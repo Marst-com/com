@@ -95,14 +95,13 @@ const KEY = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 const GET_URL =
     "https://api.keyval.org/get/" + KEY;
 
-function setURL(value) {
-    return "https://api.keyval.org/set/" +
-           KEY + "/" +
-           encodeURIComponent(value);
-}
+const SET_URL = (value) =>
+    "https://api.keyval.org/set/" +
+    KEY + "/" +
+    encodeURIComponent(String(value));
 
-const scoreElement = document.getElementById("score");
-const statusElement = document.getElementById("status");
+const scoreEl = document.getElementById("score");
+const statusEl = document.getElementById("status");
 
 let score = 1;
 let busy = false;
@@ -114,12 +113,12 @@ function render(value) {
         score = 1;
     }
 
-    scoreElement.textContent = score;
+    scoreEl.textContent = score;
 }
 
 function status(text, error = false) {
-    statusElement.textContent = text;
-    statusElement.className =
+    statusEl.textContent = text;
+    statusEl.className =
         error ? "status error" : "status";
 }
 
@@ -127,49 +126,96 @@ async function getScore() {
     const response = await fetch(
         GET_URL + "?t=" + Date.now(),
         {
+            method: "GET",
             cache: "no-store"
         }
     );
 
+    const body = await response.text();
+
+    console.log("GET:", response.status, body);
+
     if (!response.ok) {
-        throw new Error("HTTP " + response.status);
+        throw new Error(
+            "GET HTTP " +
+            response.status +
+            " : " +
+            body
+        );
     }
 
-    const text = (await response.text()).trim();
+    /*
+      KeyVal이 숫자를 그대로 주는 경우
+      숫자만 추출
+    */
+    let value = body.trim();
 
-    const value = Number(text);
+    // JSON 응답도 대응
+    try {
+        const json = JSON.parse(value);
 
-    if (!Number.isFinite(value)) {
-        throw new Error("잘못된 점수");
+        if (typeof json === "object" && json !== null) {
+            value =
+                json.val ??
+                json.value ??
+                json.data ??
+                value;
+        }
+    } catch {}
+
+    value = String(value).trim();
+
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+        throw new Error(
+            "점수 해석 실패: " + body
+        );
     }
 
-    return value;
+    return number;
 }
 
 async function saveScore(value) {
-    const response = await fetch(setURL(value), {
-        method: "GET",
-        cache: "no-store"
-    });
+    const response = await fetch(
+        SET_URL(value),
+        {
+            method: "GET",
+            cache: "no-store"
+        }
+    );
+
+    const body = await response.text();
+
+    console.log("SET:", response.status, body);
 
     if (!response.ok) {
-        throw new Error("저장 실패: HTTP " + response.status);
+        throw new Error(
+            "SET HTTP " +
+            response.status +
+            " : " +
+            body
+        );
     }
+
+    return body;
 }
 
 async function sync() {
+    if (busy) return;
+
     try {
         const value = await getScore();
 
-        if (value !== score) {
-            render(value);
-        }
-
-        status("🟢 동기화됨");
-
+        render(value);
+        status("🟢 연결됨");
     } catch (error) {
         console.error(error);
-        status("🔴 연결 실패", true);
+
+        status(
+            "🔴 " + error.message,
+            true
+        );
     }
 }
 
@@ -179,15 +225,7 @@ async function change(amount) {
     busy = true;
 
     try {
-        // 다른 기기에서 바뀐 최신 점수를 먼저 가져옴
-        let current;
-
-        try {
-            current = await getScore();
-        } catch {
-            current = score;
-        }
-
+        const current = await getScore();
         const next = current + amount;
 
         render(next);
@@ -195,10 +233,13 @@ async function change(amount) {
         await saveScore(next);
 
         status("🟢 저장됨");
-
     } catch (error) {
         console.error(error);
-        status("🔴 저장 실패", true);
+
+        status(
+            "🔴 " + error.message,
+            true
+        );
     }
 
     busy = false;
@@ -206,25 +247,23 @@ async function change(amount) {
 
 document
     .getElementById("plus")
-    .addEventListener("click", () => change(1));
+    .addEventListener(
+        "click",
+        () => change(1)
+    );
 
 document
     .getElementById("minus")
-    .addEventListener("click", () => change(-1));
+    .addEventListener(
+        "click",
+        () => change(-1)
+    );
 
-/*
-    최초 연결
-*/
+// 최초 연결
 sync();
 
-/*
-    0.5초마다 다른 기기의 점수 확인
-*/
-setInterval(() => {
-    if (!busy) {
-        sync();
-    }
-}, 500);
+// 1초마다 다른 기기의 점수 확인
+setInterval(sync, 1000);
 </script>
 
 </body>
