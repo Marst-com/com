@@ -732,13 +732,14 @@ async function sync() {
 
     try {
 
-        const value =
-            await getScore();
+        const value = await getScore();
 
-        render(value);
+        // 실제 점수가 바뀌었을 때만 애니메이션
+        if (value !== score) {
+            render(value);
+        }
 
         setConnection(true);
-
         status("동기화됨");
 
     } catch (error) {
@@ -747,10 +748,7 @@ async function sync() {
 
         setConnection(false);
 
-        status(
-            "연결 실패",
-            true
-        );
+        status("연결 실패", true);
     }
 }
 
