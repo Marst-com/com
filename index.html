@@ -92,30 +92,11 @@
 
 <script>
 const PANTRY_ID = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
-const BASKET_NAME = "score";
+const BASKET = "score";
 
 const API =
-    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET_NAME}`;
+    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET}`;
 
-const scoreElement = document.getElementById("score");
-const statusElement = document.getElementById("status");
-
-let score = 1;
-let updating = false;
-
-function showScore(value) {
-    score = Number.isFinite(Number(value)) ? Number(value) : 1;
-    scoreElement.textContent = score;
-}
-
-function setStatus(text, error = false) {
-    statusElement.textContent = text;
-    statusElement.className = error
-        ? "status error"
-        : "status";
-}
-
-// 서버에서 점수 가져오기
 async function loadScore() {
     try {
         const response = await fetch(API, {
@@ -123,38 +104,28 @@ async function loadScore() {
             cache: "no-store"
         });
 
-        if (response.status === 404) {
-            // 처음 사용하는 경우
-            await saveScore(1);
-            showScore(1);
-            setStatus("🟢 연결됨");
-            return;
-        }
+        const text = await response.text();
 
         if (!response.ok) {
-            throw new Error("GET " + response.status);
+            throw new Error(`HTTP ${response.status}: ${text}`);
         }
 
-        const data = await response.json();
+        const data = JSON.parse(text);
 
-        if (typeof data.score === "number") {
-            showScore(data.score);
-        } else {
-            showScore(1);
-        }
+        score = Number(data.score ?? 1);
+        scoreElement.textContent = score;
 
         setStatus("🟢 연결됨");
 
     } catch (error) {
         console.error(error);
-        setStatus("🔴 연결 실패", true);
+        setStatus("🔴 " + error.message, true);
     }
 }
 
-// 서버에 점수 저장
 async function saveScore(value) {
     const response = await fetch(API, {
-        method: "POST",
+        method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
@@ -163,87 +134,12 @@ async function saveScore(value) {
         })
     });
 
+    const text = await response.text();
+
     if (!response.ok) {
-        throw new Error("SAVE " + response.status);
+        throw new Error(`HTTP ${response.status}: ${text}`);
     }
 }
-
-// + / -
-async function changeScore(amount) {
-    if (updating) return;
-
-    updating = true;
-
-    try {
-        // 다른 기기에서 바뀐 최신 점수를 먼저 가져옴
-        const response = await fetch(API, {
-            method: "GET",
-            cache: "no-store"
-        });
-
-        let current = score;
-
-        if (response.ok) {
-            const data = await response.json();
-
-            if (typeof data.score === "number") {
-                current = data.score;
-            }
-        }
-
-        const newScore = current + amount;
-
-        showScore(newScore);
-
-        await saveScore(newScore);
-
-        setStatus("🟢 저장됨");
-
-    } catch (error) {
-        console.error(error);
-        setStatus("🔴 저장 실패", true);
-    }
-
-    updating = false;
-}
-
-// 다른 기기의 변경 감지
-async function syncScore() {
-    if (updating) return;
-
-    try {
-        const response = await fetch(API, {
-            method: "GET",
-            cache: "no-store"
-        });
-
-        if (!response.ok) return;
-
-        const data = await response.json();
-
-        if (typeof data.score === "number" && data.score !== score) {
-            showScore(data.score);
-        }
-
-        setStatus("🟢 연결됨");
-
-    } catch (error) {
-        setStatus("🔴 연결 실패", true);
-    }
-}
-
-document.getElementById("plus")
-    .addEventListener("click", () => changeScore(1));
-
-document.getElementById("minus")
-    .addEventListener("click", () => changeScore(-1));
-
-// 처음 불러오기
-loadScore();
-
-// 0.5초마다 다른 기기의 점수 확인
-setInterval(syncScore, 500);
 </script>
-
 </body>
 </html>
