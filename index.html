@@ -3,23 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>점수판</title>
+<title>점수</title>
 
 <style>
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-}
-
-:root {
-    --bg: #0b0b0d;
-    --panel: #111114;
-    --line: #242428;
-    --text: #f5f5f7;
-    --sub: #77777f;
-    --plus: #ffffff;
-    --plusText: #09090b;
 }
 
 html,
@@ -30,109 +19,125 @@ body {
 }
 
 body {
-    background: var(--bg);
-    color: var(--text);
+    background: #f2f2f7;
 
     font-family:
         -apple-system,
         BlinkMacSystemFont,
+        "SF Pro Display",
         "Segoe UI",
         sans-serif;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: #111;
 }
 
 /* 전체 */
 
 .app {
-    width: min(92vw, 620px);
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
 }
 
-/* 위쪽 */
+/* 상단 */
 
-.top {
+.header {
+    height: 64px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    margin-bottom: 30px;
-
-    padding: 0 4px;
+    padding: 0 22px;
 }
 
-.title {
-    font-size: 15px;
-    font-weight: 600;
-
-    color: #aaaab1;
+.header-title {
+    font-size: 17px;
+    font-weight: 650;
 }
 
 .status {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 6px;
 
     font-size: 12px;
-
-    color: #66666d;
+    color: #8e8e93;
 }
 
 .status-dot {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
 
     border-radius: 50%;
 
-    background: #55555b;
+    background: #34c759;
+}
+
+/* 중앙 */
+
+.main {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 20px;
 }
 
 /* 점수 */
 
-.score-wrap {
-    width: 100%;
+.score-box {
+    width: min(82vw, 430px);
+    aspect-ratio: 1 / 1;
+
+    border-radius: 38%;
+
+    background: #fff;
 
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
-    min-height: 300px;
-
-    margin-bottom: 30px;
+    box-shadow:
+        0 2px 10px rgba(0,0,0,.025),
+        0 15px 40px rgba(0,0,0,.045);
 }
 
 .score {
     margin: 0;
 
-    font-size: clamp(150px, 31vw, 260px);
+    font-size: clamp(110px, 27vw, 190px);
 
-    font-weight: 800;
+    font-weight: 750;
 
-    letter-spacing: -14px;
+    letter-spacing: -7px;
 
-    line-height: .8;
-
-    color: var(--text);
+    line-height: 1;
 
     user-select: none;
 
-    text-align: center;
+    color: #111;
 }
 
 .score.pop {
-    animation: pop .18s cubic-bezier(.2,.8,.2,1);
+    animation: pop .2s ease-out;
 }
 
 @keyframes pop {
 
     0% {
-        transform: scale(.92);
-        opacity: .5;
+        transform: scale(.9);
+        opacity: .55;
     }
 
-    65% {
-        transform: scale(1.035);
+    60% {
+        transform: scale(1.06);
         opacity: 1;
     }
 
@@ -141,141 +146,104 @@ body {
     }
 }
 
-/* 버튼 영역 */
+/* 버튼 */
 
 .controls {
+    width: min(82vw, 430px);
+
     display: grid;
+    grid-template-columns: 1fr 1fr;
 
-    grid-template-columns: 100px 1fr;
+    gap: 12px;
 
-    gap: 10px;
-
-    height: 82px;
+    margin-top: 18px;
 }
 
-/* 공통 */
-
 button {
-    border: 0;
+    height: 76px;
 
-    border-radius: 18px;
+    border: none;
+    border-radius: 24px;
 
     font-family: inherit;
+
+    font-size: 34px;
+    font-weight: 400;
 
     cursor: pointer;
 
     transition:
-        transform .1s ease,
-        background .15s ease;
+        transform .1s,
+        background .15s;
 }
 
 button:active {
-    transform: scale(.96);
+    transform: scale(.94);
 }
 
-/* 마이너스 */
-
 .minus {
-    background: var(--panel);
-
-    border: 1px solid var(--line);
-
-    color: #aaaab1;
-
-    font-size: 34px;
+    background: #e5e5ea;
+    color: #3a3a3c;
 }
 
 .minus:hover {
-    background: #18181c;
+    background: #dcdce1;
 }
 
-/* 플러스 */
-
 .plus {
-    background: var(--plus);
-
-    color: var(--plusText);
-
-    font-size: 38px;
-
-    font-weight: 500;
+    background: #007aff;
+    color: white;
 }
 
 .plus:hover {
-    background: #e5e5e7;
+    background: #006ee6;
 }
 
-/* 아래 */
+/* 하단 */
 
-.bottom {
+.footer {
+    height: 48px;
+
     display: flex;
+    align-items: center;
     justify-content: center;
 
-    margin-top: 22px;
-}
+    color: #aeaeb2;
 
-.sync {
     font-size: 11px;
-
-    color: #45454b;
 }
 
-/* 에러 */
+/* 작은 화면 */
 
-.status.error {
-    color: #ef4444;
-}
+@media (max-height: 650px) {
 
-.status.error .status-dot {
-    background: #ef4444;
+    .header {
+        height: 54px;
+    }
+
+    .score-box {
+        width: min(65vw, 300px);
+    }
+
+    .controls {
+        width: min(65vw, 300px);
+    }
+
+    button {
+        height: 62px;
+    }
 }
 
 /* 모바일 */
 
-@media (max-width: 500px) {
+@media (max-width: 450px) {
 
-    .app {
-        width: 90vw;
-    }
-
-    .score-wrap {
-        min-height: 250px;
-    }
-
-    .score {
-        font-size: 150px;
-        letter-spacing: -9px;
+    .score-box {
+        width: 82vw;
     }
 
     .controls {
-        grid-template-columns: 82px 1fr;
-        height: 76px;
-    }
-
-    .plus {
-        font-size: 34px;
-    }
-
-    .minus {
-        font-size: 30px;
-    }
-}
-
-/* 세로가 짧은 기기 */
-
-@media (max-height: 650px) {
-
-    .score-wrap {
-        min-height: 190px;
-        margin-bottom: 20px;
-    }
-
-    .score {
-        font-size: 130px;
-    }
-
-    .top {
-        margin-bottom: 20px;
+        width: 82vw;
     }
 }
 </style>
@@ -285,69 +253,68 @@ button:active {
 
 <div class="app">
 
-    <div class="top">
+    <header class="header">
 
-        <div class="title">
-            점수판
+        <div class="header-title">
+            점수
         </div>
 
-        <div
-            id="connection"
-            class="status"
-        >
+        <div class="status">
+
             <span
                 id="statusDot"
                 class="status-dot"
             ></span>
 
             <span id="statusText">
-                연결 중
+                연결됨
             </span>
+
         </div>
 
-    </div>
+    </header>
 
 
-    <div class="score-wrap">
+    <main class="main">
 
-        <div
-            id="score"
-            class="score"
-        >
-            1
+        <div class="score-box">
+
+            <div
+                id="score"
+                class="score"
+            >
+                1
+            </div>
+
         </div>
 
-    </div>
 
+        <div class="controls">
 
-    <div class="controls">
+            <button
+                id="minus"
+                class="minus"
+                type="button"
+            >
+                −
+            </button>
 
-        <button
-            id="minus"
-            class="minus"
-            type="button"
-        >
-            −
-        </button>
+            <button
+                id="plus"
+                class="plus"
+                type="button"
+            >
+                ＋
+            </button>
 
-        <button
-            id="plus"
-            class="plus"
-            type="button"
-        >
-            ＋
-        </button>
-
-    </div>
-
-
-    <div class="bottom">
-
-        <div class="sync">
-            자동 동기화
         </div>
 
-    </div>
+    </main>
+
+
+    <footer class="footer">
+        자동 동기화
+    </footer>
 
 </div>
 
@@ -373,14 +340,11 @@ const statusText =
 const statusDot =
     document.getElementById("statusDot");
 
-const connection =
-    document.getElementById("connection");
-
 let score = 1;
 let busy = false;
 
 
-/* 점수 표시 */
+/* 점수 */
 
 function render(value, animate = true) {
 
@@ -402,33 +366,35 @@ function render(value, animate = true) {
 
     setTimeout(() => {
         scoreEl.classList.remove("pop");
-    }, 180);
+    }, 200);
 }
 
 
-/* 연결 상태 */
+/* 연결 */
 
-function setConnection(connected) {
+function setConnection(ok) {
 
-    connection.className = "status";
-
-    if (connected) {
-
-        statusDot.style.background =
-            "#4ade80";
+    if (ok) {
 
         statusText.textContent =
             "연결됨";
 
-    } else {
+        statusText.style.color =
+            "#8e8e93";
 
         statusDot.style.background =
-            "#ef4444";
+            "#34c759";
+
+    } else {
 
         statusText.textContent =
             "연결 실패";
 
-        connection.classList.add("error");
+        statusText.style.color =
+            "#ff3b30";
+
+        statusDot.style.background =
+            "#ff3b30";
     }
 }
 
@@ -441,7 +407,6 @@ async function getScore() {
         await fetch(
             GET_URL + "?t=" + Date.now(),
             {
-                method: "GET",
                 cache: "no-store"
             }
         );
@@ -452,9 +417,9 @@ async function getScore() {
     if (!response.ok) {
 
         throw new Error(
-            "GET HTTP " +
+            "GET " +
             response.status +
-            " : " +
+            ": " +
             body
         );
     }
@@ -488,8 +453,7 @@ async function getScore() {
     if (!Number.isFinite(number)) {
 
         throw new Error(
-            "점수 해석 실패: " +
-            body
+            "잘못된 점수"
         );
     }
 
@@ -505,25 +469,17 @@ async function saveScore(value) {
         await fetch(
             SET_URL(value),
             {
-                method: "GET",
                 cache: "no-store"
             }
         );
 
-    const body =
-        await response.text();
-
     if (!response.ok) {
 
         throw new Error(
-            "SET HTTP " +
-            response.status +
-            " : " +
-            body
+            "SET " +
+            response.status
         );
     }
-
-    return body;
 }
 
 
@@ -539,11 +495,15 @@ async function sync() {
             await getScore();
 
         /*
-         * DB와 현재 화면의 값이
+         * DB 값과 현재 화면 값이
          * 다를 때만 애니메이션
          */
         if (value !== score) {
-            render(value, true);
+
+            render(
+                value,
+                true
+            );
         }
 
         setConnection(true);
@@ -557,7 +517,7 @@ async function sync() {
 }
 
 
-/* + / - */
+/* 점수 변경 */
 
 async function change(amount) {
 
@@ -573,7 +533,10 @@ async function change(amount) {
         const next =
             current + amount;
 
-        render(next, true);
+        render(
+            next,
+            true
+        );
 
         await saveScore(next);
 
@@ -590,20 +553,20 @@ async function change(amount) {
 }
 
 
-/* 이벤트 */
-
-document
-    .getElementById("plus")
-    .addEventListener(
-        "click",
-        () => change(1)
-    );
+/* 버튼 */
 
 document
     .getElementById("minus")
     .addEventListener(
         "click",
         () => change(-1)
+    );
+
+document
+    .getElementById("plus")
+    .addEventListener(
+        "click",
+        () => change(1)
     );
 
 
