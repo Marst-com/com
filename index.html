@@ -2,1242 +2,172 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shared Score</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Duo Score</title>
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#030205;color:#fff;font-family:Inter,Pretendard,Arial,sans-serif}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+.bg{position:fixed;inset:0;pointer-events:none;background:
+radial-gradient(circle at 50% 95%,rgba(123,45,220,.09),transparent 38%),
+linear-gradient(180deg,#030205,#06030a)}
+.panel{
+position:absolute;z-index:5;left:50%;top:43%;transform:translate(-50%,-50%);
+width:440px;height:330px;background:rgba(0,0,0,.96);
+border:1px solid rgba(190,130,255,.18);
+box-shadow:0 35px 120px rgba(0,0,0,.8),0 0 70px rgba(120,30,220,.06);
+display:flex;flex-direction:column;align-items:center
 }
-
-html,
-body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #050308;
-    font-family: Arial, sans-serif;
+.panel:before,.panel:after{content:"";position:absolute;background:#a855f7}
+.panel:before{width:42px;height:1px;top:-1px;left:28px}
+.panel:after{width:1px;height:42px;right:-1px;bottom:28px}
+.top{
+width:100%;padding:25px 30px 0;display:flex;
+justify-content:space-between;color:#666;font-size:9px;letter-spacing:3px
 }
-
-body {
-    position: relative;
+.live{display:flex;align-items:center;gap:7px;color:#777}
+.dot{width:5px;height:5px;border-radius:50%;background:#34c759;box-shadow:0 0 10px #34c759}
+.label{margin-top:27px;font-size:11px;letter-spacing:7px;color:#777}
+#score{margin-top:8px;font-size:112px;line-height:1;font-weight:600;letter-spacing:-7px}
+#score.pop{animation:pop .22s ease}
+@keyframes pop{50%{transform:scale(1.08)}}
+.sub{margin-top:5px;color:#555;font-size:9px;letter-spacing:2px}
+.controls{display:flex;gap:9px;margin-top:25px}
+button{
+width:58px;height:35px;background:#08080a;color:#999;border:1px solid #222;
+font-size:19px;cursor:pointer;transition:.15s
 }
-
-/* =========================
-   3D NETWORK
-========================= */
-
-#canvas {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
+button:hover{color:#fff;border-color:#7540a8;background:#100a16}
+button:active{transform:scale(.94)}
+.bottom{
+position:absolute;bottom:18px;width:100%;padding:0 28px;
+display:flex;justify-content:space-between;color:#414044;font-size:8px;letter-spacing:1.5px
 }
-
-/* =========================
-   SCORE PANEL
-========================= */
-
-.panel {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-
-    width: 330px;
-    height: 230px;
-
-    background: #000;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    z-index: 10;
-
-    box-shadow:
-        0 0 0 1px rgba(255,255,255,0.08),
-        0 25px 80px rgba(0,0,0,0.7);
-}
-
-.label {
-    color: #777;
-    font-size: 11px;
-    letter-spacing: 4px;
-    margin-bottom: 12px;
-}
-
-#score {
-    color: white;
-    font-size: 76px;
-    font-weight: 700;
-    line-height: 1;
-
-    transition: transform 0.2s ease;
-}
-
-#score.pop {
-    animation: pop 0.2s ease;
-}
-
-@keyframes pop {
-    0% {
-        transform: scale(1);
-    }
-
-    45% {
-        transform: scale(1.12);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-.controls {
-    display: flex;
-    gap: 8px;
-    margin-top: 25px;
-}
-
-button {
-    width: 42px;
-    height: 30px;
-
-    border: 1px solid #222;
-    background: #090909;
-    color: #aaa;
-
-    font-size: 17px;
-    cursor: pointer;
-
-    transition:
-        background 0.15s,
-        color 0.15s;
-}
-
-button:hover {
-    background: #161616;
-    color: white;
-}
-
-button:active {
-    transform: scale(0.95);
-}
-
-.status {
-    position: absolute;
-    bottom: 15px;
-
-    display: flex;
-    align-items: center;
-    gap: 6px;
-
-    color: #777;
-    font-size: 10px;
-}
-
-#statusDot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #ff3b30;
-}
+.line{position:absolute;height:1px;background:rgba(170,100,255,.12);top:54px;left:30px;right:30px}
 </style>
 </head>
-
 <body>
-
+<div class="bg"></div>
 <canvas id="canvas"></canvas>
 
 <div class="panel">
-
-    <div class="label">
-        SHARED SCORE
-    </div>
-
-    <div id="score">
-        1
-    </div>
-
-    <div class="controls">
-        <button id="minus">−</button>
-        <button id="plus">+</button>
-    </div>
-
-    <div class="status">
-        <span id="statusDot"></span>
-        <span id="statusText">연결 중</span>
-    </div>
-
+<div class="line"></div>
+<div class="top">
+<span>DUOMARST / SCORE SYSTEM</span>
+<span class="live"><i class="dot" id="statusDot"></i><b id="statusText">SYNC</b></span>
+</div>
+<div class="label">SHARED SCORE</div>
+<div id="score">1</div>
+<div class="sub">LIVE SYNCHRONIZED VALUE</div>
+<div class="controls">
+<button id="minus">−</button>
+<button id="plus">+</button>
+</div>
+<div class="bottom">
+<span>NETWORK // ACTIVE</span>
+<span>KEYVAL STORAGE</span>
+</div>
 </div>
 
 <script>
+const c=document.getElementById("canvas"),x=c.getContext("2d");
+let W,H;function resize(){W=c.width=innerWidth;H=c.height=innerHeight}resize();
+addEventListener("resize",resize);
 
-/* =========================================================
-   CANVAS
-========================================================= */
-
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-
-let W = innerWidth;
-let H = innerHeight;
-
-function resize() {
-    W = canvas.width = innerWidth;
-    H = canvas.height = innerHeight;
+const N=78,COLS=13,ROWS=6,nodes=[],edges=[],set=new Set();
+function purple(){return{h:255+Math.random()*38,s:70+Math.random()*25,l:48+Math.random()*27}}
+function mix(a,b,t=.5){return{h:a.h+(b.h-a.h)*t,s:a.s+(b.s-a.s)*t,l:a.l+(b.l-a.l)*t}}
+function rgb(q,a=1){
+let h=q.h/360,s=q.s/100,l=q.l/100,r,g,b;
+if(!s)r=g=b=l;else{let q2=l<.5?l*(1+s):l+s-l*s,p=2*l-q2,f=t=>{if(t<0)t++;if(t>1)t--;if(t<1/6)return p+(q2-p)*6*t;if(t<.5)return q2;if(t<2/3)return p+(q2-p)*(2/3-t)*6;return p};r=f(h+1/3);g=f(h);b=f(h-1/3)}
+return`rgba(${r*255},${g*255},${b*255},${a})`;
 }
 
-resize();
-
-addEventListener("resize", resize);
-
-
-/* =========================================================
-   COLORS
-   보라색 범위 안에서 각각 조금씩 다르게
-========================================================= */
-
-function randomPurple() {
-
-    const hues = [
-        255,
-        260,
-        265,
-        270,
-        275,
-        280,
-        285,
-        290
-    ];
-
-    const h = hues[
-        Math.floor(Math.random() * hues.length)
-    ];
-
-    const s = 70 + Math.random() * 25;
-    const l = 50 + Math.random() * 25;
-
-    return {
-        h,
-        s,
-        l
-    };
+for(let r=0;r<ROWS;r++)for(let col=0;col<COLS;col++){
+let d=r/(ROWS-1),z=420-d*2500,w=900-d*650;
+nodes.push({
+x:(col/(COLS-1)-.5)*w+(Math.random()-.5)*80,
+y:300+d*270+(Math.random()-.5)*65,z:z+(Math.random()-.5)*100,
+color:purple(),size:1.5+Math.random()*2,phase:Math.random()*6.28
+});
 }
+function edge(a,b){let k=a<b?a+"-"+b:b+"-"+a;if(!set.has(k)){set.add(k);edges.push({a,b})}}
+for(let r=0;r<ROWS;r++)for(let j=0;j<COLS;j++){
+let i=r*COLS+j;
+if(j<COLS-1)edge(i,i+1);
+if(r<ROWS-1){
+edge(i,i+COLS);
+if(j<COLS-1)edge(i,i+COLS+1);
+if(j>0)edge(i,i+COLS-1);
+}}
+for(let i=0;i<N;i++)if(Math.random()<.25&&i+COLS*2<N)edge(i,i+COLS*2);
 
+let rot=0,mx=0,my=0;
+addEventListener("mousemove",e=>{mx=e.clientX/W-.5;my=e.clientY/H-.5});
 
-function colorToRGB(c, alpha = 1) {
-
-    let h = c.h / 360;
-    let s = c.s / 100;
-    let l = c.l / 100;
-
-    let r, g, b;
-
-    if (s === 0) {
-        r = g = b = l;
-    } else {
-
-        const hue2rgb = (p, q, t) => {
-
-            if (t < 0) t += 1;
-            if (t > 1) t -= 1;
-
-            if (t < 1 / 6)
-                return p + (q - p) * 6 * t;
-
-            if (t < 1 / 2)
-                return q;
-
-            if (t < 2 / 3)
-                return p + (q - p) * (2 / 3 - t) * 6;
-
-            return p;
-        };
-
-        const q =
-            l < 0.5
-                ? l * (1 + s)
-                : l + s - l * s;
-
-        const p = 2 * l - q;
-
-        r = hue2rgb(p, q, h + 1 / 3);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1 / 3);
-    }
-
-    return `rgba(
-        ${Math.round(r * 255)},
-        ${Math.round(g * 255)},
-        ${Math.round(b * 255)},
-        ${alpha}
-    )`;
+function project(n,t){
+let xx=n.x+Math.sin(t*.0006+n.phase)*7;
+let yy=n.y+Math.cos(t*.0005+n.phase)*5;
+let cy=Math.cos(rot+mx*.035),sy=Math.sin(rot+mx*.035);
+let rx=xx*cy-n.z*sy,rz=xx*sy+n.z*cy;
+let cx=Math.cos(-.48+my*.025),sx=Math.sin(-.48+my*.025);
+let ry=yy*cx-rz*sx,zz=yy*sx+rz*cx;
+let p=1050/(1050+zz);
+return{x:W*.5+rx*p,y:H*.72+ry*p,z:zz,s:p}
 }
+function draw(t){
+x.fillStyle="#030205";x.fillRect(0,0,W,H);
+let g=x.createRadialGradient(W/2,H,0,W/2,H,H*.8);
+g.addColorStop(0,"rgba(125,45,230,.075)");g.addColorStop(1,"transparent");
+x.fillStyle=g;x.fillRect(0,H*.4,W,H*.6);
+rot+=.000018;
+let p=nodes.map(n=>project(n,t));
+edges.forEach(e=>{
+let a=p[e.a],b=p[e.b],d=Math.hypot(a.x-b.x,a.y-b.y);
+if(d<5||d>300)return;
+let col=mix(nodes[e.a].color,nodes[e.b].color);
+x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);
+x.strokeStyle=rgb(col,Math.min(.32,.18*(a.s+b.s)));
+x.lineWidth=.55+.5*(a.s+b.s);x.stroke();
+});
+nodes.forEach((n,i)=>{
+let q=p[i];if(q.x<-50||q.x>W+50||q.y<-50||q.y>H+50)return;
+let r=Math.max(.6,n.size*q.s);
+x.beginPath();x.arc(q.x,q.y,r*3,0,7);x.fillStyle=rgb(n.color,.025);x.fill();
+x.beginPath();x.arc(q.x,q.y,r,0,7);x.fillStyle=rgb(n.color,Math.min(.9,q.s));x.fill();
+});
+requestAnimationFrame(draw)
+}requestAnimationFrame(draw);
 
+/* SCORE */
+const KEY="6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
+const GET="https://api.keyval.org/get/"+KEY;
+const SET=v=>"https://api.keyval.org/set/"+KEY+"/"+encodeURIComponent(v);
+const scoreEl=document.getElementById("score"),status=document.getElementById("statusText"),dot=document.getElementById("statusDot");
+let score=1,busy=false;
 
-function mixColor(a, b, amount = 0.5) {
-
-    return {
-        h: a.h + (b.h - a.h) * amount,
-        s: a.s + (b.s - a.s) * amount,
-        l: a.l + (b.l - a.l) * amount
-    };
+function render(v,anim=true){
+score=Number(v);if(!Number.isFinite(score))score=1;
+scoreEl.textContent=score;
+if(anim){scoreEl.classList.remove("pop");void scoreEl.offsetWidth;scoreEl.classList.add("pop")}
 }
-
-
-/* =========================================================
-   3D WORLD
-   화면보다 훨씬 큰 구조물
-========================================================= */
-
-const NODE_COUNT = 125;
-
-const WORLD_X = 1500;
-const WORLD_Y = 1100;
-const WORLD_Z = 1200;
-
-const nodes = [];
-
-for (let i = 0; i < NODE_COUNT; i++) {
-
-    nodes.push({
-
-        x:
-            (Math.random() - 0.5)
-            * WORLD_X,
-
-        y:
-            (Math.random() - 0.5)
-            * WORLD_Y,
-
-        z:
-            (Math.random() - 0.5)
-            * WORLD_Z,
-
-        vx:
-            (Math.random() - 0.5)
-            * 0.08,
-
-        vy:
-            (Math.random() - 0.5)
-            * 0.08,
-
-        vz:
-            (Math.random() - 0.5)
-            * 0.08,
-
-        color:
-            randomPurple(),
-
-        size:
-            1.5 + Math.random() * 2.5
-    });
+function conn(ok){status.textContent=ok?"SYNC":"OFFLINE";dot.style.background=ok?"#34c759":"#ff3b30";dot.style.boxShadow=ok?"0 0 10px #34c759":"0 0 10px #ff3b30"}
+async function getScore(){
+let r=await fetch(GET+"?t="+Date.now(),{cache:"no-store"}),b=(await r.text()).trim();
+if(!r.ok)throw Error("GET "+r.status);
+try{let j=JSON.parse(b);if(j&&typeof j==="object")b=j.val??j.value??j.data??b}catch{}
+let n=Number(b);if(!Number.isFinite(n))throw Error("Invalid score");return n
 }
-
-
-/* =========================================================
-   BUILD NETWORK
-========================================================= */
-
-const edges = [];
-const edgeSet = new Set();
-
-const MAX_LINKS = 4;
-
-for (let i = 0; i < nodes.length; i++) {
-
-    const nearest = [];
-
-    for (let j = 0; j < nodes.length; j++) {
-
-        if (i === j) continue;
-
-        const a = nodes[i];
-        const b = nodes[j];
-
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const dz = a.z - b.z;
-
-        const distance =
-            dx * dx +
-            dy * dy +
-            dz * dz;
-
-        nearest.push({
-            index: j,
-            distance
-        });
-    }
-
-    nearest.sort(
-        (a, b) =>
-            a.distance - b.distance
-    );
-
-    for (
-        let n = 0;
-        n < Math.min(MAX_LINKS, nearest.length);
-        n++
-    ) {
-
-        const j = nearest[n].index;
-
-        const key =
-            i < j
-                ? `${i}-${j}`
-                : `${j}-${i}`;
-
-        if (edgeSet.has(key)) continue;
-
-        edgeSet.add(key);
-
-        edges.push({
-            a: i,
-            b: j
-        });
-    }
+async function save(v){let r=await fetch(SET(v),{cache:"no-store"});if(!r.ok)throw Error("SET "+r.status)}
+async function sync(){if(busy)return;try{let v=await getScore();if(v!==score)render(v);conn(true)}catch(e){console.error(e);conn(false)}}
+async function change(a){
+if(busy)return;busy=true;
+try{let v=await getScore();render(v+a);await save(v+a);conn(true)}
+catch(e){console.error(e);conn(false)}busy=false
 }
-
-
-/* =========================================================
-   CAMERA
-========================================================= */
-
-let rotationY = 0;
-let rotationX = -0.15;
-
-const CAMERA_DISTANCE = 1350;
-
-
-/* =========================================================
-   PROJECT 3D → 2D
-========================================================= */
-
-function project(node) {
-
-    let x = node.x;
-    let y = node.y;
-    let z = node.z;
-
-
-    /* Y rotation */
-
-    const cosY = Math.cos(rotationY);
-    const sinY = Math.sin(rotationY);
-
-    const rx =
-        x * cosY -
-        z * sinY;
-
-    const rz =
-        x * sinY +
-        z * cosY;
-
-
-    /* X rotation */
-
-    const cosX = Math.cos(rotationX);
-    const sinX = Math.sin(rotationX);
-
-    const ry =
-        y * cosX -
-        rz * sinX;
-
-    const finalZ =
-        y * sinX +
-        rz * cosX;
-
-
-    const perspective =
-        CAMERA_DISTANCE /
-        (CAMERA_DISTANCE + finalZ);
-
-
-    return {
-
-        x:
-            W * 0.54 +
-            rx * perspective,
-
-        y:
-            H * 0.50 +
-            ry * perspective,
-
-        z: finalZ,
-
-        scale: perspective
-    };
-}
-
-
-/* =========================================================
-   TRIANGLES
-========================================================= */
-
-function buildTriangles() {
-
-    const triangles = [];
-
-    /*
-       일부 연결된 점 3개를 찾아
-       저밀도 삼각형 생성
-    */
-
-    const links = new Map();
-
-    for (let i = 0; i < nodes.length; i++) {
-        links.set(i, new Set());
-    }
-
-    for (const edge of edges) {
-
-        links.get(edge.a).add(edge.b);
-        links.get(edge.b).add(edge.a);
-    }
-
-
-    for (let a = 0; a < nodes.length; a++) {
-
-        const neighbors =
-            [...links.get(a)];
-
-        for (
-            let i = 0;
-            i < neighbors.length;
-            i++
-        ) {
-
-            for (
-                let j = i + 1;
-                j < neighbors.length;
-                j++
-            ) {
-
-                const b = neighbors[i];
-                const c = neighbors[j];
-
-                if (
-                    links.get(b).has(c)
-                ) {
-
-                    triangles.push({
-                        a,
-                        b,
-                        c
-                    });
-                }
-            }
-        }
-    }
-
-    return triangles;
-}
-
-const triangles =
-    buildTriangles();
-
-
-/* =========================================================
-   DRAW
-========================================================= */
-
-function draw() {
-
-    ctx.clearRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    /*
-       아주 어두운 배경
-    */
-
-    ctx.fillStyle = "#050308";
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    /*
-       아주 미세한 보라색 공간광
-    */
-
-    const glow =
-        ctx.createRadialGradient(
-            W * 0.25,
-            H * 0.25,
-            0,
-            W * 0.25,
-            H * 0.25,
-            Math.max(W, H) * 0.8
-        );
-
-    glow.addColorStop(
-        0,
-        "rgba(110,40,180,0.035)"
-    );
-
-    glow.addColorStop(
-        1,
-        "rgba(0,0,0,0)"
-    );
-
-    ctx.fillStyle = glow;
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    /*
-       이동
-    */
-
-    for (const node of nodes) {
-
-        node.x += node.vx;
-        node.y += node.vy;
-        node.z += node.vz;
-
-        /*
-           월드 경계를 넘으면 반대편으로
-           순간이동하지 않고 방향 반전
-        */
-
-        if (
-            Math.abs(node.x) >
-            WORLD_X / 2
-        ) {
-            node.vx *= -1;
-        }
-
-        if (
-            Math.abs(node.y) >
-            WORLD_Y / 2
-        ) {
-            node.vy *= -1;
-        }
-
-        if (
-            Math.abs(node.z) >
-            WORLD_Z / 2
-        ) {
-            node.vz *= -1;
-        }
-    }
-
-
-    /*
-       회전
-    */
-
-    rotationY += 0.0008;
-
-
-    /*
-       투영
-    */
-
-    const projected =
-        nodes.map(project);
-
-
-    /*
-       삼각형을 뒤에서부터 그림
-    */
-
-    const sortedTriangles =
-        triangles
-            .map(t => {
-
-                const z =
-                    (
-                        projected[t.a].z +
-                        projected[t.b].z +
-                        projected[t.c].z
-                    ) / 3;
-
-                return {
-                    ...t,
-                    z
-                };
-            })
-            .sort(
-                (a, b) =>
-                    b.z - a.z
-            );
-
-
-    /*
-       LOW POLY FACES
-    */
-
-    for (const t of sortedTriangles) {
-
-        const a = projected[t.a];
-        const b = projected[t.b];
-        const c = projected[t.c];
-
-        /*
-           화면에서 너무 작은 면은 생략
-        */
-
-        const area =
-            Math.abs(
-                (b.x - a.x) *
-                (c.y - a.y) -
-                (b.y - a.y) *
-                (c.x - a.x)
-            );
-
-        if (area < 25) continue;
-
-
-        const color =
-            mixColor(
-                mixColor(
-                    nodes[t.a].color,
-                    nodes[t.b].color,
-                    0.5
-                ),
-                nodes[t.c].color,
-                0.5
-            );
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            a.x,
-            a.y
-        );
-
-        ctx.lineTo(
-            b.x,
-            b.y
-        );
-
-        ctx.lineTo(
-            c.x,
-            c.y
-        );
-
-        ctx.closePath();
-
-        ctx.fillStyle =
-            colorToRGB(
-                color,
-                0.035
-            );
-
-        ctx.fill();
-    }
-
-
-    /*
-       LINES
-    */
-
-    ctx.lineCap = "round";
-
-    for (const edge of edges) {
-
-        const a =
-            projected[edge.a];
-
-        const b =
-            projected[edge.b];
-
-        /*
-           화면과 너무 멀리 떨어진 연결선은
-           그리지 않아 성능과 느낌을 유지
-        */
-
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-
-        const screenDistance =
-            Math.sqrt(
-                dx * dx +
-                dy * dy
-            );
-
-        if (
-            screenDistance > 430
-        ) continue;
-
-
-        /*
-           두 점 색상 평균
-        */
-
-        const lineColor =
-            mixColor(
-                nodes[edge.a].color,
-                nodes[edge.b].color,
-                0.5
-            );
-
-
-        const depthAlpha =
-            Math.max(
-                0.08,
-                Math.min(
-                    0.42,
-                    0.28 *
-                    ((a.scale + b.scale) / 2)
-                )
-            );
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            a.x,
-            a.y
-        );
-
-        ctx.lineTo(
-            b.x,
-            b.y
-        );
-
-        ctx.strokeStyle =
-            colorToRGB(
-                lineColor,
-                depthAlpha
-            );
-
-        ctx.lineWidth =
-            0.7 +
-            (
-                (a.scale + b.scale) / 2
-            ) * 0.7;
-
-        ctx.stroke();
-    }
-
-
-    /*
-       POINTS
-    */
-
-    for (let i = 0; i < nodes.length; i++) {
-
-        const p =
-            projected[i];
-
-        /*
-           화면에 어느 정도 보이는 점만
-        */
-
-        if (
-            p.x < -100 ||
-            p.x > W + 100 ||
-            p.y < -100 ||
-            p.y > H + 100
-        ) {
-            continue;
-        }
-
-
-        const radius =
-            nodes[i].size *
-            p.scale;
-
-
-        /*
-           약한 glow
-        */
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            radius * 3.5,
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle =
-            colorToRGB(
-                nodes[i].color,
-                0.045
-            );
-
-        ctx.fill();
-
-
-        /*
-           실제 점
-        */
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            Math.max(
-                1.2,
-                radius
-            ),
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle =
-            colorToRGB(
-                nodes[i].color,
-                0.9
-            );
-
-        ctx.fill();
-
-
-        /*
-           중심 하이라이트
-        */
-
-        ctx.beginPath();
-
-        ctx.arc(
-            p.x,
-            p.y,
-            Math.max(
-                0.5,
-                radius * 0.35
-            ),
-            0,
-            Math.PI * 2
-        );
-
-        ctx.fillStyle =
-            "rgba(255,255,255,0.25)";
-
-        ctx.fill();
-    }
-
-
-    requestAnimationFrame(draw);
-}
-
-draw();
-
-
-/* =========================================================
-   SCORE SYSTEM
-========================================================= */
-
-const KEY =
-    "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
-
-const GET_URL =
-    "https://api.keyval.org/get/" +
-    KEY;
-
-const SET_URL = value =>
-    "https://api.keyval.org/set/" +
-    KEY +
-    "/" +
-    encodeURIComponent(
-        String(value)
-    );
-
-
-const scoreEl =
-    document.getElementById(
-        "score"
-    );
-
-const statusText =
-    document.getElementById(
-        "statusText"
-    );
-
-const statusDot =
-    document.getElementById(
-        "statusDot"
-    );
-
-
-let score = 1;
-let busy = false;
-
-
-function render(
-    value,
-    animate = true
-) {
-
-    score = Number(value);
-
-    if (
-        !Number.isFinite(score)
-    ) {
-        score = 1;
-    }
-
-    scoreEl.textContent =
-        score;
-
-    if (!animate) return;
-
-    scoreEl.classList.remove(
-        "pop"
-    );
-
-    void scoreEl.offsetWidth;
-
-    scoreEl.classList.add(
-        "pop"
-    );
-
-    setTimeout(() => {
-
-        scoreEl.classList.remove(
-            "pop"
-        );
-
-    }, 200);
-}
-
-
-function setConnection(ok) {
-
-    if (ok) {
-
-        statusText.textContent =
-            "연결됨";
-
-        statusText.style.color =
-            "#777";
-
-        statusDot.style.background =
-            "#34c759";
-
-    } else {
-
-        statusText.textContent =
-            "연결 실패";
-
-        statusText.style.color =
-            "#ff3b30";
-
-        statusDot.style.background =
-            "#ff3b30";
-    }
-}
-
-
-async function getScore() {
-
-    const response =
-        await fetch(
-            GET_URL +
-            "?t=" +
-            Date.now(),
-            {
-                cache:
-                    "no-store"
-            }
-        );
-
-
-    const body =
-        (
-            await response.text()
-        ).trim();
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "GET " +
-            response.status +
-            ": " +
-            body
-        );
-    }
-
-
-    let value = body;
-
-
-    try {
-
-        const json =
-            JSON.parse(value);
-
-        if (
-            typeof json ===
-                "object" &&
-            json !== null
-        ) {
-
-            value =
-                json.val ??
-                json.value ??
-                json.data ??
-                value;
-        }
-
-    } catch {}
-
-
-    const number =
-        Number(
-            String(value).trim()
-        );
-
-
-    if (
-        !Number.isFinite(number)
-    ) {
-
-        throw new Error(
-            "잘못된 점수"
-        );
-    }
-
-
-    return number;
-}
-
-
-async function saveScore(value) {
-
-    const response =
-        await fetch(
-            SET_URL(value),
-            {
-                cache:
-                    "no-store"
-            }
-        );
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "SET " +
-            response.status
-        );
-    }
-}
-
-
-async function sync() {
-
-    if (busy) return;
-
-    try {
-
-        const value =
-            await getScore();
-
-        /*
-           DB와 현재 화면 값이
-           다를 때만 애니메이션
-        */
-
-        if (
-            value !== score
-        ) {
-
-            render(
-                value,
-                true
-            );
-        }
-
-        setConnection(true);
-
-    } catch (error) {
-
-        console.error(error);
-
-        setConnection(false);
-    }
-}
-
-
-async function change(amount) {
-
-    if (busy) return;
-
-    busy = true;
-
-    try {
-
-        const current =
-            await getScore();
-
-        const next =
-            current + amount;
-
-        render(
-            next,
-            true
-        );
-
-        await saveScore(
-            next
-        );
-
-        setConnection(true);
-
-    } catch (error) {
-
-        console.error(error);
-
-        setConnection(false);
-    }
-
-    busy = false;
-}
-
-
-document
-    .getElementById("minus")
-    .addEventListener(
-        "click",
-        () => change(-1)
-    );
-
-
-document
-    .getElementById("plus")
-    .addEventListener(
-        "click",
-        () => change(1)
-    );
-
-
-sync();
-
-setInterval(
-    sync,
-    1000
-);
-
+document.getElementById("minus").onclick=()=>change(-1);
+document.getElementById("plus").onclick=()=>change(1);
+sync();setInterval(sync,1000);
 </script>
-
 </body>
 </html>
