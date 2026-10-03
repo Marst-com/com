@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -6,77 +7,76 @@
 <title>공유 점수판</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-    }
+* {
+    box-sizing: border-box;
+}
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: #ffffff;
-        font-family: Arial, sans-serif;
-    }
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: #fff;
+}
 
-    .scoreboard {
-        text-align: center;
-        width: 100%;
-        max-width: 500px;
-        padding: 30px;
-    }
+.scoreboard {
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+    padding: 30px;
+}
 
-    .title {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
+.title {
+    font-size: 24px;
+    font-weight: 700;
+}
 
-    .score {
-        font-size: 120px;
-        line-height: 1;
-        font-weight: 800;
-        margin: 20px 0 40px;
-    }
+.score {
+    margin: 25px 0 40px;
+    font-size: 120px;
+    font-weight: 800;
+    line-height: 1;
+}
 
-    .buttons {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
 
-    button {
-        width: 100px;
-        height: 75px;
-        border: none;
-        border-radius: 18px;
-        background: #eeeeee;
-        font-size: 42px;
-        font-weight: bold;
-        cursor: pointer;
-    }
+button {
+    width: 100px;
+    height: 75px;
+    border: 0;
+    border-radius: 18px;
+    background: #eee;
+    font-size: 42px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-    button:active {
-        transform: scale(0.94);
-    }
+button:active {
+    transform: scale(.94);
+}
 
-    .status {
-        margin-top: 25px;
-        font-size: 14px;
-        color: #777;
-    }
+.status {
+    margin-top: 25px;
+    color: #777;
+    font-size: 14px;
+}
 
-    .error {
-        color: #d33;
-    }
+.error {
+    color: #d33;
+}
 </style>
 </head>
 
 <body>
 
 <div class="scoreboard">
-    <div class="title">점수판</div>
+    <div class="title">점수</div>
 
     <div id="score" class="score">1</div>
 
@@ -91,55 +91,143 @@
 </div>
 
 <script>
-const PANTRY_ID = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
-const BASKET = "score";
+const KEY = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
-const API =
-    `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${BASKET}`;
+const GET_URL =
+    "https://api.keyval.org/get/" + KEY;
 
-async function loadScore() {
-    try {
-        const response = await fetch(API, {
-            method: "GET",
-            cache: "no-store"
-        });
+function setURL(value) {
+    return "https://api.keyval.org/set/" +
+           KEY + "/" +
+           encodeURIComponent(value);
+}
 
-        const text = await response.text();
+const scoreElement = document.getElementById("score");
+const statusElement = document.getElementById("status");
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${text}`);
-        }
+let score = 1;
+let busy = false;
 
-        const data = JSON.parse(text);
+function render(value) {
+    score = Number(value);
 
-        score = Number(data.score ?? 1);
-        scoreElement.textContent = score;
-
-        setStatus("🟢 연결됨");
-
-    } catch (error) {
-        console.error(error);
-        setStatus("🔴 " + error.message, true);
+    if (!Number.isFinite(score)) {
+        score = 1;
     }
+
+    scoreElement.textContent = score;
+}
+
+function status(text, error = false) {
+    statusElement.textContent = text;
+    statusElement.className =
+        error ? "status error" : "status";
+}
+
+async function getScore() {
+    const response = await fetch(
+        GET_URL + "?t=" + Date.now(),
+        {
+            cache: "no-store"
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error("HTTP " + response.status);
+    }
+
+    const text = (await response.text()).trim();
+
+    const value = Number(text);
+
+    if (!Number.isFinite(value)) {
+        throw new Error("잘못된 점수");
+    }
+
+    return value;
 }
 
 async function saveScore(value) {
-    const response = await fetch(API, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            score: value
-        })
+    const response = await fetch(setURL(value), {
+        method: "GET",
+        cache: "no-store"
     });
 
-    const text = await response.text();
-
     if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${text}`);
+        throw new Error("저장 실패: HTTP " + response.status);
     }
 }
+
+async function sync() {
+    try {
+        const value = await getScore();
+
+        if (value !== score) {
+            render(value);
+        }
+
+        status("🟢 동기화됨");
+
+    } catch (error) {
+        console.error(error);
+        status("🔴 연결 실패", true);
+    }
+}
+
+async function change(amount) {
+    if (busy) return;
+
+    busy = true;
+
+    try {
+        // 다른 기기에서 바뀐 최신 점수를 먼저 가져옴
+        let current;
+
+        try {
+            current = await getScore();
+        } catch {
+            current = score;
+        }
+
+        const next = current + amount;
+
+        render(next);
+
+        await saveScore(next);
+
+        status("🟢 저장됨");
+
+    } catch (error) {
+        console.error(error);
+        status("🔴 저장 실패", true);
+    }
+
+    busy = false;
+}
+
+document
+    .getElementById("plus")
+    .addEventListener("click", () => change(1));
+
+document
+    .getElementById("minus")
+    .addEventListener("click", () => change(-1));
+
+/*
+    최초 연결
+*/
+sync();
+
+/*
+    0.5초마다 다른 기기의 점수 확인
+*/
+setInterval(() => {
+    if (!busy) {
+        sync();
+    }
+}, 500);
 </script>
+
 </body>
 </html>
+```
