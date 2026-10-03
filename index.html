@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>System Score</title>
 
 <style>
@@ -12,11 +13,13 @@
 
 html,
 body {
-    margin: 0;
     width: 100%;
     height: 100%;
+    margin: 0;
     overflow: hidden;
-    background: #030406;
+
+    background: #030405;
+
     font-family:
         Inter,
         "Segoe UI",
@@ -27,15 +30,17 @@ body {
 canvas {
     position: fixed;
     inset: 0;
+
     width: 100%;
     height: 100%;
+
     display: block;
 }
 
 
-/* =========================================
-   중앙 시스템
-========================================= */
+/* =====================================================
+   중앙 패널
+===================================================== */
 
 .system {
     position: fixed;
@@ -57,24 +62,22 @@ canvas {
 
     background: #000;
 
-    border: 1px solid #292d33;
+    border: 1px solid #292d32;
 
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
 
     pointer-events: auto;
 
     box-shadow:
-        0 0 0 1px rgba(255,255,255,.02),
-        0 35px 100px rgba(0,0,0,.8);
+        0 0 0 1px rgba(255,255,255,.015),
+        0 30px 100px rgba(0,0,0,.85);
 }
 
 
-/* =========================================
-   모서리 마커
-========================================= */
+/* 모서리 */
 
 .corner {
     position: absolute;
@@ -82,9 +85,7 @@ canvas {
     width: 15px;
     height: 15px;
 
-    border-color: #8b9199;
-
-    opacity: .8;
+    border-color: #858b93;
 }
 
 .c1 {
@@ -120,9 +121,9 @@ canvas {
 }
 
 
-/* =========================================
-   상단
-========================================= */
+/* =====================================================
+   Header
+===================================================== */
 
 .header {
     position: absolute;
@@ -135,7 +136,7 @@ canvas {
     justify-content: space-between;
     align-items: center;
 
-    color: #747a83;
+    color: #747a82;
 
     font-size: 10px;
     letter-spacing: 2px;
@@ -156,14 +157,16 @@ canvas {
 
     background: #34c759;
 
+    border-radius: 50%;
+
     box-shadow:
         0 0 8px rgba(52,199,89,.55);
 }
 
 
-/* =========================================
-   점수
-========================================= */
+/* =====================================================
+   Score
+===================================================== */
 
 .score {
     color: #f5f5f5;
@@ -180,46 +183,42 @@ canvas {
 
 
 .score.pop {
-    animation: scorePop .2s ease;
+    animation: pop .2s ease;
 }
 
 
-@keyframes scorePop {
+@keyframes pop {
 
     0% {
-        transform: scale(.86);
         opacity: .25;
+        transform: scale(.86);
     }
 
     100% {
-        transform: scale(1);
         opacity: 1;
+        transform: scale(1);
     }
 }
 
 
-/* =========================================
-   구분선
-========================================= */
+/* =====================================================
+   Controls
+===================================================== */
 
 .line {
     width: 150px;
     height: 1px;
 
-    background: #25292e;
+    background: #25282d;
 
-    margin-top: 24px;
-    margin-bottom: 20px;
+    margin:
+        24px 0
+        20px;
 }
 
 
-/* =========================================
-   버튼
-========================================= */
-
 .controls {
     display: flex;
-
     gap: 8px;
 }
 
@@ -230,9 +229,9 @@ button {
 
     border: 1px solid #292d33;
 
-    background: #08090b;
+    background: #08090a;
 
-    color: #c5c9ce;
+    color: #c4c8cd;
 
     font-size: 18px;
     font-weight: 300;
@@ -240,17 +239,17 @@ button {
     cursor: pointer;
 
     transition:
-        background .12s ease,
-        border-color .12s ease,
-        color .12s ease,
-        transform .12s ease;
+        background .12s,
+        border-color .12s,
+        color .12s,
+        transform .12s;
 }
 
 
 button:hover {
     background: #15171a;
 
-    border-color: #565c65;
+    border-color: #555b63;
 
     color: #fff;
 }
@@ -263,9 +262,9 @@ button:active {
 }
 
 
-/* =========================================
-   하단
-========================================= */
+/* =====================================================
+   Footer
+===================================================== */
 
 .footer {
     position: absolute;
@@ -285,9 +284,9 @@ button:active {
 }
 
 
-/* =========================================
-   비네팅
-========================================= */
+/* =====================================================
+   Vignette
+===================================================== */
 
 .vignette {
     position: fixed;
@@ -298,8 +297,8 @@ button:active {
     background:
         radial-gradient(
             circle at center,
-            transparent 24%,
-            rgba(0,0,0,.15) 60%,
+            transparent 25%,
+            rgba(0,0,0,.12) 58%,
             rgba(0,0,0,.58) 100%
         );
 }
@@ -359,9 +358,13 @@ button:active {
 
         <div class="controls">
 
-            <button id="minus">−</button>
+            <button id="minus">
+                −
+            </button>
 
-            <button id="plus">+</button>
+            <button id="plus">
+                +
+            </button>
 
         </div>
 
@@ -386,7 +389,7 @@ button:active {
 <script>
 
 /* =========================================================
-   3D PLEXUS / LOW POLY ENGINE
+   PLEXUS / LOW POLY ENGINE
 ========================================================= */
 
 const canvas =
@@ -402,49 +405,76 @@ let dpr = 1;
 
 
 /*
- * 노드 개수
- *
- * 너무 적으면 Plexus 느낌이 약하고
- * 너무 많으면 구형 PC에서 부담됨.
+ * 너무 많으면 오래된 PC에서 부담된다.
+ * 90개 정도면 충분히 복잡하게 보인다.
  */
-const NODE_COUNT = 105;
+
+const NODE_COUNT = 90;
 
 
 /*
- * 연결 거리
+ * 한 점이 연결할 최대 이웃 수
  */
-const LINK_DISTANCE = 240;
+
+const MAX_LINKS = 5;
 
 
 /*
- * 3D 공간 크기
+ * 3D 공간
  */
-const SPACE = 850;
+
+const WORLD = 850;
+
+
+/*
+ * 카메라 거리
+ */
+
+const CAMERA = 1050;
 
 
 /*
  * 노드
  */
+
 const nodes = [];
 
 
 /*
- * 마우스는 노드를 움직이지 않고
- * 카메라 회전에만 아주 약하게 사용
+ * 마우스
+ *
+ * 점의 위치에는 영향을 주지 않는다.
  */
+
 let mouseX = 0;
 let mouseY = 0;
 
 
 /*
+ * 카메라 목표각
+ */
+
+let cameraX = 0;
+let cameraY = 0;
+
+
+/*
+ * 실제 카메라각
+ */
+
+let currentX = 0;
+let currentY = 0;
+
+
+/*
  * 자동 회전
  */
-let rotationX = 0;
-let rotationY = 0;
+
+let rotation = 0;
 
 
 /* =========================================================
-   화면
+   Resize
 ========================================================= */
 
 function resize() {
@@ -454,6 +484,7 @@ function resize() {
             window.devicePixelRatio || 1,
             1.5
         );
+
 
     width =
         window.innerWidth;
@@ -481,7 +512,7 @@ function resize() {
 
 
 /* =========================================================
-   3D 노드 생성
+   노드 생성
 ========================================================= */
 
 function createNodes() {
@@ -500,29 +531,31 @@ function createNodes() {
             /*
              * 3D 좌표
              */
+
             x:
                 (Math.random() - .5) *
-                SPACE,
+                WORLD,
 
             y:
                 (Math.random() - .5) *
-                SPACE,
+                WORLD,
 
             z:
                 (Math.random() - .5) *
-                SPACE,
+                WORLD,
 
 
             /*
-             * 아주 느린 자체 움직임
+             * 이동
              */
+
             vx:
                 (Math.random() - .5) *
-                .10,
+                .09,
 
             vy:
                 (Math.random() - .5) *
-                .10,
+                .09,
 
             vz:
                 (Math.random() - .5) *
@@ -530,11 +563,12 @@ function createNodes() {
 
 
             /*
-             * 노드 크기
+             * 크기
              */
+
             size:
-                Math.random() * 1.5 +
-                1.0
+                1.1 +
+                Math.random() * 1.3
         });
     }
 }
@@ -548,11 +582,30 @@ window.addEventListener(
     "pointermove",
     e => {
 
-        mouseX =
-            e.clientX;
+        /*
+         * -1 ~ +1
+         */
 
-        mouseY =
-            e.clientY;
+        const x =
+            (e.clientX / width - .5) *
+            2;
+
+        const y =
+            (e.clientY / height - .5) *
+            2;
+
+
+        /*
+         * 카메라만 움직인다.
+         *
+         * 점 자체는 절대 마우스를 따라가지 않음.
+         */
+
+        cameraY =
+            x * .10;
+
+        cameraX =
+            y * .07;
     }
 );
 
@@ -562,630 +615,88 @@ window.addEventListener(
 ========================================================= */
 
 function rotatePoint(
-    x,
-    y,
-    z,
+    p,
     rx,
     ry
 ) {
 
     /*
-     * Y축 회전
+     * Y축
      */
-    const cosY =
+
+    const cy =
         Math.cos(ry);
 
-    const sinY =
+    const sy =
         Math.sin(ry);
 
 
-    const x1 =
-        x * cosY -
-        z * sinY;
+    const x =
+        p.x * cy -
+        p.z * sy;
 
-    const z1 =
-        x * sinY +
-        z * cosY;
+
+    const z =
+        p.x * sy +
+        p.z * cy;
 
 
     /*
-     * X축 회전
+     * X축
      */
-    const cosX =
+
+    const cx =
         Math.cos(rx);
 
-    const sinX =
+    const sx =
         Math.sin(rx);
 
 
-    const y1 =
-        y * cosX -
-        z1 * sinX;
+    const y =
+        p.y * cx -
+        z * sx;
 
-    const z2 =
-        y * sinX +
-        z1 * cosX;
+
+    const finalZ =
+        p.y * sx +
+        z * cx;
 
 
     return {
-        x: x1,
-        y: y1,
-        z: z2
+        x,
+        y,
+        z: finalZ
     };
 }
 
 
 /* =========================================================
-   3D → 화면 좌표
+   Projection
 ========================================================= */
 
-function project(
-    point
-) {
+function project(p) {
 
-    /*
-     * 카메라
-     */
-    const camera =
-        1050;
-
-
-    /*
-     * 원근
-     */
-    const scale =
-        camera /
-        (camera + point.z);
+    const depth =
+        CAMERA /
+        (CAMERA + p.z);
 
 
     return {
 
         x:
             width / 2 +
-            point.x *
-            scale,
+            p.x * depth,
 
         y:
             height / 2 +
-            point.y *
-            scale,
+            p.y * depth,
 
-        scale,
+        scale:
+            depth,
 
         z:
-            point.z
+            p.z
     };
-}
-
-
-/* =========================================================
-   렌더링
-========================================================= */
-
-function drawNetwork() {
-
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-
-    /*
-     * 자동 회전
-     *
-     * 매우 천천히 움직임
-     */
-    rotationY += 0.00075;
-    rotationX += 0.00021;
-
-
-    /*
-     * 마우스는 카메라에만 영향
-     */
-    const targetMouseX =
-        ((mouseX / width) - .5)
-        * .10;
-
-    const targetMouseY =
-        ((mouseY / height) - .5)
-        * .07;
-
-
-    /*
-     * 현재 회전값에 마우스 효과 추가
-     */
-    const finalRX =
-        rotationX +
-        targetMouseY;
-
-    const finalRY =
-        rotationY +
-        targetMouseX;
-
-
-    /*
-     * 노드 이동
-     */
-
-    for (const node of nodes) {
-
-        node.x += node.vx;
-        node.y += node.vy;
-        node.z += node.vz;
-
-
-        /*
-         * 공간 경계
-         */
-
-        const limit =
-            SPACE / 2;
-
-
-        if (
-            node.x < -limit ||
-            node.x > limit
-        ) {
-            node.vx *= -1;
-        }
-
-
-        if (
-            node.y < -limit ||
-            node.y > limit
-        ) {
-            node.vy *= -1;
-        }
-
-
-        if (
-            node.z < -limit ||
-            node.z > limit
-        ) {
-            node.vz *= -1;
-        }
-    }
-
-
-    /*
-     * 회전 + 투영
-     */
-
-    const projected =
-        nodes.map(node => {
-
-            const rotated =
-                rotatePoint(
-                    node.x,
-                    node.y,
-                    node.z,
-                    finalRX,
-                    finalRY
-                );
-
-
-            const screen =
-                project(
-                    rotated
-                );
-
-
-            return {
-
-                node,
-
-                x:
-                    screen.x,
-
-                y:
-                    screen.y,
-
-                scale:
-                    screen.scale,
-
-                z:
-                    screen.z
-            };
-        });
-
-
-    /* =====================================================
-       LOW POLY FACE
-       
-       가까운 3개 노드가 서로 연결되어 있으면
-       삼각형 면을 만든다.
-    ===================================================== */
-
-    const triangles = [];
-
-
-    for (
-        let i = 0;
-        i < projected.length;
-        i++
-    ) {
-
-        for (
-            let j = i + 1;
-            j < projected.length;
-            j++
-        ) {
-
-            for (
-                let k = j + 1;
-                k < projected.length;
-                k++
-            ) {
-
-                const a =
-                    projected[i];
-
-                const b =
-                    projected[j];
-
-                const c =
-                    projected[k];
-
-
-                /*
-                 * 3D 거리
-                 */
-
-                const ab =
-                    distance3D(
-                        a.node,
-                        b.node
-                    );
-
-                const ac =
-                    distance3D(
-                        a.node,
-                        c.node
-                    );
-
-                const bc =
-                    distance3D(
-                        b.node,
-                        c.node
-                    );
-
-
-                /*
-                 * 삼각형이 너무 크면 버림
-                 */
-
-                if (
-                    ab > LINK_DISTANCE ||
-                    ac > LINK_DISTANCE ||
-                    bc > LINK_DISTANCE
-                ) {
-                    continue;
-                }
-
-
-                /*
-                 * 너무 찌그러진 삼각형 방지
-                 */
-
-                const maxSide =
-                    Math.max(
-                        ab,
-                        ac,
-                        bc
-                    );
-
-                const minSide =
-                    Math.min(
-                        ab,
-                        ac,
-                        bc
-                    );
-
-
-                if (
-                    minSide <
-                    maxSide * .28
-                ) {
-                    continue;
-                }
-
-
-                /*
-                 * 중심 깊이
-                 */
-
-                const depth =
-                    (
-                        a.z +
-                        b.z +
-                        c.z
-                    ) / 3;
-
-
-                triangles.push({
-                    a,
-                    b,
-                    c,
-                    depth
-                });
-            }
-        }
-    }
-
-
-    /*
-     * 뒤쪽부터 그리기
-     */
-
-    triangles.sort(
-        (a, b) =>
-            b.depth -
-            a.depth
-    );
-
-
-    /*
-     * 삼각형 면
-     */
-
-    for (
-        const triangle
-        of triangles
-    ) {
-
-        const {
-            a,
-            b,
-            c
-        } = triangle;
-
-
-        /*
-         * 아주 희미한 Low Poly 면
-         */
-
-        const alpha =
-            Math.max(
-                .018,
-                Math.min(
-                    .075,
-                    .045 -
-                    triangle.depth /
-                    25000
-                )
-            );
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            a.x,
-            a.y
-        );
-
-        ctx.lineTo(
-            b.x,
-            b.y
-        );
-
-        ctx.lineTo(
-            c.x,
-            c.y
-        );
-
-        ctx.closePath();
-
-
-        ctx.fillStyle =
-            `rgba(
-                180,
-                185,
-                192,
-                ${alpha}
-            )`;
-
-        ctx.fill();
-    }
-
-
-    /* =====================================================
-       PLEXUS LINE
-    ===================================================== */
-
-    for (
-        let i = 0;
-        i < projected.length;
-        i++
-    ) {
-
-        const a =
-            projected[i];
-
-
-        for (
-            let j = i + 1;
-            j < projected.length;
-            j++
-        ) {
-
-            const b =
-                projected[j];
-
-
-            const distance =
-                distance3D(
-                    a.node,
-                    b.node
-                );
-
-
-            if (
-                distance >
-                LINK_DISTANCE
-            ) {
-                continue;
-            }
-
-
-            /*
-             * 가까울수록 진하게
-             */
-
-            const strength =
-                1 -
-                distance /
-                LINK_DISTANCE;
-
-
-            const alpha =
-                .08 +
-                strength * .32;
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                a.x,
-                a.y
-            );
-
-            ctx.lineTo(
-                b.x,
-                b.y
-            );
-
-
-            ctx.strokeStyle =
-                `rgba(
-                    190,
-                    196,
-                    204,
-                    ${alpha}
-                )`;
-
-
-            ctx.lineWidth =
-                .45 +
-                strength * .65;
-
-
-            ctx.stroke();
-        }
-    }
-
-
-    /* =====================================================
-       NODE
-    ===================================================== */
-
-    /*
-     * 뒤 → 앞 순서
-     */
-
-    projected.sort(
-        (a, b) =>
-            b.z -
-            a.z
-    );
-
-
-    for (
-        const point
-        of projected
-    ) {
-
-        /*
-         * 화면 밖이면 생략
-         */
-
-        if (
-            point.x < -20 ||
-            point.x > width + 20 ||
-            point.y < -20 ||
-            point.y > height + 20
-        ) {
-            continue;
-        }
-
-
-        const radius =
-            point.node.size *
-            point.scale *
-            1.8;
-
-
-        /*
-         * 노드
-         */
-
-        ctx.beginPath();
-
-        ctx.fillStyle =
-            `rgba(
-                225,
-                230,
-                236,
-                ${Math.max(
-                    .35,
-                    Math.min(
-                        .9,
-                        point.scale
-                    )
-                )}
-            )`;
-
-
-        ctx.arc(
-            point.x,
-            point.y,
-            Math.max(
-                .65,
-                radius
-            ),
-            0,
-            Math.PI * 2
-        );
-
-
-        ctx.fill();
-
-
-        /*
-         * 중심 코어
-         */
-
-        if (
-            radius > .9
-        ) {
-
-            ctx.beginPath();
-
-            ctx.fillStyle =
-                "rgba(255,255,255,.9)";
-
-
-            ctx.arc(
-                point.x,
-                point.y,
-                Math.min(
-                    radius * .32,
-                    1.25
-                ),
-                0,
-                Math.PI * 2
-            );
-
-
-            ctx.fill();
-        }
-    }
-
-
-    requestAnimationFrame(
-        drawNetwork
-    );
 }
 
 
@@ -1193,10 +704,7 @@ function drawNetwork() {
    3D 거리
 ========================================================= */
 
-function distance3D(
-    a,
-    b
-) {
+function distance3D(a, b) {
 
     const dx =
         a.x - b.x;
@@ -1217,25 +725,687 @@ function distance3D(
 
 
 /* =========================================================
-   초기화
+   네트워크 생성
 ========================================================= */
 
-window.addEventListener(
-    "resize",
-    () => {
+/*
+ * 매 프레임 삼각형을 전부 검사하지 않는다.
+ *
+ * 각 노드의 가까운 이웃을 한 번 찾고,
+ * 그 연결관계를 이용해서 mesh를 만든다.
+ */
 
-        resize();
+function buildNetwork() {
 
-        createNodes();
+    const links =
+        nodes.map(
+            () => []
+        );
+
+
+    for (
+        let i = 0;
+        i < nodes.length;
+        i++
+    ) {
+
+        const candidates = [];
+
+
+        for (
+            let j = 0;
+            j < nodes.length;
+            j++
+        ) {
+
+            if (i === j) {
+                continue;
+            }
+
+
+            candidates.push({
+
+                index: j,
+
+                distance:
+                    distance3D(
+                        nodes[i],
+                        nodes[j]
+                    )
+            });
+        }
+
+
+        candidates.sort(
+            (a, b) =>
+                a.distance -
+                b.distance
+        );
+
+
+        /*
+         * 가까운 5개만
+         */
+
+        for (
+            let k = 0;
+            k <
+            Math.min(
+                MAX_LINKS,
+                candidates.length
+            );
+            k++
+        ) {
+
+            /*
+             * 너무 먼 점은 연결하지 않음
+             */
+
+            if (
+                candidates[k].distance >
+                300
+            ) {
+                continue;
+            }
+
+
+            links[i].push(
+                candidates[k].index
+            );
+        }
     }
-);
 
+
+    /*
+     * 중복 없는 edge
+     */
+
+    const edges = [];
+    const edgeSet = new Set();
+
+
+    for (
+        let i = 0;
+        i < links.length;
+        i++
+    ) {
+
+        for (
+            const j of links[i]
+        ) {
+
+            const a =
+                Math.min(i, j);
+
+            const b =
+                Math.max(i, j);
+
+
+            const key =
+                a + ":" + b;
+
+
+            if (
+                edgeSet.has(key)
+            ) {
+                continue;
+            }
+
+
+            edgeSet.add(key);
+
+
+            edges.push({
+                a,
+                b
+            });
+        }
+    }
+
+
+    /*
+     * 삼각형
+     *
+     * 서로 연결된 세 점만 face로 만든다.
+     */
+
+    const triangles = [];
+
+
+    for (
+        let i = 0;
+        i < nodes.length;
+        i++
+    ) {
+
+        const set =
+            new Set(
+                links[i]
+            );
+
+
+        for (
+            let x = 0;
+            x < links[i].length;
+            x++
+        ) {
+
+            for (
+                let y = x + 1;
+                y < links[i].length;
+                y++
+            ) {
+
+                const b =
+                    links[i][x];
+
+                const c =
+                    links[i][y];
+
+
+                /*
+                 * b와 c도 서로 연결되어야
+                 * 진짜 삼각형
+                 */
+
+                if (
+                    !links[b].includes(c)
+                ) {
+                    continue;
+                }
+
+
+                const triangle =
+                    [
+                        i,
+                        b,
+                        c
+                    ].sort(
+                        (a, b) =>
+                            a - b
+                    );
+
+
+                const key =
+                    triangle.join(",");
+
+
+                /*
+                 * 중복 제거
+                 */
+
+                if (
+                    !triangles.some(
+                        t =>
+                            t.key === key
+                    )
+                ) {
+
+                    triangles.push({
+                        key,
+
+                        a: triangle[0],
+                        b: triangle[1],
+                        c: triangle[2]
+                    });
+                }
+            }
+        }
+    }
+
+
+    return {
+        edges,
+        triangles
+    };
+}
+
+
+const network =
+    buildNetwork();
+
+
+/* =========================================================
+   Render
+========================================================= */
+
+function renderNetwork() {
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /*
+     * 자동 회전
+     */
+
+    rotation += .00065;
+
+
+    /*
+     * 마우스 카메라 부드럽게
+     */
+
+    currentX +=
+        (cameraX - currentX) *
+        .025;
+
+    currentY +=
+        (cameraY - currentY) *
+        .025;
+
+
+    /*
+     * 실제 회전
+     */
+
+    const rx =
+        currentY;
+
+    const ry =
+        rotation +
+        currentX;
+
+
+    /*
+     * 노드 이동
+     */
+
+    for (
+        const node of nodes
+    ) {
+
+        node.x += node.vx;
+        node.y += node.vy;
+        node.z += node.vz;
+
+
+        const half =
+            WORLD / 2;
+
+
+        /*
+         * 공간 안에서 반사
+         */
+
+        if (
+            node.x < -half ||
+            node.x > half
+        ) {
+            node.vx *= -1;
+        }
+
+
+        if (
+            node.y < -half ||
+            node.y > half
+        ) {
+            node.vy *= -1;
+        }
+
+
+        if (
+            node.z < -half ||
+            node.z > half
+        ) {
+            node.vz *= -1;
+        }
+    }
+
+
+    /*
+     * Projection
+     */
+
+    const projected =
+        nodes.map(
+            node => {
+
+                const rotated =
+                    rotatePoint(
+                        node,
+                        rx,
+                        ry
+                    );
+
+
+                const screen =
+                    project(
+                        rotated
+                    );
+
+
+                return {
+                    node,
+                    ...screen
+                };
+            }
+        );
+
+
+    /* =====================================================
+       LOW POLY TRIANGLES
+    ===================================================== */
+
+    const visibleTriangles =
+        network.triangles
+            .map(t => {
+
+                const a =
+                    projected[t.a];
+
+                const b =
+                    projected[t.b];
+
+                const c =
+                    projected[t.c];
+
+
+                return {
+                    a,
+                    b,
+                    c,
+
+                    depth:
+                        (
+                            a.z +
+                            b.z +
+                            c.z
+                        ) / 3
+                };
+            });
+
+
+    /*
+     * 뒤쪽부터
+     */
+
+    visibleTriangles.sort(
+        (a, b) =>
+            b.depth -
+            a.depth
+    );
+
+
+    /*
+     * 면
+     */
+
+    for (
+        const t
+        of visibleTriangles
+    ) {
+
+        /*
+         * 화면 밖이면 생략
+         */
+
+        if (
+            (
+                t.a.x < -100 &&
+                t.b.x < -100 &&
+                t.c.x < -100
+            ) ||
+            (
+                t.a.x > width + 100 &&
+                t.b.x > width + 100 &&
+                t.c.x > width + 100
+            )
+        ) {
+            continue;
+        }
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            t.a.x,
+            t.a.y
+        );
+
+        ctx.lineTo(
+            t.b.x,
+            t.b.y
+        );
+
+        ctx.lineTo(
+            t.c.x,
+            t.c.y
+        );
+
+        ctx.closePath();
+
+
+        /*
+         * 매우 어두운 mesh 면
+         */
+
+        ctx.fillStyle =
+            "rgba(150,155,162,.035)";
+
+
+        ctx.fill();
+    }
+
+
+    /* =====================================================
+       CONNECTIONS
+    ===================================================== */
+
+    for (
+        const edge
+        of network.edges
+    ) {
+
+        const a =
+            projected[edge.a];
+
+        const b =
+            projected[edge.b];
+
+
+        const dx =
+            a.x - b.x;
+
+        const dy =
+            a.y - b.y;
+
+
+        const distance =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+
+        /*
+         * 화면상 너무 먼 연결은 희미하게
+         */
+
+        const alpha =
+            Math.max(
+                .08,
+                Math.min(
+                    .42,
+                    1 -
+                    distance / 320
+                )
+            );
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            a.x,
+            a.y
+        );
+
+        ctx.lineTo(
+            b.x,
+            b.y
+        );
+
+
+        ctx.strokeStyle =
+            `rgba(
+                185,
+                190,
+                197,
+                ${alpha}
+            )`;
+
+
+        ctx.lineWidth =
+            .5;
+
+
+        ctx.stroke();
+    }
+
+
+    /* =====================================================
+       NODES
+    ===================================================== */
+
+    const sortedNodes =
+        [...projected].sort(
+            (a, b) =>
+                b.z - a.z
+        );
+
+
+    for (
+        const p
+        of sortedNodes
+    ) {
+
+        if (
+            p.x < -30 ||
+            p.x > width + 30 ||
+            p.y < -30 ||
+            p.y > height + 30
+        ) {
+            continue;
+        }
+
+
+        /*
+         * 깊이에 따른 크기
+         */
+
+        const radius =
+            Math.max(
+                .8,
+                p.node.size *
+                p.scale *
+                1.8
+            );
+
+
+        /*
+         * 노드
+         */
+
+        ctx.beginPath();
+
+        ctx.fillStyle =
+            `rgba(
+                225,
+                230,
+                236,
+                ${Math.min(
+                    .95,
+                    .42 +
+                    p.scale * .4
+                )}
+            )`;
+
+
+        ctx.arc(
+            p.x,
+            p.y,
+            radius,
+            0,
+            Math.PI * 2
+        );
+
+
+        ctx.fill();
+
+
+        /*
+         * 중앙 코어
+         */
+
+        if (
+            radius > 1.2
+        ) {
+
+            ctx.beginPath();
+
+            ctx.fillStyle =
+                "rgba(255,255,255,.95)";
+
+
+            ctx.arc(
+                p.x,
+                p.y,
+                Math.min(
+                    1.1,
+                    radius * .38
+                ),
+                0,
+                Math.PI * 2
+            );
+
+
+            ctx.fill();
+        }
+    }
+
+
+    requestAnimationFrame(
+        renderNetwork
+    );
+}
+
+
+/* =========================================================
+   Start
+========================================================= */
 
 resize();
 
 createNodes();
 
-drawNetwork();
+
+/*
+ * 노드를 생성한 뒤
+ * 연결 구조를 다시 생성
+ */
+
+const generatedNetwork =
+    buildNetwork();
+
+
+network.edges =
+    generatedNetwork.edges;
+
+network.triangles =
+    generatedNetwork.triangles;
+
+
+renderNetwork();
+
+
+window.addEventListener(
+    "resize",
+    resize
+);
 
 
 /* =========================================================
@@ -1288,7 +1458,7 @@ let busy = false;
    SCORE RENDER
 ========================================================= */
 
-function render(
+function renderScore(
     value,
     animate = true
 ) {
@@ -1309,8 +1479,8 @@ function render(
 
 
     /*
-     * DB 값이 같을 때는
-     * 애니메이션 없음
+     * 값이 실제로 변경됐을 때만
+     * 애니메이션
      */
 
     if (!animate) {
@@ -1345,52 +1515,38 @@ function render(
 
 
 /* =========================================================
-   CONNECTION
+   Connection
 ========================================================= */
 
-function setConnection(
-    ok
-) {
+function setConnection(ok) {
 
     if (ok) {
 
         statusText.textContent =
             "연결됨";
 
-
         statusText.style.color =
-            "#858b94";
-
+            "#858b93";
 
         statusDot.style.background =
             "#34c759";
-
-
-        statusDot.style.boxShadow =
-            "0 0 8px rgba(52,199,89,.5)";
 
     } else {
 
         statusText.textContent =
             "연결 실패";
 
-
         statusText.style.color =
             "#ff453a";
 
-
         statusDot.style.background =
             "#ff453a";
-
-
-        statusDot.style.boxShadow =
-            "0 0 8px rgba(255,69,58,.45)";
     }
 }
 
 
 /* =========================================================
-   GET
+   GET SCORE
 ========================================================= */
 
 async function getScore() {
@@ -1469,12 +1625,10 @@ async function getScore() {
 
 
 /* =========================================================
-   SET
+   SAVE SCORE
 ========================================================= */
 
-async function saveScore(
-    value
-) {
+async function saveScore(value) {
 
     const response =
         await fetch(
@@ -1513,15 +1667,15 @@ async function sync() {
 
 
         /*
-         * 현재 화면과 DB가 같으면
-         * 아무 애니메이션도 실행하지 않음
+         * DB 값과 현재 값이 다를 때만
+         * 화면을 변경한다.
          */
 
         if (
             value !== score
         ) {
 
-            render(
+            renderScore(
                 value,
                 true
             );
@@ -1549,9 +1703,7 @@ async function sync() {
    CHANGE
 ========================================================= */
 
-async function change(
-    amount
-) {
+async function change(amount) {
 
     if (busy) {
         return;
@@ -1571,7 +1723,7 @@ async function change(
             current + amount;
 
 
-        render(
+        renderScore(
             next,
             true
         );
@@ -1603,7 +1755,7 @@ async function change(
 
 
 /* =========================================================
-   BUTTON
+   BUTTONS
 ========================================================= */
 
 document
@@ -1623,7 +1775,7 @@ document
 
 
 /* =========================================================
-   START
+   START SYNC
 ========================================================= */
 
 sync();
