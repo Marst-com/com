@@ -3,153 +3,443 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>공유 점수판</title>
+<title>Shared Score</title>
 
 <style>
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
 }
 
 body {
     margin: 0;
-    min-height: 100vh;
+    overflow: hidden;
 
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 
     font-family:
+        Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
 
-    background: #f5f7fb;
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            #e9e7ff 0,
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            #dff5ff 0,
+            transparent 35%
+        ),
+        #f7f8fc;
+
     color: #111827;
 }
 
-.scoreboard {
-    width: min(92vw, 520px);
-    padding: 42px 32px 32px;
+/* 배경 장식 */
 
-    background: rgba(255, 255, 255, 0.92);
+.background {
+    position: fixed;
+    inset: 0;
 
-    border: 1px solid #e5e7eb;
-    border-radius: 32px;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+
+    border-radius: 50%;
+
+    filter: blur(70px);
+
+    opacity: .45;
+}
+
+.blob.one {
+    width: 300px;
+    height: 300px;
+
+    background: #c4b5fd;
+
+    top: -120px;
+    left: -100px;
+}
+
+.blob.two {
+    width: 280px;
+    height: 280px;
+
+    background: #93c5fd;
+
+    bottom: -100px;
+    right: -80px;
+}
+
+/* 메인 */
+
+.app {
+    position: relative;
+
+    width: min(92vw, 540px);
+
+    padding: 18px;
+
+    border-radius: 38px;
+
+    background: rgba(255,255,255,.62);
+
+    border: 1px solid rgba(255,255,255,.85);
 
     box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.08);
+        0 30px 80px rgba(31,41,55,.12),
+        inset 0 1px 0 rgba(255,255,255,.9);
 
-    text-align: center;
+    backdrop-filter: blur(24px);
 }
 
-.title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #6b7280;
+/* 내부 카드 */
 
-    margin-bottom: 18px;
+.card {
+    position: relative;
+
+    padding: 38px 34px 30px;
+
+    border-radius: 28px;
+
+    background:
+        rgba(255,255,255,.72);
+
+    border: 1px solid rgba(229,231,235,.7);
+
+    overflow: hidden;
 }
 
-.score {
-    font-size: clamp(100px, 22vw, 150px);
-    font-weight: 800;
-    letter-spacing: -6px;
-    line-height: 1;
+/* 상단 */
 
-    margin: 0 0 42px;
-
-    color: #111827;
-
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s ease;
-}
-
-.score.pop {
-    transform: scale(1.08);
-}
-
-.buttons {
+.header {
     display: flex;
-    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 20px;
 }
 
-button {
-    flex: 1;
-
-    height: 82px;
-
-    border: 0;
-    border-radius: 22px;
-
-    font-size: 42px;
-    font-weight: 500;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.12s ease,
-        background 0.15s ease,
-        box-shadow 0.15s ease;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-#minus {
-    background: #f1f3f6;
+.logo {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #111827;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    box-shadow:
+        0 5px 15px rgba(17,24,39,.18);
+}
+
+.brand-text {
+    font-size: 13px;
+    font-weight: 800;
+
+    letter-spacing: 1.4px;
+
     color: #374151;
 }
 
-#plus {
-    background: #111827;
-    color: white;
+/* 연결 상태 */
+
+.connection {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: rgba(243,244,246,.8);
+
+    font-size: 11px;
+    font-weight: 600;
+
+    color: #6b7280;
 }
 
-button:hover {
+.connection-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #9ca3af;
+
+    box-shadow: 0 0 0 4px rgba(156,163,175,.12);
+
+    transition: .25s;
+}
+
+/* 제목 */
+
+.heading {
+    margin-top: 20px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #9ca3af;
+
+    letter-spacing: .8px;
+}
+
+/* 점수 */
+
+.score-area {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 220px;
+}
+
+.score {
+    margin: 0;
+
+    font-size: clamp(110px, 24vw, 170px);
+
+    font-weight: 850;
+
+    letter-spacing: -9px;
+
+    line-height: .9;
+
+    color: #111827;
+
+    user-select: none;
+
+    transform-origin: center;
+}
+
+/* 숫자 변화 */
+
+.score.pop {
+    animation: scorePop .18s ease-out;
+}
+
+@keyframes scorePop {
+    0% {
+        transform: scale(.88);
+        opacity: .35;
+    }
+
+    60% {
+        transform: scale(1.06);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 버튼 */
+
+.controls {
+    display: grid;
+
+    grid-template-columns: 1fr 1.35fr;
+
+    gap: 12px;
+
+    margin-top: 8px;
+}
+
+button {
+    position: relative;
+
+    height: 76px;
+
+    border: 0;
+
+    border-radius: 21px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 38px;
+
+    font-weight: 400;
+
+    overflow: hidden;
+
+    transition:
+        transform .12s ease,
+        box-shadow .18s ease,
+        background .18s ease;
+}
+
+.minus {
+    background: #f1f3f7;
+    color: #374151;
+
+    box-shadow:
+        inset 0 1px 0 white;
+}
+
+.plus {
+    background: #111827;
+    color: white;
+
+    box-shadow:
+        0 10px 25px rgba(17,24,39,.2);
+}
+
+.minus:hover {
+    background: #e8ebf0;
     transform: translateY(-2px);
 }
 
-#minus:hover {
-    background: #e5e7eb;
-}
-
-#plus:hover {
+.plus:hover {
     background: #1f2937;
-    box-shadow: 0 8px 20px rgba(17, 24, 39, 0.18);
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 30px rgba(17,24,39,.25);
 }
 
 button:active {
-    transform: scale(0.94);
+    transform: scale(.94) !important;
+}
+
+/* 버튼 안 작은 텍스트 */
+
+.button-label {
+    position: absolute;
+
+    left: 50%;
+    bottom: 9px;
+
+    transform: translateX(-50%);
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    opacity: .4;
+}
+
+/* 하단 */
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 18px;
+
+    padding: 0 4px;
 }
 
 .status {
-    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
 
-    font-size: 13px;
-    font-weight: 500;
+    min-height: 18px;
 
-    color: #6b7280;
+    font-size: 11px;
+    font-weight: 600;
 
-    min-height: 20px;
+    color: #9ca3af;
 }
 
 .status.error {
     color: #ef4444;
 }
 
+.sync-text {
+    font-size: 10px;
+
+    color: #b0b5be;
+
+    letter-spacing: .4px;
+}
+
 /* 모바일 */
+
 @media (max-width: 480px) {
-    .scoreboard {
-        padding: 34px 22px 24px;
-        border-radius: 26px;
+
+    .app {
+        width: 94vw;
+
+        padding: 10px;
+
+        border-radius: 30px;
     }
 
-    .score {
-        margin-bottom: 34px;
+    .card {
+        padding: 28px 20px 22px;
+
+        border-radius: 23px;
+    }
+
+    .score-area {
+        min-height: 190px;
     }
 
     button {
-        height: 72px;
-        border-radius: 18px;
+        height: 70px;
+    }
+}
+
+/* 아주 작은 화면 */
+
+@media (max-height: 650px) {
+
+    .card {
+        padding-top: 22px;
+    }
+
+    .score-area {
+        min-height: 150px;
+    }
+
+    .score {
+        font-size: 100px;
+    }
+
+    button {
+        height: 62px;
     }
 }
 </style>
@@ -157,29 +447,102 @@ button:active {
 
 <body>
 
-<div class="scoreboard">
+<div class="background">
+    <div class="blob one"></div>
+    <div class="blob two"></div>
+</div>
 
-    <div class="title">
-        점수
-    </div>
+<div class="app">
 
-    <div id="score" class="score">
-        1
-    </div>
+    <div class="card">
 
-    <div class="buttons">
-        <button id="minus" type="button">−</button>
-        <button id="plus" type="button">＋</button>
-    </div>
+        <div class="header">
 
-    <div id="status" class="status">
-        연결 중...
+            <div class="brand">
+                <div class="logo">S</div>
+
+                <div class="brand-text">
+                    SHARED SCORE
+                </div>
+            </div>
+
+            <div class="connection">
+                <span
+                    id="connectionDot"
+                    class="connection-dot"
+                ></span>
+
+                <span id="connectionText">
+                    연결 중
+                </span>
+            </div>
+
+        </div>
+
+        <div class="heading">
+            CURRENT SCORE
+        </div>
+
+        <div class="score-area">
+            <div
+                id="score"
+                class="score"
+            >
+                1
+            </div>
+        </div>
+
+        <div class="controls">
+
+            <button
+                id="minus"
+                class="minus"
+                type="button"
+            >
+                −
+
+                <span class="button-label">
+                    DECREASE
+                </span>
+            </button>
+
+            <button
+                id="plus"
+                class="plus"
+                type="button"
+            >
+                ＋
+
+                <span class="button-label">
+                    INCREASE
+                </span>
+            </button>
+
+        </div>
+
+        <div class="footer">
+
+            <div
+                id="status"
+                class="status"
+            >
+                <span>●</span>
+                연결 중...
+            </div>
+
+            <div class="sync-text">
+                AUTO SYNC
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 
 <script>
-const KEY = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
+const KEY =
+    "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
 const GET_URL =
     "https://api.keyval.org/get/" + KEY;
@@ -195,10 +558,17 @@ const scoreEl =
 const statusEl =
     document.getElementById("status");
 
+const connectionDot =
+    document.getElementById("connectionDot");
+
+const connectionText =
+    document.getElementById("connectionText");
+
 let score = 1;
 let busy = false;
 
 function render(value) {
+
     score = Number(value);
 
     if (!Number.isFinite(score)) {
@@ -215,29 +585,68 @@ function render(value) {
 
     setTimeout(() => {
         scoreEl.classList.remove("pop");
-    }, 150);
+    }, 180);
+}
+
+function setConnection(connected) {
+
+    if (connected) {
+
+        connectionDot.style.background =
+            "#22c55e";
+
+        connectionDot.style.boxShadow =
+            "0 0 0 4px rgba(34,197,94,.12)";
+
+        connectionText.textContent =
+            "연결됨";
+
+    } else {
+
+        connectionDot.style.background =
+            "#ef4444";
+
+        connectionDot.style.boxShadow =
+            "0 0 0 4px rgba(239,68,68,.12)";
+
+        connectionText.textContent =
+            "오프라인";
+    }
 }
 
 function status(text, error = false) {
-    statusEl.textContent = text;
+
+    statusEl.innerHTML =
+        "<span>" +
+        (error ? "●" : "●") +
+        "</span> " +
+        text;
+
     statusEl.className =
-        error ? "status error" : "status";
+        error
+            ? "status error"
+            : "status";
 }
 
 async function getScore() {
 
-    const response = await fetch(
-        GET_URL + "?t=" + Date.now(),
-        {
-            method: "GET",
-            cache: "no-store"
-        }
-    );
+    const response =
+        await fetch(
+            GET_URL + "?t=" + Date.now(),
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
 
     const body =
         (await response.text()).trim();
 
-    console.log("GET:", response.status, body);
+    console.log(
+        "GET:",
+        response.status,
+        body
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -251,7 +660,9 @@ async function getScore() {
     let value = body;
 
     try {
-        const json = JSON.parse(value);
+
+        const json =
+            JSON.parse(value);
 
         if (
             typeof json === "object" &&
@@ -266,13 +677,16 @@ async function getScore() {
 
     } catch {}
 
-    const number = Number(
-        String(value).trim()
-    );
+    const number =
+        Number(
+            String(value).trim()
+        );
 
     if (!Number.isFinite(number)) {
+
         throw new Error(
-            "점수 해석 실패: " + body
+            "점수 해석 실패: " +
+            body
         );
     }
 
@@ -281,13 +695,14 @@ async function getScore() {
 
 async function saveScore(value) {
 
-    const response = await fetch(
-        SET_URL(value),
-        {
-            method: "GET",
-            cache: "no-store"
-        }
-    );
+    const response =
+        await fetch(
+            SET_URL(value),
+            {
+                method: "GET",
+                cache: "no-store"
+            }
+        );
 
     const body =
         await response.text();
@@ -299,6 +714,7 @@ async function saveScore(value) {
     );
 
     if (!response.ok) {
+
         throw new Error(
             "SET HTTP " +
             response.status +
@@ -321,14 +737,18 @@ async function sync() {
 
         render(value);
 
-        status("🟢 연결됨");
+        setConnection(true);
+
+        status("동기화됨");
 
     } catch (error) {
 
         console.error(error);
 
+        setConnection(false);
+
         status(
-            "🔴 " + error.message,
+            "연결 실패",
             true
         );
     }
@@ -352,14 +772,18 @@ async function change(amount) {
 
         await saveScore(next);
 
-        status("🟢 저장됨");
+        setConnection(true);
+
+        status("저장됨");
 
     } catch (error) {
 
         console.error(error);
 
+        setConnection(false);
+
         status(
-            "🔴 " + error.message,
+            "저장 실패",
             true
         );
     }
