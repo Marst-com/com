@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
     <title>DuoMarst Daily Score</title>
 
@@ -19,14 +19,21 @@
     <header class="topbar">
 
         <div class="brand">
-            <div class="brand-logo">DM</div>
 
-            <div>
-                <div class="brand-name">DUOMARST</div>
+            <div class="brand-logo">
+                DM
+            </div>
+
+            <div class="brand-text">
+                <div class="brand-name">
+                    DUOMARST
+                </div>
+
                 <div class="brand-sub">
                     DAILY POINT SYSTEM
                 </div>
             </div>
+
         </div>
 
 
@@ -56,7 +63,7 @@
     </header>
 
 
-    <!-- CONTENT -->
+    <!-- MAIN -->
     <main class="layout">
 
 
@@ -90,6 +97,7 @@
 
                 <div class="stat">
                     <span>POSITIVE</span>
+
                     <strong
                         id="positive"
                         class="positive"
@@ -98,8 +106,10 @@
                     </strong>
                 </div>
 
+
                 <div class="stat">
                     <span>NEGATIVE</span>
+
                     <strong
                         id="negative"
                         class="negative"
@@ -108,15 +118,19 @@
                     </strong>
                 </div>
 
+
                 <div class="stat">
                     <span>ACTIVE DAYS</span>
+
                     <strong id="active">
                         0
                     </strong>
                 </div>
 
+
                 <div class="stat">
                     <span>BEST DAY</span>
+
                     <strong
                         id="best"
                         class="positive"
@@ -131,18 +145,25 @@
             <section class="progress-card">
 
                 <div class="progress-head">
-                    <span>PERIOD PROGRESS</span>
+
+                    <span>
+                        PERIOD PROGRESS
+                    </span>
 
                     <strong id="progressText">
                         0%
                     </strong>
+
                 </div>
 
+
                 <div class="progress">
+
                     <div
                         id="progressBar"
                         class="progress-fill"
                     ></div>
+
                 </div>
 
             </section>
@@ -179,14 +200,14 @@
                         id="monthTitle"
                         class="month-title"
                     >
-                        October 2026
+                        September 2026
                     </div>
 
                     <div
                         id="monthMeta"
                         class="month-meta"
                     >
-                        31 DAYS
+                        30 DAYS
                     </div>
 
                 </div>
@@ -247,6 +268,7 @@
 
                 </div>
 
+
                 <span class="hint">
                     Click a day to edit
                 </span>
@@ -277,6 +299,7 @@
                 -
             </div>
 
+
             <div
                 id="selectedWeekday"
                 class="selected-weekday"
@@ -303,12 +326,29 @@
 
             <div class="quick-buttons">
 
-                <button data-step="-10">−10</button>
-                <button data-step="-5">−5</button>
-                <button data-step="-1">−1</button>
-                <button data-step="1">+1</button>
-                <button data-step="5">+5</button>
-                <button data-step="10">+10</button>
+                <button data-step="-10">
+                    −10
+                </button>
+
+                <button data-step="-5">
+                    −5
+                </button>
+
+                <button data-step="-1">
+                    −1
+                </button>
+
+                <button data-step="1">
+                    +1
+                </button>
+
+                <button data-step="5">
+                    +5
+                </button>
+
+                <button data-step="10">
+                    +10
+                </button>
 
             </div>
 
@@ -322,6 +362,7 @@
                 <input
                     id="valueInput"
                     type="number"
+                    step="1"
                     value="0"
                 >
 
@@ -354,25 +395,37 @@
                     DAY INFO
                 </div>
 
+
                 <div class="info-row">
+
                     <span>STATUS</span>
+
                     <strong id="status">
                         ZERO
                     </strong>
+
                 </div>
 
+
                 <div class="info-row">
+
                     <span>VALUE</span>
+
                     <strong id="infoValue">
                         0
                     </strong>
+
                 </div>
 
+
                 <div class="info-row">
+
                     <span>SYNC</span>
+
                     <strong id="daySync">
                         READY
                     </strong>
+
                 </div>
 
             </div>
@@ -382,7 +435,6 @@
     </main>
 
 
-    <!-- FOOTER -->
     <footer>
 
         <span>
