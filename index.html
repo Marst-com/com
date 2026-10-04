@@ -2,7 +2,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>DuoMarst Daily Score</title>
 
@@ -11,446 +14,599 @@
 
 <body>
 
-<canvas id="background"></canvas>
+    <div class="background-grid"></div>
 
-<div class="app">
+    <main class="app">
 
-    <!-- HEADER -->
-    <header class="topbar">
+        <!-- =========================
+             HEADER
+        ========================== -->
+        <header class="topbar">
 
-        <div class="brand">
+            <div class="brand">
 
-            <div class="brand-logo">
-                DM
-            </div>
-
-            <div class="brand-text">
-                <div class="brand-name">
-                    DUOMARST
+                <div class="brand-icon">
+                    <span></span>
+                    <span></span>
                 </div>
 
-                <div class="brand-sub">
-                    DAILY POINT SYSTEM
-                </div>
-            </div>
-
-        </div>
-
-
-        <div class="range-selector">
-
-            <button id="prevMonth">‹</button>
-
-            <span id="rangeText">
-                2026.09 — 2027.03
-            </span>
-
-            <button id="nextMonth">›</button>
-
-        </div>
-
-
-        <div class="sync">
-
-            <span class="sync-light"></span>
-
-            <span id="syncText">
-                SYNCED
-            </span>
-
-        </div>
-
-    </header>
-
-
-    <!-- MAIN -->
-    <main class="layout">
-
-
-        <!-- LEFT -->
-        <aside class="left-panel">
-
-            <div class="panel-title">
-                OVERVIEW
-            </div>
-
-
-            <section class="total-card">
-
-                <div class="small-title">
-                    TOTAL POINTS
-                </div>
-
-                <div
-                    id="total"
-                    class="total"
-                >
-                    0
-                </div>
-
-                <div class="total-line"></div>
-
-            </section>
-
-
-            <section class="stats">
-
-                <div class="stat">
-                    <span>POSITIVE</span>
-
-                    <strong
-                        id="positive"
-                        class="positive"
-                    >
-                        +0
-                    </strong>
-                </div>
-
-
-                <div class="stat">
-                    <span>NEGATIVE</span>
-
-                    <strong
-                        id="negative"
-                        class="negative"
-                    >
-                        0
-                    </strong>
-                </div>
-
-
-                <div class="stat">
-                    <span>ACTIVE DAYS</span>
-
-                    <strong id="active">
-                        0
-                    </strong>
-                </div>
-
-
-                <div class="stat">
-                    <span>BEST DAY</span>
-
-                    <strong
-                        id="best"
-                        class="positive"
-                    >
-                        +0
-                    </strong>
-                </div>
-
-            </section>
-
-
-            <section class="progress-card">
-
-                <div class="progress-head">
-
-                    <span>
-                        PERIOD PROGRESS
-                    </span>
-
-                    <strong id="progressText">
-                        0%
-                    </strong>
-
-                </div>
-
-
-                <div class="progress">
-
-                    <div
-                        id="progressBar"
-                        class="progress-fill"
-                    ></div>
-
-                </div>
-
-            </section>
-
-
-            <section class="quote">
-
-                <div class="quote-mark">
-                    “
-                </div>
-
-                <div>
-                    Small changes,<br>
-                    make a big difference.
-                </div>
-
-                <small>
-                    — DUOMARST
-                </small>
-
-            </section>
-
-        </aside>
-
-
-        <!-- CENTER -->
-        <section class="calendar-panel">
-
-            <div class="calendar-header">
-
-                <div>
-
-                    <div
-                        id="monthTitle"
-                        class="month-title"
-                    >
-                        September 2026
+                <div class="brand-text">
+                    <div class="brand-name">
+                        DuoMarst
                     </div>
 
-                    <div
-                        id="monthMeta"
-                        class="month-meta"
-                    >
-                        30 DAYS
+                    <div class="brand-subtitle">
+                        Daily Score
                     </div>
-
-                </div>
-
-
-                <div class="calendar-buttons">
-
-                    <button id="calendarPrev">
-                        ‹
-                    </button>
-
-                    <button id="calendarNext">
-                        ›
-                    </button>
-
                 </div>
 
             </div>
 
+            <div class="period">
+                <span class="period-label">
+                    SCORE PERIOD
+                </span>
 
-            <div class="weekdays">
-
-                <span>SUN</span>
-                <span>MON</span>
-                <span>TUE</span>
-                <span>WED</span>
-                <span>THU</span>
-                <span>FRI</span>
-                <span>SAT</span>
-
+                <span class="period-value">
+                    2026.09.01 — 2027.03.31
+                </span>
             </div>
 
+            <div class="sync-indicator">
 
-            <div
-                id="calendar"
-                class="calendar"
-            ></div>
+                <span
+                    id="syncDot"
+                    class="sync-dot"
+                ></span>
 
-
-            <div class="calendar-footer">
-
-                <div class="legend">
-
-                    <span>
-                        <i class="legend-positive"></i>
-                        Positive
-                    </span>
-
-                    <span>
-                        <i class="legend-negative"></i>
-                        Negative
-                    </span>
-
-                    <span>
-                        <i class="legend-zero"></i>
-                        Zero
-                    </span>
-
-                </div>
-
-
-                <span class="hint">
-                    Click a day to edit
+                <span id="syncText">
+                    Connecting...
                 </span>
 
             </div>
 
+        </header>
+
+
+        <!-- =========================
+             MAIN LAYOUT
+        ========================== -->
+
+        <section class="layout">
+
+            <!-- =====================
+                 LEFT PANEL
+            ====================== -->
+
+            <aside class="panel overview-panel">
+
+                <div class="panel-header">
+
+                    <div>
+                        <div class="eyebrow">
+                            OVERVIEW
+                        </div>
+
+                        <h2>
+                            전체 점수
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="total-card">
+
+                    <div class="total-label">
+                        TOTAL SCORE
+                    </div>
+
+                    <div
+                        id="totalScore"
+                        class="total-value"
+                    >
+                        0
+                    </div>
+
+                    <div
+                        id="totalDescription"
+                        class="total-description"
+                    >
+                        아직 기록이 없습니다.
+                    </div>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            POSITIVE
+                        </div>
+
+                        <div
+                            id="positiveScore"
+                            class="stat-value positive"
+                        >
+                            +0
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            NEGATIVE
+                        </div>
+
+                        <div
+                            id="negativeScore"
+                            class="stat-value negative"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            ACTIVE DAYS
+                        </div>
+
+                        <div
+                            id="activeDays"
+                            class="stat-value"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            BEST DAY
+                        </div>
+
+                        <div
+                            id="bestDay"
+                            class="stat-value positive"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="progress-section">
+
+                    <div class="progress-header">
+
+                        <span>
+                            PERIOD PROGRESS
+                        </span>
+
+                        <strong id="progressPercent">
+                            0%
+                        </strong>
+
+                    </div>
+
+                    <div class="progress-track">
+
+                        <div
+                            id="progressBar"
+                            class="progress-bar"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quote-card">
+
+                    <div class="quote-mark">
+                        “
+                    </div>
+
+                    <div id="quote">
+                        작은 점수도 쌓이면 기록이 된다.
+                    </div>
+
+                </div>
+
+            </aside>
+
+
+            <!-- =====================
+                 CENTER PANEL
+            ====================== -->
+
+            <section class="panel calendar-panel">
+
+                <div class="calendar-header">
+
+                    <div>
+
+                        <div class="eyebrow">
+                            DAILY CALENDAR
+                        </div>
+
+                        <h1 id="monthTitle">
+                            2026년 9월
+                        </h1>
+
+                        <div
+                            id="monthMeta"
+                            class="month-meta"
+                        >
+                            30 days
+                        </div>
+
+                    </div>
+
+
+                    <div class="month-controls">
+
+                        <button
+                            id="prevMonth"
+                            class="icon-button"
+                            type="button"
+                            aria-label="Previous month"
+                        >
+                            ←
+                        </button>
+
+                        <button
+                            id="nextMonth"
+                            class="icon-button"
+                            type="button"
+                            aria-label="Next month"
+                        >
+                            →
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="weekday-row">
+
+                    <div class="weekday sunday">
+                        SUN
+                    </div>
+
+                    <div class="weekday">
+                        MON
+                    </div>
+
+                    <div class="weekday">
+                        TUE
+                    </div>
+
+                    <div class="weekday">
+                        WED
+                    </div>
+
+                    <div class="weekday">
+                        THU
+                    </div>
+
+                    <div class="weekday">
+                        FRI
+                    </div>
+
+                    <div class="weekday saturday">
+                        SAT
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="calendar"
+                    class="calendar"
+                ></div>
+
+
+                <div class="legend">
+
+                    <div class="legend-item">
+
+                        <span class="legend-dot positive-dot"></span>
+
+                        <span>
+                            Positive
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span class="legend-dot negative-dot"></span>
+
+                        <span>
+                            Negative
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span class="legend-dot zero-dot"></span>
+
+                        <span>
+                            No score
+                        </span>
+
+                    </div>
+
+
+                    <div class="legend-item">
+
+                        <span class="today-marker"></span>
+
+                        <span>
+                            Today
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =====================
+                 RIGHT PANEL
+            ====================== -->
+
+            <aside class="panel editor-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <div class="eyebrow">
+                            SELECTED DAY
+                        </div>
+
+                        <h2 id="selectedDate">
+                            날짜를 선택하세요
+                        </h2>
+
+                        <div
+                            id="selectedWeekday"
+                            class="selected-weekday"
+                        >
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="editor-value-card">
+
+                    <div class="editor-value-label">
+                        SCORE
+                    </div>
+
+                    <div
+                        id="editorValue"
+                        class="editor-value"
+                    >
+                        0
+                    </div>
+
+                </div>
+
+
+                <div class="quick-title">
+                    QUICK CHANGE
+                </div>
+
+
+                <div class="quick-grid">
+
+                    <button
+                        class="quick-button negative-button"
+                        data-delta="-10"
+                        type="button"
+                    >
+                        -10
+                    </button>
+
+                    <button
+                        class="quick-button negative-button"
+                        data-delta="-5"
+                        type="button"
+                    >
+                        -5
+                    </button>
+
+                    <button
+                        class="quick-button negative-button"
+                        data-delta="-1"
+                        type="button"
+                    >
+                        -1
+                    </button>
+
+                    <button
+                        class="quick-button positive-button"
+                        data-delta="1"
+                        type="button"
+                    >
+                        +1
+                    </button>
+
+                    <button
+                        class="quick-button positive-button"
+                        data-delta="5"
+                        type="button"
+                    >
+                        +5
+                    </button>
+
+                    <button
+                        class="quick-button positive-button"
+                        data-delta="10"
+                        type="button"
+                    >
+                        +10
+                    </button>
+
+                </div>
+
+
+                <div class="manual-title">
+                    VALUE
+                </div>
+
+
+                <div class="value-editor">
+
+                    <button
+                        id="minusButton"
+                        class="value-button"
+                        type="button"
+                    >
+                        −
+                    </button>
+
+                    <input
+                        id="valueInput"
+                        type="number"
+                        value="0"
+                        inputmode="numeric"
+                    >
+
+                    <button
+                        id="plusButton"
+                        class="value-button"
+                        type="button"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+
+                <div class="editor-actions">
+
+                    <button
+                        id="saveButton"
+                        class="save-button"
+                        type="button"
+                    >
+                        저장
+                    </button>
+
+                    <button
+                        id="resetButton"
+                        class="reset-button"
+                        type="button"
+                    >
+                        0으로
+                    </button>
+
+                </div>
+
+
+                <div class="day-info">
+
+                    <div class="info-row">
+
+                        <span>
+                            Day
+                        </span>
+
+                        <strong id="infoDate">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <strong id="infoStatus">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Current
+                        </span>
+
+                        <strong id="infoValue">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-row">
+
+                        <span>
+                            Sync
+                        </span>
+
+                        <strong id="infoSync">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </aside>
+
         </section>
 
 
-        <!-- RIGHT -->
-        <aside class="right-panel">
+        <!-- =========================
+             FOOTER
+        ========================== -->
 
-            <div class="selected-header">
+        <footer class="footer">
 
-                <div class="panel-title">
-                    SELECTED DATE
-                </div>
-
-                <div class="status-dot"></div>
-
+            <div>
+                DuoMarst Daily Score
             </div>
 
-
-            <div
-                id="selectedDate"
-                class="selected-date"
-            >
-                -
+            <div>
+                Local UI · Cloud Sync
             </div>
 
-
-            <div
-                id="selectedWeekday"
-                class="selected-weekday"
-            >
-                -
-            </div>
-
-
-            <div class="wave"></div>
-
-
-            <div class="edit-label">
-                POINT VALUE
-            </div>
-
-
-            <div
-                id="bigValue"
-                class="big-value"
-            >
-                +0
-            </div>
-
-
-            <div class="quick-buttons">
-
-                <button data-step="-10">
-                    −10
-                </button>
-
-                <button data-step="-5">
-                    −5
-                </button>
-
-                <button data-step="-1">
-                    −1
-                </button>
-
-                <button data-step="1">
-                    +1
-                </button>
-
-                <button data-step="5">
-                    +5
-                </button>
-
-                <button data-step="10">
-                    +10
-                </button>
-
-            </div>
-
-
-            <div class="value-editor">
-
-                <button id="minus">
-                    −
-                </button>
-
-                <input
-                    id="valueInput"
-                    type="number"
-                    step="1"
-                    value="0"
-                >
-
-                <button id="plus">
-                    +
-                </button>
-
-            </div>
-
-
-            <button
-                id="save"
-                class="save"
-            >
-                SAVE
-            </button>
-
-
-            <button
-                id="reset"
-                class="reset"
-            >
-                RESET TO 0
-            </button>
-
-
-            <div class="day-info">
-
-                <div class="info-title">
-                    DAY INFO
-                </div>
-
-
-                <div class="info-row">
-
-                    <span>STATUS</span>
-
-                    <strong id="status">
-                        ZERO
-                    </strong>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <span>VALUE</span>
-
-                    <strong id="infoValue">
-                        0
-                    </strong>
-
-                </div>
-
-
-                <div class="info-row">
-
-                    <span>SYNC</span>
-
-                    <strong id="daySync">
-                        READY
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </aside>
+        </footer>
 
     </main>
 
 
-    <footer>
-
-        <span>
-            DUOMARST • DAILY SCORE
-        </span>
-
-        <span id="footerStatus">
-            Connected
-        </span>
-
-    </footer>
-
-</div>
-
-
-<script src="./app.js"></script>
+    <script src="./app.js"></script>
 
 </body>
 </html>
