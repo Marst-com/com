@@ -1,658 +1,396 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DuoMarst Daily Points</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-*{
-    box-sizing:border-box;
-}
+    <title>DuoMarst Daily Score</title>
 
-html,body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#020104;
-    color:#fff;
-    font-family:Inter,Pretendard,Arial,sans-serif;
-}
-
-body{
-    position:relative;
-}
-
-canvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    opacity:.8;
-}
-
-.bg{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:
-        radial-gradient(
-            ellipse at 50% 65%,
-            rgba(120,45,220,.09),
-            transparent 55%
-        );
-}
-
-
-/* =========================
-   MAIN
-========================= */
-
-.app{
-    position:absolute;
-    z-index:5;
-
-    width:min(900px,94vw);
-    height:min(700px,92vh);
-
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    background:rgba(0,0,0,.94);
-
-    border:1px solid rgba(190,120,255,.18);
-
-    box-shadow:
-        0 40px 140px rgba(0,0,0,.9),
-        0 0 100px rgba(100,30,190,.06);
-
-    display:flex;
-    flex-direction:column;
-}
-
-
-/* =========================
-   HEADER
-========================= */
-
-.header{
-    height:88px;
-    min-height:88px;
-
-    padding:0 32px;
-
-    border-bottom:1px solid rgba(255,255,255,.06);
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-.title small{
-    display:block;
-
-    color:#68636d;
-
-    font-size:9px;
-    letter-spacing:4px;
-
-    margin-bottom:7px;
-}
-
-.title strong{
-    font-size:19px;
-    font-weight:500;
-    letter-spacing:1px;
-}
-
-.total{
-    text-align:right;
-}
-
-.total small{
-    display:block;
-
-    color:#66616b;
-
-    font-size:8px;
-    letter-spacing:3px;
-
-    margin-bottom:4px;
-}
-
-#total{
-    font-size:34px;
-    font-weight:500;
-    letter-spacing:-2px;
-}
-
-#total.negative{
-    color:#ff5c7a;
-}
-
-
-/* =========================
-   MONTH BAR
-========================= */
-
-.monthbar{
-    height:64px;
-    min-height:64px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    gap:28px;
-
-    border-bottom:1px solid rgba(255,255,255,.045);
-}
-
-.monthbar button{
-    width:34px;
-    height:34px;
-
-    border:1px solid #242027;
-    background:#08070a;
-
-    color:#77717d;
-
-    cursor:pointer;
-
-    font-size:17px;
-
-    transition:.15s;
-}
-
-.monthbar button:hover{
-    color:#fff;
-    border-color:#9149d6;
-}
-
-.monthbar button:disabled{
-    opacity:.2;
-    cursor:not-allowed;
-}
-
-#monthTitle{
-    min-width:190px;
-
-    text-align:center;
-
-    font-size:16px;
-    font-weight:500;
-
-    letter-spacing:2px;
-}
-
-
-/* =========================
-   WEEK
-========================= */
-
-.week{
-    display:grid;
-
-    grid-template-columns:
-        repeat(7,1fr);
-
-    padding:
-        0 22px;
-
-    height:36px;
-    min-height:36px;
-
-    align-items:center;
-
-    border-bottom:1px solid rgba(255,255,255,.035);
-}
-
-.week div{
-    text-align:center;
-
-    color:#514c55;
-
-    font-size:9px;
-
-    letter-spacing:2px;
-}
-
-.week div:first-child{
-    color:#79465c;
-}
-
-.week div:last-child{
-    color:#574d72;
-}
-
-
-/* =========================
-   CALENDAR
-========================= */
-
-.calendar{
-    flex:1;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(7,1fr);
-
-    grid-auto-rows:1fr;
-
-    gap:1px;
-
-    padding:8px 22px 18px;
-
-    overflow:hidden;
-}
-
-.day{
-    position:relative;
-
-    min-width:0;
-
-    background:
-        rgba(255,255,255,.018);
-
-    border:1px solid
-        rgba(255,255,255,.025);
-
-    cursor:pointer;
-
-    transition:
-        background .15s,
-        border-color .15s,
-        transform .15s;
-
-    padding:9px;
-}
-
-.day:hover{
-    background:
-        rgba(145,70,220,.09);
-
-    border-color:
-        rgba(170,90,255,.3);
-
-    transform:translateY(-1px);
-}
-
-.day.empty{
-    background:transparent;
-    border-color:transparent;
-    cursor:default;
-}
-
-.day.today{
-    border-color:
-        rgba(168,85,247,.65);
-
-    box-shadow:
-        inset 0 0 20px
-        rgba(130,50,220,.06);
-}
-
-.day-number{
-    color:#6d6872;
-
-    font-size:10px;
-}
-
-.day.today .day-number{
-    color:#c58cff;
-}
-
-.points{
-    position:absolute;
-
-    left:9px;
-    bottom:9px;
-
-    font-size:20px;
-
-    font-weight:500;
-
-    letter-spacing:-.5px;
-}
-
-.points.plus{
-    color:#b66cff;
-}
-
-.points.minus{
-    color:#ff5575;
-}
-
-.points.zero{
-    color:#3e3a42;
-}
-
-.edit-mark{
-    position:absolute;
-
-    right:8px;
-    top:8px;
-
-    width:3px;
-    height:3px;
-
-    border-radius:50%;
-
-    background:#7540a5;
-
-    opacity:.6;
-}
-
-
-/* =========================
-   FOOTER
-========================= */
-
-.footer{
-    height:48px;
-    min-height:48px;
-
-    padding:0 24px;
-
-    border-top:1px solid rgba(255,255,255,.05);
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    color:#403b45;
-
-    font-size:8px;
-    letter-spacing:2px;
-}
-
-.connection{
-    display:flex;
-    align-items:center;
-    gap:7px;
-}
-
-#statusDot{
-    width:5px;
-    height:5px;
-
-    border-radius:50%;
-
-    background:#34c759;
-
-    box-shadow:
-        0 0 8px
-        rgba(52,199,89,.7);
-}
-
-
-/* =========================
-   EDITOR
-========================= */
-
-.editor{
-    position:fixed;
-
-    z-index:20;
-
-    left:50%;
-    top:50%;
-
-    transform:
-        translate(-50%,-50%)
-        scale(.96);
-
-    width:320px;
-
-    padding:24px;
-
-    background:#08070a;
-
-    border:1px solid
-        rgba(180,100,255,.3);
-
-    box-shadow:
-        0 30px 100px
-        rgba(0,0,0,.9);
-
-    opacity:0;
-    pointer-events:none;
-
-    transition:.16s;
-}
-
-.editor.open{
-    opacity:1;
-    pointer-events:auto;
-
-    transform:
-        translate(-50%,-50%)
-        scale(1);
-}
-
-.editor-date{
-    color:#706a75;
-
-    font-size:9px;
-    letter-spacing:3px;
-
-    margin-bottom:6px;
-}
-
-.editor-title{
-    font-size:20px;
-
-    margin-bottom:20px;
-}
-
-.input-row{
-    display:flex;
-    gap:8px;
-}
-
-.input-row button{
-    width:46px;
-    height:42px;
-
-    border:1px solid #29232e;
-    background:#100d13;
-
-    color:#a76ae1;
-
-    font-size:20px;
-
-    cursor:pointer;
-}
-
-#pointInput{
-    flex:1;
-
-    min-width:0;
-
-    height:42px;
-
-    background:#030204;
-
-    border:1px solid #29232e;
-
-    outline:none;
-
-    color:#fff;
-
-    text-align:center;
-
-    font-size:17px;
-}
-
-#pointInput:focus{
-    border-color:#9149d6;
-}
-
-.editor-buttons{
-    display:flex;
-
-    gap:8px;
-
-    margin-top:12px;
-}
-
-.editor-buttons button{
-    flex:1;
-
-    height:36px;
-
-    border:1px solid #28232d;
-
-    background:#0d0b10;
-
-    color:#77717d;
-
-    cursor:pointer;
-}
-
-.editor-buttons button:hover{
-    color:#fff;
-    border-color:#9149d6;
-}
-
-#saveDay{
-    color:#b16bff;
-}
-
-.overlay{
-    position:fixed;
-
-    inset:0;
-
-    z-index:15;
-
-    background:rgba(0,0,0,.45);
-
-    opacity:0;
-    pointer-events:none;
-
-    transition:.15s;
-}
-
-.overlay.open{
-    opacity:1;
-    pointer-events:auto;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:650px){
-
-    .app{
-        width:96vw;
-        height:94vh;
-    }
-
-    .header{
-        padding:0 18px;
-    }
-
-    .calendar{
-        padding:
-            6px 8px 12px;
-    }
-
-    .week{
-        padding:0 8px;
-    }
-
-    .points{
-        font-size:15px;
-    }
-
-    .day{
-        padding:6px;
-    }
-
-    .points{
-        left:6px;
-        bottom:6px;
-    }
-
-    .footer{
-        padding:0 12px;
-    }
-}
-</style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
-<div class="bg"></div>
-<canvas id="canvas"></canvas>
+<canvas id="background"></canvas>
 
 <div class="app">
 
-    <header class="header">
+    <!-- HEADER -->
+    <header class="topbar">
 
-        <div class="title">
-            <small>DUOMARST / POINT SYSTEM</small>
-            <strong>DAILY SCORE</strong>
+        <div class="brand">
+            <div class="brand-logo">DM</div>
+
+            <div>
+                <div class="brand-name">DUOMARST</div>
+                <div class="brand-sub">
+                    DAILY POINT SYSTEM
+                </div>
+            </div>
         </div>
 
-        <div class="total">
-            <small>TOTAL POINTS</small>
-            <div id="total">0</div>
+
+        <div class="range-selector">
+
+            <button id="prevMonth">‹</button>
+
+            <span id="rangeText">
+                2026.09 — 2027.03
+            </span>
+
+            <button id="nextMonth">›</button>
+
+        </div>
+
+
+        <div class="sync">
+
+            <span class="sync-light"></span>
+
+            <span id="syncText">
+                SYNCED
+            </span>
+
         </div>
 
     </header>
 
 
-    <div class="monthbar">
-
-        <button id="prevMonth">‹</button>
-
-        <div id="monthTitle">
-            2026.09
-        </div>
-
-        <button id="nextMonth">›</button>
-
-    </div>
+    <!-- CONTENT -->
+    <main class="layout">
 
 
-    <div class="week">
+        <!-- LEFT -->
+        <aside class="left-panel">
 
-        <div>SUN</div>
-        <div>MON</div>
-        <div>TUE</div>
-        <div>WED</div>
-        <div>THU</div>
-        <div>FRI</div>
-        <div>SAT</div>
-
-    </div>
+            <div class="panel-title">
+                OVERVIEW
+            </div>
 
 
-    <div id="calendar" class="calendar"></div>
+            <section class="total-card">
+
+                <div class="small-title">
+                    TOTAL POINTS
+                </div>
+
+                <div
+                    id="total"
+                    class="total"
+                >
+                    0
+                </div>
+
+                <div class="total-line"></div>
+
+            </section>
 
 
-    <footer class="footer">
+            <section class="stats">
+
+                <div class="stat">
+                    <span>POSITIVE</span>
+                    <strong
+                        id="positive"
+                        class="positive"
+                    >
+                        +0
+                    </strong>
+                </div>
+
+                <div class="stat">
+                    <span>NEGATIVE</span>
+                    <strong
+                        id="negative"
+                        class="negative"
+                    >
+                        0
+                    </strong>
+                </div>
+
+                <div class="stat">
+                    <span>ACTIVE DAYS</span>
+                    <strong id="active">
+                        0
+                    </strong>
+                </div>
+
+                <div class="stat">
+                    <span>BEST DAY</span>
+                    <strong
+                        id="best"
+                        class="positive"
+                    >
+                        +0
+                    </strong>
+                </div>
+
+            </section>
+
+
+            <section class="progress-card">
+
+                <div class="progress-head">
+                    <span>PERIOD PROGRESS</span>
+
+                    <strong id="progressText">
+                        0%
+                    </strong>
+                </div>
+
+                <div class="progress">
+                    <div
+                        id="progressBar"
+                        class="progress-fill"
+                    ></div>
+                </div>
+
+            </section>
+
+
+            <section class="quote">
+
+                <div class="quote-mark">
+                    “
+                </div>
+
+                <div>
+                    Small changes,<br>
+                    make a big difference.
+                </div>
+
+                <small>
+                    — DUOMARST
+                </small>
+
+            </section>
+
+        </aside>
+
+
+        <!-- CENTER -->
+        <section class="calendar-panel">
+
+            <div class="calendar-header">
+
+                <div>
+
+                    <div
+                        id="monthTitle"
+                        class="month-title"
+                    >
+                        October 2026
+                    </div>
+
+                    <div
+                        id="monthMeta"
+                        class="month-meta"
+                    >
+                        31 DAYS
+                    </div>
+
+                </div>
+
+
+                <div class="calendar-buttons">
+
+                    <button id="calendarPrev">
+                        ‹
+                    </button>
+
+                    <button id="calendarNext">
+                        ›
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="weekdays">
+
+                <span>SUN</span>
+                <span>MON</span>
+                <span>TUE</span>
+                <span>WED</span>
+                <span>THU</span>
+                <span>FRI</span>
+                <span>SAT</span>
+
+            </div>
+
+
+            <div
+                id="calendar"
+                class="calendar"
+            ></div>
+
+
+            <div class="calendar-footer">
+
+                <div class="legend">
+
+                    <span>
+                        <i class="legend-positive"></i>
+                        Positive
+                    </span>
+
+                    <span>
+                        <i class="legend-negative"></i>
+                        Negative
+                    </span>
+
+                    <span>
+                        <i class="legend-zero"></i>
+                        Zero
+                    </span>
+
+                </div>
+
+                <span class="hint">
+                    Click a day to edit
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- RIGHT -->
+        <aside class="right-panel">
+
+            <div class="selected-header">
+
+                <div class="panel-title">
+                    SELECTED DATE
+                </div>
+
+                <div class="status-dot"></div>
+
+            </div>
+
+
+            <div
+                id="selectedDate"
+                class="selected-date"
+            >
+                -
+            </div>
+
+            <div
+                id="selectedWeekday"
+                class="selected-weekday"
+            >
+                -
+            </div>
+
+
+            <div class="wave"></div>
+
+
+            <div class="edit-label">
+                POINT VALUE
+            </div>
+
+
+            <div
+                id="bigValue"
+                class="big-value"
+            >
+                +0
+            </div>
+
+
+            <div class="quick-buttons">
+
+                <button data-step="-10">−10</button>
+                <button data-step="-5">−5</button>
+                <button data-step="-1">−1</button>
+                <button data-step="1">+1</button>
+                <button data-step="5">+5</button>
+                <button data-step="10">+10</button>
+
+            </div>
+
+
+            <div class="value-editor">
+
+                <button id="minus">
+                    −
+                </button>
+
+                <input
+                    id="valueInput"
+                    type="number"
+                    value="0"
+                >
+
+                <button id="plus">
+                    +
+                </button>
+
+            </div>
+
+
+            <button
+                id="save"
+                class="save"
+            >
+                SAVE
+            </button>
+
+
+            <button
+                id="reset"
+                class="reset"
+            >
+                RESET TO 0
+            </button>
+
+
+            <div class="day-info">
+
+                <div class="info-title">
+                    DAY INFO
+                </div>
+
+                <div class="info-row">
+                    <span>STATUS</span>
+                    <strong id="status">
+                        ZERO
+                    </strong>
+                </div>
+
+                <div class="info-row">
+                    <span>VALUE</span>
+                    <strong id="infoValue">
+                        0
+                    </strong>
+                </div>
+
+                <div class="info-row">
+                    <span>SYNC</span>
+                    <strong id="daySync">
+                        READY
+                    </strong>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
 
         <span>
-            2026.09.01 — 2027.03.31
+            DUOMARST • DAILY SCORE
         </span>
 
-        <span class="connection">
-
-            <i id="statusDot"></i>
-
-            <span id="statusText">
-                SYNC
-            </span>
-
+        <span id="footerStatus">
+            Connected
         </span>
 
     </footer>
@@ -660,1340 +398,7 @@ canvas{
 </div>
 
 
-<div id="overlay" class="overlay"></div>
-
-
-<div id="editor" class="editor">
-
-    <div id="editorDate" class="editor-date">
-        2026.10.04
-    </div>
-
-    <div class="editor-title">
-        POINTS
-    </div>
-
-    <div class="input-row">
-
-        <button id="minusOne">
-            −
-        </button>
-
-        <input
-            id="pointInput"
-            type="number"
-            step="1"
-            value="0"
-        >
-
-        <button id="plusOne">
-            +
-        </button>
-
-    </div>
-
-    <div class="editor-buttons">
-
-        <button id="cancelEdit">
-            CANCEL
-        </button>
-
-        <button id="saveDay">
-            SAVE
-        </button>
-
-    </div>
-
-</div>
-
-
-<script>
-/* =====================================================
-   KEYVAL
-===================================================== */
-
-const KEY =
-    "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
-
-const GET_URL =
-    "https://api.keyval.org/get/" + KEY;
-
-const SET_URL =
-    value =>
-        "https://api.keyval.org/set/" +
-        KEY +
-        "/" +
-        encodeURIComponent(
-            String(value)
-        );
-
-
-/* =====================================================
-   DATE RANGE
-===================================================== */
-
-const START =
-    new Date(
-        2026,
-        8,
-        1
-    );
-
-const END =
-    new Date(
-        2027,
-        2,
-        31
-    );
-
-
-let currentYear = 2026;
-let currentMonth = 8;
-
-let data = {};
-
-let selectedDate = null;
-
-let busy = false;
-
-
-/* =====================================================
-   ELEMENTS
-===================================================== */
-
-const calendar =
-    document.getElementById(
-        "calendar"
-    );
-
-const totalEl =
-    document.getElementById(
-        "total"
-    );
-
-const monthTitle =
-    document.getElementById(
-        "monthTitle"
-    );
-
-const statusText =
-    document.getElementById(
-        "statusText"
-    );
-
-const statusDot =
-    document.getElementById(
-        "statusDot"
-    );
-
-const editor =
-    document.getElementById(
-        "editor"
-    );
-
-const overlay =
-    document.getElementById(
-        "overlay"
-    );
-
-const editorDate =
-    document.getElementById(
-        "editorDate"
-    );
-
-const pointInput =
-    document.getElementById(
-        "pointInput"
-    );
-
-
-/* =====================================================
-   DATE HELPERS
-===================================================== */
-
-function dateKey(
-    year,
-    month,
-    day
-){
-
-    return (
-        year +
-        "-" +
-        String(month+1)
-            .padStart(2,"0") +
-        "-" +
-        String(day)
-            .padStart(2,"0")
-    );
-}
-
-
-function isAllowedDate(
-    date
-){
-
-    return (
-        date >= START &&
-        date <= END
-    );
-}
-
-
-function todayKey(){
-
-    const d =
-        new Date();
-
-    return dateKey(
-        d.getFullYear(),
-        d.getMonth(),
-        d.getDate()
-    );
-}
-
-
-/* =====================================================
-   RENDER CALENDAR
-===================================================== */
-
-function renderCalendar(){
-
-    calendar.innerHTML = "";
-
-    monthTitle.textContent =
-        currentYear +
-        "." +
-        String(
-            currentMonth + 1
-        ).padStart(2,"0");
-
-
-    const first =
-        new Date(
-            currentYear,
-            currentMonth,
-            1
-        );
-
-    const last =
-        new Date(
-            currentYear,
-            currentMonth + 1,
-            0
-        );
-
-
-    const firstDay =
-        first.getDay();
-
-    const days =
-        last.getDate();
-
-
-    /*
-       빈 칸
-    */
-
-    for(
-        let i=0;
-        i<firstDay;
-        i++
-    ){
-
-        const empty =
-            document.createElement(
-                "div"
-            );
-
-        empty.className =
-            "day empty";
-
-        calendar.appendChild(
-            empty
-        );
-    }
-
-
-    /*
-       날짜
-    */
-
-    for(
-        let day=1;
-        day<=days;
-        day++
-    ){
-
-        const key =
-            dateKey(
-                currentYear,
-                currentMonth,
-                day
-            );
-
-
-        const date =
-            new Date(
-                currentYear,
-                currentMonth,
-                day
-            );
-
-
-        const allowed =
-            isAllowedDate(
-                date
-            );
-
-
-        const cell =
-            document.createElement(
-                "div"
-            );
-
-        cell.className =
-            "day";
-
-
-        if(
-            !allowed
-        ){
-
-            cell.classList.add(
-                "empty"
-            );
-
-        }else{
-
-            const value =
-                Number(
-                    data[key] ?? 0
-                );
-
-
-            const number =
-                document.createElement(
-                    "div"
-                );
-
-            number.className =
-                "day-number";
-
-            number.textContent =
-                day;
-
-
-            if(
-                key === todayKey()
-            ){
-
-                cell.classList.add(
-                    "today"
-                );
-            }
-
-
-            const points =
-                document.createElement(
-                    "div"
-                );
-
-            points.className =
-                "points " +
-                (
-                    value > 0
-                    ? "plus"
-                    : value < 0
-                    ? "minus"
-                    : "zero"
-                );
-
-
-            if(
-                value > 0
-            ){
-
-                points.textContent =
-                    "+" + value;
-
-            }else{
-
-                points.textContent =
-                    value;
-            }
-
-
-            if(
-                value !== 0
-            ){
-
-                const mark =
-                    document.createElement(
-                        "div"
-                    );
-
-                mark.className =
-                    "edit-mark";
-
-                cell.appendChild(
-                    mark
-                );
-            }
-
-
-            cell.appendChild(
-                number
-            );
-
-            cell.appendChild(
-                points
-            );
-
-
-            cell.onclick =
-                () =>
-                    openEditor(
-                        key,
-                        value
-                    );
-        }
-
-
-        calendar.appendChild(
-            cell
-        );
-    }
-
-
-    updateTotal();
-}
-
-
-/* =====================================================
-   TOTAL
-===================================================== */
-
-function updateTotal(){
-
-    let total = 0;
-
-    for(
-        const key in data
-    ){
-
-        const date =
-            new Date(
-                key +
-                "T00:00:00"
-            );
-
-        if(
-            isAllowedDate(
-                date
-            )
-        ){
-
-            const value =
-                Number(
-                    data[key]
-                );
-
-            if(
-                Number.isFinite(value)
-            ){
-
-                total += value;
-            }
-        }
-    }
-
-
-    totalEl.textContent =
-        total > 0
-        ? "+" + total
-        : total;
-
-
-    totalEl.classList.toggle(
-        "negative",
-        total < 0
-    );
-}
-
-
-/* =====================================================
-   EDITOR
-===================================================== */
-
-function openEditor(
-    key,
-    value
-){
-
-    selectedDate =
-        key;
-
-    editorDate.textContent =
-        key;
-
-    pointInput.value =
-        Number(value) || 0;
-
-    editor.classList.add(
-        "open"
-    );
-
-    overlay.classList.add(
-        "open"
-    );
-
-    setTimeout(
-        () => {
-            pointInput.focus();
-            pointInput.select();
-        },
-        50
-    );
-}
-
-
-function closeEditor(){
-
-    editor.classList.remove(
-        "open"
-    );
-
-    overlay.classList.remove(
-        "open"
-    );
-
-    selectedDate =
-        null;
-}
-
-
-document
-    .getElementById(
-        "cancelEdit"
-    )
-    .onclick =
-        closeEditor;
-
-
-overlay.onclick =
-    closeEditor;
-
-
-document
-    .getElementById(
-        "minusOne"
-    )
-    .onclick =
-        () => {
-
-            pointInput.value =
-                (
-                    Number(
-                        pointInput.value
-                    ) || 0
-                ) - 1;
-        };
-
-
-document
-    .getElementById(
-        "plusOne"
-    )
-    .onclick =
-        () => {
-
-            pointInput.value =
-                (
-                    Number(
-                        pointInput.value
-                    ) || 0
-                ) + 1;
-        };
-
-
-/* =====================================================
-   SAVE DAY
-===================================================== */
-
-document
-    .getElementById(
-        "saveDay"
-    )
-    .onclick =
-        async () => {
-
-            if(
-                !selectedDate ||
-                busy
-            )
-                return;
-
-
-            const value =
-                Number(
-                    pointInput.value
-                );
-
-
-            if(
-                !Number.isFinite(value)
-            ){
-
-                alert(
-                    "숫자를 입력해줘."
-                );
-
-                return;
-            }
-
-
-            busy = true;
-
-
-            try{
-
-                /*
-                   저장 직전에 DB를 다시 읽음.
-                   다른 기기에서 바뀐 내용도 최대한 보존.
-                */
-
-                const latest =
-                    await getData();
-
-
-                latest[selectedDate] =
-                    Math.trunc(
-                        value
-                    );
-
-
-                await saveData(
-                    latest
-                );
-
-
-                data =
-                    latest;
-
-
-                renderCalendar();
-
-                closeEditor();
-
-                setConnection(
-                    true
-                );
-
-            }catch(error){
-
-                console.error(
-                    error
-                );
-
-                setConnection(
-                    false
-                );
-
-                alert(
-                    "저장 실패"
-                );
-
-            }
-
-
-            busy = false;
-        };
-
-
-/* =====================================================
-   KEYVAL GET
-===================================================== */
-
-async function getData(){
-
-    const response =
-        await fetch(
-            GET_URL +
-            "?t=" +
-            Date.now(),
-            {
-                cache:
-                    "no-store"
-            }
-        );
-
-
-    const body =
-        (
-            await response.text()
-        ).trim();
-
-
-    if(
-        !response.ok
-    ){
-
-        throw new Error(
-            "GET " +
-            response.status
-        );
-    }
-
-
-    if(
-        !body
-    ){
-
-        return {};
-    }
-
-
-    let value =
-        body;
-
-
-    /*
-       KeyVal 응답 형식이
-       JSON / 문자열 등으로 올 수 있어서
-       여러 형태를 처리
-    */
-
-    try{
-
-        const parsed =
-            JSON.parse(
-                body
-            );
-
-
-        if(
-            parsed &&
-            typeof parsed ===
-            "object"
-        ){
-
-            if(
-                parsed.val !== undefined
-            ){
-
-                value =
-                    parsed.val;
-
-            }else if(
-                parsed.value !== undefined
-            ){
-
-                value =
-                    parsed.value;
-
-            }else if(
-                parsed.data !== undefined
-            ){
-
-                value =
-                    parsed.data;
-            }
-        }
-
-    }catch{}
-
-
-    /*
-       문자열로 들어온 JSON
-    */
-
-    if(
-        typeof value ===
-        "string"
-    ){
-
-        try{
-
-            value =
-                JSON.parse(
-                    value
-                );
-
-        }catch{
-
-            return {};
-        }
-    }
-
-
-    if(
-        !value ||
-        typeof value !==
-        "object" ||
-        Array.isArray(value)
-    ){
-
-        return {};
-    }
-
-
-    return value;
-}
-
-
-/* =====================================================
-   KEYVAL SAVE
-===================================================== */
-
-async function saveData(
-    value
-){
-
-    const response =
-        await fetch(
-            SET_URL(
-                JSON.stringify(
-                    value
-                )
-            ),
-            {
-                cache:
-                    "no-store"
-            }
-        );
-
-
-    if(
-        !response.ok
-    ){
-
-        throw new Error(
-            "SET " +
-            response.status
-        );
-    }
-}
-
-
-/* =====================================================
-   CONNECTION
-===================================================== */
-
-function setConnection(
-    ok
-){
-
-    statusText.textContent =
-        ok
-        ? "SYNC"
-        : "OFFLINE";
-
-
-    statusDot.style.background =
-        ok
-        ? "#34c759"
-        : "#ff3b30";
-
-
-    statusDot.style.boxShadow =
-        ok
-        ? "0 0 8px rgba(52,199,89,.7)"
-        : "0 0 8px rgba(255,59,48,.7)";
-}
-
-
-/* =====================================================
-   SYNC
-===================================================== */
-
-async function sync(){
-
-    if(
-        busy
-    )
-        return;
-
-
-    try{
-
-        const latest =
-            await getData();
-
-
-        /*
-           내용이 바뀌었을 때만
-           달력을 다시 그림
-        */
-
-        if(
-            JSON.stringify(latest) !==
-            JSON.stringify(data)
-        ){
-
-            data =
-                latest;
-
-            renderCalendar();
-        }
-
-
-        setConnection(
-            true
-        );
-
-    }catch(error){
-
-        console.error(
-            error
-        );
-
-        setConnection(
-            false
-        );
-    }
-}
-
-
-/* =====================================================
-   MONTH NAVIGATION
-===================================================== */
-
-function canMoveTo(
-    year,
-    month
-){
-
-    const first =
-        new Date(
-            year,
-            month,
-            1
-        );
-
-    const last =
-        new Date(
-            year,
-            month + 1,
-            0
-        );
-
-
-    return (
-        last >= START &&
-        first <= END
-    );
-}
-
-
-document
-    .getElementById(
-        "prevMonth"
-    )
-    .onclick =
-        () => {
-
-            let y =
-                currentYear;
-
-            let m =
-                currentMonth - 1;
-
-
-            if(
-                m < 0
-            ){
-
-                m = 11;
-                y--;
-            }
-
-
-            if(
-                canMoveTo(y,m)
-            ){
-
-                currentYear =
-                    y;
-
-                currentMonth =
-                    m;
-
-                renderCalendar();
-            }
-        };
-
-
-document
-    .getElementById(
-        "nextMonth"
-    )
-    .onclick =
-        () => {
-
-            let y =
-                currentYear;
-
-            let m =
-                currentMonth + 1;
-
-
-            if(
-                m > 11
-            ){
-
-                m = 0;
-                y++;
-            }
-
-
-            if(
-                canMoveTo(y,m)
-            ){
-
-                currentYear =
-                    y;
-
-                currentMonth =
-                    m;
-
-                renderCalendar();
-            }
-        };
-
-
-/* =====================================================
-   ENTER = SAVE
-===================================================== */
-
-pointInput.addEventListener(
-    "keydown",
-    e => {
-
-        if(
-            e.key ===
-            "Enter"
-        ){
-
-            document
-                .getElementById(
-                    "saveDay"
-                )
-                .click();
-        }
-
-        if(
-            e.key ===
-            "Escape"
-        ){
-
-            closeEditor();
-        }
-    }
-);
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
-
-async function init(){
-
-    try{
-
-        data =
-            await getData();
-
-        setConnection(
-            true
-        );
-
-    }catch(error){
-
-        console.error(
-            error
-        );
-
-        data = {};
-
-        setConnection(
-            false
-        );
-    }
-
-
-    renderCalendar();
-}
-
-
-init();
-
-
-/*
-   1초마다 다른 기기와 동기화
-*/
-
-setInterval(
-    sync,
-    1000
-);
-
-
-/* =====================================================
-   PLEXUS BACKGROUND
-===================================================== */
-
-const canvas =
-    document.getElementById(
-        "canvas"
-    );
-
-const ctx =
-    canvas.getContext(
-        "2d"
-    );
-
-
-let W =
-    innerWidth;
-
-let H =
-    innerHeight;
-
-
-function resize(){
-
-    W =
-        canvas.width =
-        innerWidth;
-
-    H =
-        canvas.height =
-        innerHeight;
-}
-
-resize();
-
-addEventListener(
-    "resize",
-    resize
-);
-
-
-const nodes = [];
-
-for(
-    let i=0;
-    i<85;
-    i++
-){
-
-    nodes.push({
-
-        x:
-            Math.random(),
-
-        y:
-            .55 +
-            Math.random()*.45,
-
-        z:
-            Math.random(),
-
-        vx:
-            (Math.random()-.5)*
-            .00005,
-
-        vy:
-            (Math.random()-.5)*
-            .000025,
-
-        hue:
-            255+
-            Math.random()*35
-    });
-}
-
-
-function drawNetwork(){
-
-    ctx.clearRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    /*
-       점 위치
-    */
-
-    for(
-        const n of nodes
-    ){
-
-        n.x += n.vx;
-        n.y += n.vy;
-
-
-        if(
-            n.x < -.05 ||
-            n.x > 1.05
-        ){
-
-            n.vx *= -1;
-        }
-
-
-        if(
-            n.y < .52 ||
-            n.y > 1.05
-        ){
-
-            n.vy *= -1;
-        }
-    }
-
-
-    /*
-       연결선
-    */
-
-    for(
-        let i=0;
-        i<nodes.length;
-        i++
-    ){
-
-        for(
-            let j=i+1;
-            j<nodes.length;
-            j++
-        ){
-
-            const a =
-                nodes[i];
-
-            const b =
-                nodes[j];
-
-
-            const ax =
-                a.x*W;
-
-            const ay =
-                a.y*H;
-
-            const bx =
-                b.x*W;
-
-            const by =
-                b.y*H;
-
-
-            const d =
-                Math.hypot(
-                    ax-bx,
-                    ay-by
-                );
-
-
-            if(
-                d > 145
-            )
-                continue;
-
-
-            const alpha =
-                (
-                    1-
-                    d/145
-                )*.14;
-
-
-            const hue =
-                (
-                    a.hue+
-                    b.hue
-                )/2;
-
-
-            ctx.beginPath();
-
-            ctx.moveTo(
-                ax,
-                ay
-            );
-
-            ctx.lineTo(
-                bx,
-                by
-            );
-
-
-            ctx.strokeStyle =
-                `hsla(
-                    ${hue},
-                    80%,
-                    65%,
-                    ${alpha}
-                )`;
-
-            ctx.lineWidth =
-                .6;
-
-            ctx.stroke();
-        }
-    }
-
-
-    /*
-       점
-    */
-
-    for(
-        const n of nodes
-    ){
-
-        const x =
-            n.x*W;
-
-        const y =
-            n.y*H;
-
-
-        ctx.beginPath();
-
-        ctx.arc(
-            x,
-            y,
-            1.5,
-            0,
-            Math.PI*2
-        );
-
-
-        ctx.fillStyle =
-            `hsla(
-                ${n.hue},
-                80%,
-                65%,
-                .32
-            )`;
-
-        ctx.fill();
-    }
-
-
-    requestAnimationFrame(
-        drawNetwork
-    );
-}
-
-
-drawNetwork();
-</script>
+<script src="./app.js"></script>
 
 </body>
 </html>
