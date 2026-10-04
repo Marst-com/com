@@ -1,256 +1,2603 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DuoMarst Score Calendar</title>
-  <link rel="stylesheet" href="./style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DuoMarst — Score Calendar</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #050611;
+  --panel: rgba(11, 13, 32, .94);
+  --purple: #9d6cff;
+  --blue: #4cc9ff;
+  --cyan: #52f2ff;
+  --text: #f7f8ff;
+  --muted: #8f95b8;
+  --border: rgba(151,116,255,.22);
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter,
+    Pretendard,
+    "Noto Sans KR",
+    Arial,
+    sans-serif;
+  overflow-x: hidden;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 10%,
+      rgba(104,66,255,.18),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(0,191,255,.12),
+      transparent 32%
+    ),
+    #050611;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(
+      rgba(116,92,255,.06) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(116,92,255,.06) 1px,
+      transparent 1px
+    );
+
+  background-size: 42px 42px;
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,.8) 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle,
+      rgba(82,242,255,.6) 1px,
+      transparent 1.5px
+    );
+
+  background-size:
+    83px 83px,
+    127px 127px;
+
+  background-position:
+    10px 20px,
+    40px 70px;
+
+  opacity: .25;
+}
+
+/* =========================
+   APP
+========================= */
+
+.app {
+  width: min(1500px, calc(100% - 32px));
+  margin: auto;
+  padding: 16px 0 25px;
+}
+
+/* =========================
+   TOPBAR
+========================= */
+
+.topbar {
+  min-height: 68px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 12px 18px;
+
+  border: 1px solid var(--border);
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(19,21,49,.95),
+      rgba(7,9,25,.95)
+    );
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.25),
+    inset 0 1px rgba(255,255,255,.04);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7c48ff,
+      #35d7ff
+    );
+
+  box-shadow:
+    0 0 25px rgba(112,78,255,.4);
+}
+
+.brand-icon span {
+  width: 5px;
+  height: 22px;
+
+  border-radius: 10px;
+  background: white;
+
+  transform: rotate(25deg);
+}
+
+.brand-icon span:last-child {
+  transform: rotate(-25deg);
+  opacity: .75;
+}
+
+.brand-name {
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.brand-sub {
+  margin-top: 2px;
+
+  color: var(--muted);
+
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.period {
+  text-align: center;
+}
+
+.period span {
+  display: block;
+
+  color: #777da2;
+
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.period strong {
+  font-size: 13px;
+}
+
+.sync {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 12px;
+
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.025);
+
+  color: #adb2d0;
+  font-size: 10px;
+}
+
+.sync-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #ffcf5c;
+  box-shadow: 0 0 10px #ffcf5c;
+}
+
+.sync.online .sync-dot {
+  background: #62efbe;
+  box-shadow: 0 0 10px #62efbe;
+}
+
+.sync.error .sync-dot {
+  background: #ff6e8b;
+  box-shadow: 0 0 10px #ff6e8b;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard {
+  display: grid;
+
+  grid-template-columns:
+    260px
+    minmax(500px, 1fr)
+    300px;
+
+  gap: 16px;
+
+  margin-top: 16px;
+}
+
+.card {
+  border: 1px solid var(--border);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(19,21,49,.94),
+      rgba(7,9,25,.94)
+    );
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,.25),
+    inset 0 1px rgba(255,255,255,.04);
+}
+
+/* =========================
+   LEFT
+========================= */
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.total-card {
+  min-height: 160px;
+  padding: 20px;
+  border-radius: 22px;
+}
+
+.kicker {
+  color: #777da1;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.total-card strong {
+  display: block;
+
+  margin-top: 13px;
+
+  font-size: 50px;
+  line-height: 1;
+
+  letter-spacing: -3px;
+
+  background:
+    linear-gradient(
+      120deg,
+      white,
+      #a97cff,
+      #52ddff
+    );
+
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.total-label {
+  margin-top: 8px;
+
+  color: #737996;
+  font-size: 9px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.stat {
+  min-height: 95px;
+
+  padding: 14px;
+
+  border-radius: 17px;
+}
+
+.stat span {
+  color: #707797;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+}
+
+.stat strong {
+  display: block;
+
+  margin-top: 25px;
+
+  font-size: 24px;
+}
+
+.stat.positive strong {
+  color: #62efbe;
+}
+
+.stat.negative strong {
+  color: #ff718d;
+}
+
+.progress-card {
+  padding: 17px;
+  border-radius: 17px;
+}
+
+.progress-number {
+  margin-top: 10px;
+
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.progress-number strong {
+  font-size: 28px;
+}
+
+.progress-number span {
+  color: #717895;
+  font-size: 9px;
+}
+
+.progress-track {
+  height: 5px;
+  margin-top: 12px;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+
+  background: rgba(255,255,255,.06);
+}
+
+.progress-fill {
+  width: 0;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #a66cff,
+      #4adfff
+    );
+
+  transition: width .2s ease;
+}
+
+.quote-card {
+  flex: 1;
+
+  min-height: 100px;
+
+  padding: 17px;
+
+  border-radius: 17px;
+}
+
+.quote-mark {
+  color: rgba(157,108,255,.5);
+  font-size: 40px;
+  line-height: 20px;
+}
+
+.quote-card p {
+  margin: 10px 0 0;
+
+  color: #b7bbd3;
+
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+/* =========================
+   CALENDAR
+========================= */
+
+.calendar-card {
+  padding: 22px;
+  border-radius: 23px;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 20px;
+}
+
+.month-kicker {
+  color: #777da1;
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+
+.calendar-title {
+  margin: 5px 0 3px;
+
+  font-size: 27px;
+  letter-spacing: -1px;
+}
+
+.calendar-desc {
+  margin: 0;
+
+  color: #777e9f;
+  font-size: 9px;
+}
+
+.month-buttons {
+  display: flex;
+  gap: 7px;
+}
+
+.month-buttons button {
+  width: 39px;
+  height: 39px;
+
+  border: 1px solid rgba(153,115,255,.25);
+  border-radius: 12px;
+
+  color: white;
+  background: rgba(255,255,255,.04);
+
+  font-size: 22px;
+
+  cursor: pointer;
+}
+
+.month-buttons button:hover {
+  background: rgba(132,83,255,.18);
+}
+
+.weekday-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  margin-bottom: 8px;
+}
+
+.weekday-row span {
+  text-align: center;
+
+  color: #656c90;
+
+  font-size: 9px;
+  font-weight: 700;
+
+  letter-spacing: 1.4px;
+}
+
+.calendar {
+  display: grid;
+
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 7px;
+}
+
+.day {
+  position: relative;
+
+  min-height: 74px;
+
+  padding: 10px;
+
+  border: 1px solid rgba(140,115,255,.12);
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.035),
+      rgba(255,255,255,.012)
+    );
+
+  color: white;
+
+  cursor: pointer;
+
+  overflow: hidden;
+}
+
+.day:hover {
+  border-color: rgba(146,112,255,.55);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(129,81,255,.16),
+      rgba(47,202,255,.06)
+    );
+}
+
+.day.selected {
+  border-color: #9d72ff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(128,76,255,.27),
+      rgba(49,197,255,.08)
+    );
+
+  box-shadow:
+    0 0 0 1px rgba(157,108,255,.2),
+    0 0 25px rgba(123,75,255,.25);
+}
+
+.day.today::after {
+  content: "";
+
+  position: absolute;
+
+  top: 7px;
+  right: 7px;
+
+  width: 5px;
+  height: 5px;
+
+  border-radius: 50%;
+
+  background: #55e9ff;
+  box-shadow: 0 0 9px #55e9ff;
+}
+
+.day.empty {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.day-number {
+  color: #b8bdd7;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.day-score {
+  position: absolute;
+
+  left: 10px;
+  bottom: 9px;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.day-score.zero {
+  color: #4d536e;
+}
+
+.day-score.positive {
+  color: #62efbe;
+}
+
+.day-score.negative {
+  color: #ff6e8b;
+}
+
+.calendar-footer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  margin-top: 14px;
+
+  color: #737996;
+
+  font-size: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.positive-dot {
+  background: #62efbe;
+}
+
+.negative-dot {
+  background: #ff6e8b;
+}
+
+.today-dot {
+  background: #55e9ff;
+}
+
+/* =========================
+   EDITOR
+========================= */
+
+.editor-card {
+  padding: 22px;
+  border-radius: 23px;
+}
+
+.selected-date {
+  margin-top: 8px;
+
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.selected-weekday {
+  margin-top: 3px;
+
+  color: #727997;
+
+  font-size: 10px;
+}
+
+.editor-score {
+  margin: 28px 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.editor-score span {
+  color: #707795;
+
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+.editor-score strong {
+  font-size: 54px;
+  line-height: 1;
+
+  letter-spacing: -3px;
+
+  background:
+    linear-gradient(
+      120deg,
+      white,
+      #a97cff,
+      #52ddff
+    );
+
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.quick-title,
+.input-title {
+  margin-bottom: 8px;
+
+  color: #707795;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 1.7px;
+}
+
+.quick-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 7px;
+}
+
+.quick-grid button {
+  height: 38px;
+
+  border: 1px solid rgba(147,116,255,.18);
+  border-radius: 10px;
+
+  background: rgba(255,255,255,.035);
+
+  color: #c5c9dd;
+
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.quick-grid button:hover {
+  border-color: rgba(157,108,255,.55);
+  background: rgba(132,78,255,.15);
+}
+
+.input-title {
+  margin-top: 20px;
+}
+
+.number-box {
+  display: grid;
+
+  grid-template-columns: 40px 1fr 40px;
+
+  height: 48px;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(147,116,255,.22);
+  border-radius: 12px;
+
+  background: rgba(0,0,0,.2);
+}
+
+.number-box button {
+  border: 0;
+
+  color: white;
+  background: rgba(255,255,255,.04);
+
+  font-size: 20px;
+
+  cursor: pointer;
+}
+
+.number-box input {
+  width: 100%;
+
+  border: 0;
+  outline: 0;
+
+  background: transparent;
+
+  color: white;
+
+  text-align: center;
+
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.number-box input::-webkit-inner-spin-button,
+.number-box input::-webkit-outer-spin-button {
+  appearance: none;
+}
+
+.save-button {
+  width: 100%;
+  height: 47px;
+
+  margin-top: 14px;
+
+  border: 0;
+  border-radius: 12px;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      110deg,
+      #7848ff,
+      #477eff,
+      #2bcce8
+    );
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.reset-button {
+  width: 100%;
+  height: 36px;
+
+  margin-top: 7px;
+
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 10px;
+
+  color: #777e9d;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.editor-info {
+  margin-top: 20px;
+
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+
+.editor-info div {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 10px 0;
+
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.editor-info span {
+  color: #656c88;
+  font-size: 9px;
+}
+
+.editor-info strong {
+  color: #b9bed5;
+  font-size: 10px;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+  display: flex;
+  justify-content: space-between;
+
+  padding: 13px 5px 0;
+
+  color: #4f5573;
+
+  font-size: 8px;
+  letter-spacing: 1.4px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  .dashboard {
+    grid-template-columns:
+      220px
+      minmax(400px, 1fr);
+  }
+
+  .editor-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .left-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quote-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .app {
+    width: calc(100% - 16px);
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+  }
+
+  .period {
+    order: 3;
+    width: 100%;
+  }
+
+  .left-panel {
+    display: flex;
+  }
+
+  .calendar-card,
+  .editor-card {
+    padding: 15px;
+  }
+
+  .calendar {
+    gap: 4px;
+  }
+
+  .day {
+    min-height: 57px;
+    padding: 7px;
+    border-radius: 10px;
+  }
+
+  .day-number {
+    font-size: 9px;
+  }
+
+  .day-score {
+    left: 7px;
+    bottom: 7px;
+    font-size: 14px;
+  }
+
+  .weekday-row span {
+    font-size: 7px;
+  }
+}
+</style>
 </head>
 
 <body>
-  <div class="background">
-    <div class="grid"></div>
-    <div class="stars"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="beam beam-1"></div>
-    <div class="beam beam-2"></div>
-  </div>
 
-  <main class="app">
+<div class="background">
+  <div class="grid"></div>
+  <div class="stars"></div>
+</div>
 
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-icon">
-          <span></span>
-          <span></span>
-        </div>
+<div class="app">
 
-        <div>
-          <div class="brand-name">DuoMarst</div>
-          <div class="brand-sub">SCORE CALENDAR</div>
-        </div>
+  <!-- TOP -->
+  <header class="topbar">
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        <span></span>
+        <span></span>
       </div>
 
-      <div class="period">
-        <span>PERIOD</span>
-        <strong>2026.10 — 2027.03</strong>
+      <div>
+        <div class="brand-name">DuoMarst</div>
+        <div class="brand-sub">SCORE CALENDAR</div>
       </div>
 
-      <div class="sync">
-        <i></i>
-        <span id="syncText">Connecting...</span>
+    </div>
+
+    <div class="period">
+      <span>PERIOD</span>
+      <strong>2026.10 — 2027.03</strong>
+    </div>
+
+    <div
+      id="sync"
+      class="sync"
+    >
+      <i class="sync-dot"></i>
+      <span id="syncText">Connecting...</span>
+    </div>
+
+  </header>
+
+
+  <!-- DASHBOARD -->
+  <main class="dashboard">
+
+
+    <!-- LEFT -->
+    <section class="left-panel">
+
+      <div class="card total-card">
+
+        <div class="kicker">
+          TOTAL SCORE
+        </div>
+
+        <strong id="totalScore">
+          0
+        </strong>
+
+        <div class="total-label">
+          Accumulated points
+        </div>
+
       </div>
-    </header>
 
 
-    <section class="dashboard">
+      <div class="stats-grid">
 
-      <!-- LEFT -->
-      <aside class="left-panel">
-
-        <div class="hero-card">
-          <div class="card-label">TOTAL SCORE</div>
-
-          <div class="total-score" id="totalScore">0</div>
-
-          <div class="score-line">
-            <span>Accumulated points</span>
-            <span id="activeDays">0 days</span>
-          </div>
-
-          <div class="progress">
-            <div id="progressBar"></div>
-          </div>
+        <div class="card stat positive">
+          <span>POSITIVE</span>
+          <strong id="positiveScore">
+            +0
+          </strong>
         </div>
 
-
-        <div class="stats-grid">
-
-          <div class="mini-card positive">
-            <span>POSITIVE</span>
-            <strong id="positiveScore">+0</strong>
-          </div>
-
-          <div class="mini-card negative">
-            <span>NEGATIVE</span>
-            <strong id="negativeScore">0</strong>
-          </div>
-
-          <div class="mini-card">
-            <span>BEST DAY</span>
-            <strong id="bestDay">0</strong>
-          </div>
-
-          <div class="mini-card">
-            <span>ACTIVE DAYS</span>
-            <strong id="activeCount">0</strong>
-          </div>
-
+        <div class="card stat negative">
+          <span>NEGATIVE</span>
+          <strong id="negativeScore">
+            0
+          </strong>
         </div>
 
+      </div>
 
-        <div class="info-card">
-          <div class="card-label">PERIOD PROGRESS</div>
 
-          <div class="big-progress">
-            <strong id="periodProgress">0%</strong>
-            <span>completed</span>
-          </div>
+      <div class="card progress-card">
 
-          <div class="progress-track">
-            <div id="periodProgressBar"></div>
-          </div>
+        <div class="kicker">
+          PERIOD PROGRESS
         </div>
 
+        <div class="progress-number">
+          <strong id="progressText">
+            0%
+          </strong>
 
-        <div class="quote-card">
-          <div class="quote-mark">“</div>
-          <p id="quote">
-            Small points become big results.
-          </p>
-        </div>
-
-      </aside>
-
-
-      <!-- CENTER -->
-      <section class="calendar-card">
-
-        <div class="calendar-header">
-
-          <div>
-            <div class="month-kicker">MONTHLY SCORE</div>
-            <h1 id="monthTitle">October 2026</h1>
-            <p id="monthMeta">31 days</p>
-          </div>
-
-          <div class="month-buttons">
-            <button id="prevMonth">‹</button>
-            <button id="nextMonth">›</button>
-          </div>
-
-        </div>
-
-
-        <div class="weekday-row">
-          <span>SUN</span>
-          <span>MON</span>
-          <span>TUE</span>
-          <span>WED</span>
-          <span>THU</span>
-          <span>FRI</span>
-          <span>SAT</span>
-        </div>
-
-
-        <div id="calendar" class="calendar"></div>
-
-
-        <div class="calendar-footer">
-          <div>
-            <span class="legend positive-dot"></span>
-            Positive
-          </div>
-
-          <div>
-            <span class="legend negative-dot"></span>
-            Negative
-          </div>
-
-          <div>
-            <span class="legend today-dot"></span>
-            Today
-          </div>
-
-          <span class="footer-hint">
-            Select a date to edit
+          <span>
+            completed
           </span>
         </div>
 
-      </section>
-
-
-      <!-- RIGHT -->
-      <aside class="editor-card">
-
-        <div class="editor-top">
-          <div class="card-label">DAY EDITOR</div>
-
-          <div class="selected-date" id="selectedDate">
-            October 4, 2026
-          </div>
-
-          <div class="selected-weekday" id="selectedWeekday">
-            Sunday
-          </div>
+        <div class="progress-track">
+          <div
+            id="progressBar"
+            class="progress-fill"
+          ></div>
         </div>
 
+      </div>
 
-        <div class="editor-score">
-          <span>Current score</span>
-          <strong id="editorScore">0</strong>
+
+      <div class="card quote-card">
+
+        <div class="quote-mark">
+          “
         </div>
 
+        <p>
+          Small points become big results.
+        </p>
 
-        <div class="quick-title">QUICK CHANGE</div>
-
-        <div class="quick-grid">
-          <button data-change="-10">−10</button>
-          <button data-change="-5">−5</button>
-          <button data-change="-1">−1</button>
-          <button data-change="1">+1</button>
-          <button data-change="5">+5</button>
-          <button data-change="10">+10</button>
-        </div>
-
-
-        <div class="input-title">EXACT VALUE</div>
-
-        <div class="number-box">
-          <button id="minus">−</button>
-          <input id="scoreInput" type="number" value="0">
-          <button id="plus">+</button>
-        </div>
-
-
-        <button id="saveButton" class="save-button">
-          SAVE SCORE
-        </button>
-
-        <button id="resetButton" class="reset-button">
-          RESET
-        </button>
-
-
-        <div class="editor-info">
-
-          <div>
-            <span>Selected</span>
-            <strong id="infoDate">2026-10-04</strong>
-          </div>
-
-          <div>
-            <span>Value</span>
-            <strong id="infoValue">0</strong>
-          </div>
-
-        </div>
-
-      </aside>
+      </div>
 
     </section>
 
 
-    <footer>
-      <span>DuoMarst</span>
-      <span>LOCAL-FIRST SCORE SYSTEM</span>
-      <span>SYNC • 1s</span>
-    </footer>
+    <!-- CALENDAR -->
+    <section class="card calendar-card">
+
+      <div class="calendar-header">
+
+        <div>
+
+          <div class="month-kicker">
+            MONTHLY SCORE
+          </div>
+
+          <h1
+            id="monthTitle"
+            class="calendar-title"
+          >
+            2026년 10월
+          </h1>
+
+          <p
+            id="monthDesc"
+            class="calendar-desc"
+          >
+            31 days
+          </p>
+
+        </div>
+
+
+        <div class="month-buttons">
+
+          <button
+            id="prevMonth"
+            type="button"
+          >
+            ‹
+          </button>
+
+          <button
+            id="nextMonth"
+            type="button"
+          >
+            ›
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- 요일은 여기에서 한 번만 표시 -->
+      <div class="weekday-row">
+
+        <span>SUN</span>
+        <span>MON</span>
+        <span>TUE</span>
+        <span>WED</span>
+        <span>THU</span>
+        <span>FRI</span>
+        <span>SAT</span>
+
+      </div>
+
+
+      <!-- JS가 날짜만 생성 -->
+      <div
+        id="calendar"
+        class="calendar"
+      ></div>
+
+
+      <div class="calendar-footer">
+
+        <div class="legend-item">
+          <i class="legend positive-dot"></i>
+          Positive
+        </div>
+
+        <div class="legend-item">
+          <i class="legend negative-dot"></i>
+          Negative
+        </div>
+
+        <div class="legend-item">
+          <i class="legend today-dot"></i>
+          Today
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- EDITOR -->
+    <section class="card editor-card">
+
+      <div class="kicker">
+        DAY EDITOR
+      </div>
+
+      <div
+        id="selectedDate"
+        class="selected-date"
+      >
+        2026년 10월 4일
+      </div>
+
+      <div
+        id="selectedWeekday"
+        class="selected-weekday"
+      >
+        일요일
+      </div>
+
+
+      <div class="editor-score">
+
+        <span>
+          CURRENT SCORE
+        </span>
+
+        <strong id="editorScore">
+          0
+        </strong>
+
+      </div>
+
+
+      <div class="quick-title">
+        QUICK CHANGE
+      </div>
+
+      <div class="quick-grid">
+
+        <button data-add="-10">
+          −10
+        </button>
+
+        <button data-add="-5">
+          −5
+        </button>
+
+        <button data-add="-1">
+          −1
+        </button>
+
+        <button data-add="1">
+          +1
+        </button>
+
+        <button data-add="5">
+          +5
+        </button>
+
+        <button data-add="10">
+          +10
+        </button>
+
+      </div>
+
+
+      <div class="input-title">
+        EXACT VALUE
+      </div>
+
+      <div class="number-box">
+
+        <button
+          id="minusButton"
+          type="button"
+        >
+          −
+        </button>
+
+        <input
+          id="scoreInput"
+          type="number"
+          value="0"
+        >
+
+        <button
+          id="plusButton"
+          type="button"
+        >
+          +
+        </button>
+
+      </div>
+
+
+      <button
+        id="saveButton"
+        class="save-button"
+        type="button"
+      >
+        SAVE SCORE
+      </button>
+
+
+      <button
+        id="resetButton"
+        class="reset-button"
+        type="button"
+      >
+        RESET
+      </button>
+
+
+      <div class="editor-info">
+
+        <div>
+          <span>SELECTED</span>
+          <strong id="selectedKey">
+            2026-10-04
+          </strong>
+        </div>
+
+        <div>
+          <span>VALUE</span>
+          <strong id="selectedValue">
+            0
+          </strong>
+        </div>
+
+        <div>
+          <span>ACTIVE DAYS</span>
+          <strong id="activeDays">
+            0
+          </strong>
+        </div>
+
+        <div>
+          <span>BEST DAY</span>
+          <strong id="bestDay">
+            —
+          </strong>
+        </div>
+
+      </div>
+
+    </section>
 
   </main>
 
-  <script src="./app.js"></script>
+
+  <footer>
+    <span>DuoMarst</span>
+    <span>LOCAL-FIRST SCORE SYSTEM</span>
+    <span>SYNC • 1s</span>
+  </footer>
+
+</div>
+
+
+<script>
+/* =========================================================
+   CONFIG
+========================================================= */
+
+const BASE_KEY =
+  "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
+
+const API =
+  "https://api.keyval.org";
+
+const START =
+  new Date(2026, 9, 1);
+
+const END =
+  new Date(2027, 2, 31);
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let data = {};
+
+let selectedDate =
+  new Date(2026, 9, 4);
+
+let currentMonth =
+  new Date(2026, 9, 1);
+
+let saving = false;
+
+
+/* =========================================================
+   DOM
+========================================================= */
+
+const calendar =
+  document.getElementById("calendar");
+
+const monthTitle =
+  document.getElementById("monthTitle");
+
+const monthDesc =
+  document.getElementById("monthDesc");
+
+const selectedDateEl =
+  document.getElementById("selectedDate");
+
+const selectedWeekdayEl =
+  document.getElementById("selectedWeekday");
+
+const scoreInput =
+  document.getElementById("scoreInput");
+
+const editorScore =
+  document.getElementById("editorScore");
+
+const totalScore =
+  document.getElementById("totalScore");
+
+const positiveScore =
+  document.getElementById("positiveScore");
+
+const negativeScore =
+  document.getElementById("negativeScore");
+
+const activeDays =
+  document.getElementById("activeDays");
+
+const bestDay =
+  document.getElementById("bestDay");
+
+const progressText =
+  document.getElementById("progressText");
+
+const progressBar =
+  document.getElementById("progressBar");
+
+const sync =
+  document.getElementById("sync");
+
+const syncText =
+  document.getElementById("syncText");
+
+const selectedKey =
+  document.getElementById("selectedKey");
+
+const selectedValue =
+  document.getElementById("selectedValue");
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function pad(n) {
+  return String(n).padStart(2, "0");
+}
+
+function dateKey(date) {
+  return (
+    date.getFullYear() +
+    "-" +
+    pad(date.getMonth() + 1) +
+    "-" +
+    pad(date.getDate())
+  );
+}
+
+function monthKey(year, month) {
+  return (
+    BASE_KEY +
+    "-" +
+    year +
+    "-" +
+    pad(month + 1)
+  );
+}
+
+function daysInMonth(year, month) {
+  return new Date(
+    year,
+    month + 1,
+    0
+  ).getDate();
+}
+
+function sameDate(a, b) {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+function allowedDate(date) {
+  return (
+    date >= START &&
+    date <= END
+  );
+}
+
+
+/* =========================================================
+   DATA
+========================================================= */
+
+function createData() {
+
+  const result = {};
+
+  const cursor =
+    new Date(
+      START.getFullYear(),
+      START.getMonth(),
+      START.getDate()
+    );
+
+  while (cursor <= END) {
+
+    result[dateKey(cursor)] = 0;
+
+    cursor.setDate(
+      cursor.getDate() + 1
+    );
+  }
+
+  return result;
+}
+
+data = createData();
+
+
+/* =========================================================
+   UI STATUS
+========================================================= */
+
+function setStatus(
+  text,
+  type = ""
+) {
+  syncText.textContent = text;
+
+  sync.className =
+    "sync" +
+    (type ? " " + type : "");
+}
+
+
+/* =========================================================
+   MONTH DATA
+========================================================= */
+
+function getMonthArray(
+  year,
+  month
+) {
+
+  const days =
+    daysInMonth(
+      year,
+      month
+    );
+
+  const result =
+    new Array(days).fill(0);
+
+  for (
+    let day = 1;
+    day <= days;
+    day++
+  ) {
+
+    const key =
+      `${year}-${pad(month + 1)}-${pad(day)}`;
+
+    result[day - 1] =
+      Number(data[key]) || 0;
+  }
+
+  return result;
+}
+
+
+function applyMonth(
+  year,
+  month,
+  values
+) {
+
+  if (!Array.isArray(values)) {
+    return;
+  }
+
+  const days =
+    daysInMonth(
+      year,
+      month
+    );
+
+  for (
+    let day = 1;
+    day <= days;
+    day++
+  ) {
+
+    const key =
+      `${year}-${pad(month + 1)}-${pad(day)}`;
+
+    const value =
+      Number(values[day - 1]);
+
+    if (Number.isFinite(value)) {
+
+      data[key] =
+        Math.trunc(value);
+    }
+  }
+}
+
+
+/* =========================================================
+   KEYVAL
+========================================================= */
+
+async function getMonth(
+  year,
+  month
+) {
+
+  const key =
+    monthKey(
+      year,
+      month
+    );
+
+  const response =
+    await fetch(
+      `${API}/get/${encodeURIComponent(key)}?t=${Date.now()}`,
+      {
+        cache: "no-store"
+      }
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      "HTTP " + response.status
+    );
+  }
+
+  const raw =
+    await response.text();
+
+  /*
+    KeyVal에 아직 값이 없을 경우
+  */
+
+  if (!raw.trim()) {
+    return null;
+  }
+
+  /*
+    먼저 JSON을 시도
+  */
+
+  try {
+
+    const json =
+      JSON.parse(raw);
+
+    if (Array.isArray(json)) {
+      return json;
+    }
+
+    if (
+      json &&
+      typeof json === "object"
+    ) {
+
+      if (
+        Array.isArray(json.value)
+      ) {
+        return json.value;
+      }
+
+      if (
+        typeof json.value === "string"
+      ) {
+
+        const inner =
+          JSON.parse(json.value);
+
+        if (Array.isArray(inner)) {
+          return inner;
+        }
+
+        return inner
+          .split(",")
+          .map(Number);
+      }
+
+      if (
+        typeof json.data === "string"
+      ) {
+
+        return json.data
+          .split(",")
+          .map(Number);
+      }
+    }
+
+  } catch {}
+
+
+  /*
+    CSV
+  */
+
+  const values =
+    raw
+      .trim()
+      .split(",")
+      .map(
+        value =>
+          Number(
+            value.trim()
+          )
+      );
+
+  if (
+    values.every(
+      Number.isFinite
+    )
+  ) {
+    return values;
+  }
+
+  throw new Error(
+    "Unknown KeyVal response: " +
+    raw
+  );
+}
+
+
+async function saveMonth(
+  year,
+  month,
+  values
+) {
+
+  const key =
+    monthKey(
+      year,
+      month
+    );
+
+  const value =
+    values
+      .map(
+        v =>
+          Math.trunc(
+            Number(v) || 0
+          )
+      )
+      .join(",");
+
+  const response =
+    await fetch(
+      `${API}/set/` +
+      `${encodeURIComponent(key)}/` +
+      `${encodeURIComponent(value)}`,
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    );
+
+  if (!response.ok) {
+    throw new Error(
+      "HTTP " + response.status
+    );
+  }
+
+  return true;
+}
+
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+async function loadData() {
+
+  setStatus(
+    "Connecting..."
+  );
+
+  const months = [
+    [2026, 9],
+    [2026, 10],
+    [2026, 11],
+    [2027, 0],
+    [2027, 1],
+    [2027, 2]
+  ];
+
+  let success = 0;
+
+  await Promise.all(
+    months.map(
+      async ([year, month]) => {
+
+        try {
+
+          const values =
+            await getMonth(
+              year,
+              month
+            );
+
+          if (values) {
+
+            applyMonth(
+              year,
+              month,
+              values
+            );
+          }
+
+          success++;
+
+        } catch (error) {
+
+          console.warn(
+            "Month load failed:",
+            year,
+            month + 1,
+            error
+          );
+        }
+      }
+    )
+  );
+
+  if (success > 0) {
+
+    setStatus(
+      "Synced",
+      "online"
+    );
+
+  } else {
+
+    /*
+      서버가 안 되더라도
+      UI 자체는 정상 작동시킨다.
+    */
+
+    setStatus(
+      "Local",
+      "online"
+    );
+  }
+
+  renderAll();
+}
+
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+function renderCalendar() {
+
+  calendar.innerHTML = "";
+
+  const year =
+    currentMonth.getFullYear();
+
+  const month =
+    currentMonth.getMonth();
+
+  const firstDay =
+    new Date(
+      year,
+      month,
+      1
+    ).getDay();
+
+  const days =
+    daysInMonth(
+      year,
+      month
+    );
+
+  const today =
+    new Date();
+
+  /*
+    앞쪽 빈칸
+  */
+
+  for (
+    let i = 0;
+    i < firstDay;
+    i++
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+    empty.className =
+      "day empty";
+
+    calendar.appendChild(
+      empty
+    );
+  }
+
+
+  /*
+    날짜
+  */
+
+  for (
+    let day = 1;
+    day <= days;
+    day++
+  ) {
+
+    const date =
+      new Date(
+        year,
+        month,
+        day
+      );
+
+    const key =
+      dateKey(date);
+
+    const value =
+      Number(data[key]) || 0;
+
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+    button.type = "button";
+
+    button.className =
+      "day";
+
+
+    if (
+      sameDate(
+        date,
+        selectedDate
+      )
+    ) {
+
+      button.classList.add(
+        "selected"
+      );
+    }
+
+
+    if (
+      sameDate(
+        date,
+        today
+      )
+    ) {
+
+      button.classList.add(
+        "today"
+      );
+    }
+
+
+    const number =
+      document.createElement(
+        "div"
+      );
+
+    number.className =
+      "day-number";
+
+    number.textContent =
+      day;
+
+
+    const score =
+      document.createElement(
+        "div"
+      );
+
+    score.className =
+      "day-score";
+
+
+    if (value > 0) {
+
+      score.classList.add(
+        "positive"
+      );
+
+      score.textContent =
+        "+" + value;
+
+    } else if (
+      value < 0
+    ) {
+
+      score.classList.add(
+        "negative"
+      );
+
+      score.textContent =
+        value;
+
+    } else {
+
+      score.classList.add(
+        "zero"
+      );
+
+      score.textContent =
+        "0";
+    }
+
+
+    button.appendChild(
+      number
+    );
+
+    button.appendChild(
+      score
+    );
+
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        selectedDate =
+          new Date(date);
+
+        updateEditor();
+
+        renderCalendar();
+      }
+    );
+
+
+    calendar.appendChild(
+      button
+    );
+  }
+
+
+  /*
+    뒤쪽 빈칸
+  */
+
+  const used =
+    firstDay + days;
+
+  const remaining =
+    (7 - used % 7) % 7;
+
+  for (
+    let i = 0;
+    i < remaining;
+    i++
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+    empty.className =
+      "day empty";
+
+    calendar.appendChild(
+      empty
+    );
+  }
+
+
+  monthTitle.textContent =
+    `${year}년 ${month + 1}월`;
+
+  monthDesc.textContent =
+    `${days} days`;
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+function updateEditor() {
+
+  const key =
+    dateKey(
+      selectedDate
+    );
+
+  const value =
+    Number(
+      data[key]
+    ) || 0;
+
+
+  selectedDateEl.textContent =
+    `${selectedDate.getFullYear()}년 ` +
+    `${selectedDate.getMonth() + 1}월 ` +
+    `${selectedDate.getDate()}일`;
+
+  selectedWeekdayEl.textContent =
+    [
+      "일요일",
+      "월요일",
+      "화요일",
+      "수요일",
+      "목요일",
+      "금요일",
+      "토요일"
+    ][
+      selectedDate.getDay()
+    ];
+
+
+  scoreInput.value =
+    value;
+
+  editorScore.textContent =
+    value > 0
+      ? "+" + value
+      : value;
+
+
+  selectedKey.textContent =
+    key;
+
+  selectedValue.textContent =
+    value;
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function renderStats() {
+
+  let total = 0;
+  let positive = 0;
+  let negative = 0;
+  let active = 0;
+
+  let best =
+    -Infinity;
+
+  let bestKey =
+    null;
+
+
+  for (
+    const [key, raw] of
+    Object.entries(data)
+  ) {
+
+    const value =
+      Number(raw) || 0;
+
+    total += value;
+
+    if (value > 0) {
+      positive += value;
+    }
+
+    if (value < 0) {
+      negative += value;
+    }
+
+    if (value !== 0) {
+      active++;
+    }
+
+    if (value > best) {
+      best = value;
+      bestKey = key;
+    }
+  }
+
+
+  totalScore.textContent =
+    total > 0
+      ? "+" + total
+      : total;
+
+  positiveScore.textContent =
+    "+" + positive;
+
+  negativeScore.textContent =
+    negative;
+
+  activeDays.textContent =
+    active;
+
+
+  if (bestKey) {
+
+    bestDay.textContent =
+      `${bestKey.slice(5)} : ` +
+      `${best >= 0 ? "+" : ""}${best}`;
+
+  } else {
+
+    bestDay.textContent =
+      "—";
+  }
+
+
+  const totalDays =
+    Object.keys(data).length;
+
+  const progress =
+    totalDays
+      ? Math.round(
+          active /
+          totalDays *
+          100
+        )
+      : 0;
+
+
+  progressText.textContent =
+    progress + "%";
+
+  progressBar.style.width =
+    progress + "%";
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderAll() {
+
+  renderCalendar();
+
+  updateEditor();
+
+  renderStats();
+}
+
+
+/* =========================================================
+   QUICK BUTTONS
+========================================================= */
+
+document
+  .querySelectorAll(
+    "[data-add]"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const amount =
+            Number(
+              button.dataset.add
+            );
+
+          const current =
+            Number(
+              scoreInput.value
+            ) || 0;
+
+          scoreInput.value =
+            current + amount;
+
+          editorScore.textContent =
+            scoreInput.value > 0
+              ? "+" + scoreInput.value
+              : scoreInput.value;
+        }
+      );
+    }
+  );
+
+
+/* =========================================================
+   +/- BUTTONS
+========================================================= */
+
+document
+  .getElementById("minusButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      scoreInput.value =
+        (
+          Number(
+            scoreInput.value
+          ) || 0
+        ) - 1;
+    }
+  );
+
+
+document
+  .getElementById("plusButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      scoreInput.value =
+        (
+          Number(
+            scoreInput.value
+          ) || 0
+        ) + 1;
+    }
+  );
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+document
+  .getElementById("resetButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      const key =
+        dateKey(
+          selectedDate
+        );
+
+      scoreInput.value =
+        data[key] || 0;
+    }
+  );
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+document
+  .getElementById("saveButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      if (saving) {
+        return;
+      }
+
+      saving = true;
+
+      const button =
+        document.getElementById(
+          "saveButton"
+        );
+
+      const year =
+        selectedDate.getFullYear();
+
+      const month =
+        selectedDate.getMonth();
+
+      const day =
+        selectedDate.getDate();
+
+      const key =
+        dateKey(
+          selectedDate
+        );
+
+      const value =
+        Math.trunc(
+          Number(
+            scoreInput.value
+          ) || 0
+        );
+
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "SAVING...";
+
+
+      /*
+        즉시 UI 반영
+      */
+
+      data[key] =
+        value;
+
+      renderAll();
+
+
+      try {
+
+        /*
+          서버의 최신 월 데이터를 먼저 가져온다.
+          서버가 안 되면 현재 로컬 데이터 사용.
+        */
+
+        let monthData;
+
+        try {
+
+          monthData =
+            await getMonth(
+              year,
+              month
+            );
+
+        } catch {
+
+          monthData =
+            getMonthArray(
+              year,
+              month
+            );
+        }
+
+
+        if (!Array.isArray(monthData)) {
+
+          monthData =
+            getMonthArray(
+              year,
+              month
+            );
+        }
+
+
+        monthData[
+          day - 1
+        ] = value;
+
+
+        await saveMonth(
+          year,
+          month,
+          monthData
+        );
+
+
+        /*
+          저장 성공
+        */
+
+        applyMonth(
+          year,
+          month,
+          monthData
+        );
+
+        setStatus(
+          "Saved",
+          "online"
+        );
+
+        renderAll();
+
+      } catch (error) {
+
+        console.error(
+          "Save failed:",
+          error
+        );
+
+        setStatus(
+          "Local only",
+          "error"
+        );
+
+      } finally {
+
+        saving = false;
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "SAVE SCORE";
+      }
+    }
+  );
+
+
+/* =========================================================
+   MONTH NAVIGATION
+========================================================= */
+
+document
+  .getElementById("prevMonth")
+  .addEventListener(
+    "click",
+    () => {
+
+      const next =
+        new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() - 1,
+          1
+        );
+
+      if (
+        next >=
+        new Date(
+          START.getFullYear(),
+          START.getMonth(),
+          1
+        )
+      ) {
+
+        currentMonth =
+          next;
+
+        renderCalendar();
+      }
+    }
+  );
+
+
+document
+  .getElementById("nextMonth")
+  .addEventListener(
+    "click",
+    () => {
+
+      const next =
+        new Date(
+          currentMonth.getFullYear(),
+          currentMonth.getMonth() + 1,
+          1
+        );
+
+      if (
+        next <=
+        new Date(
+          END.getFullYear(),
+          END.getMonth(),
+          1
+        )
+      ) {
+
+        currentMonth =
+          next;
+
+        renderCalendar();
+      }
+    }
+  );
+
+
+/* =========================================================
+   INITIAL RENDER
+========================================================= */
+
+renderAll();
+
+
+/*
+  중요:
+  서버 연결이 실패해도
+  UI는 여기서 이미 작동한다.
+*/
+
+loadData();
+</script>
+
 </body>
 </html>
