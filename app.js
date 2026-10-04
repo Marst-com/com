@@ -142,14 +142,12 @@ function getMonthData(year, month) {
   return result;
 }
 
-function parseMonthValue(text, year, month) {
-  if (!text || !text.trim()) {
-    return null;
-  }
+function parseMonthValue(text) {
+  if (!text) return null;
 
-  let value = text.trim();
+  let value = String(text).trim();
 
-  // 일반 JSON
+  // 1. 그대로 JSON 파싱
   try {
     const parsed = JSON.parse(value);
 
@@ -157,12 +155,13 @@ function parseMonthValue(text, year, month) {
       return parsed;
     }
 
-    // 혹시 {"value":"[...]"} 같은 응답이면 처리
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      typeof parsed.value === "string"
-    ) {
+    // {"value": [...]}
+    if (parsed && Array.isArray(parsed.value)) {
+      return parsed.value;
+    }
+
+    // {"value": "[0,1,2,...]"}
+    if (parsed && typeof parsed.value === "string") {
       try {
         const inner = JSON.parse(parsed.value);
 
@@ -172,16 +171,24 @@ function parseMonthValue(text, year, month) {
       } catch {}
     }
 
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      Array.isArray(parsed.value)
-    ) {
-      return parsed.value;
+    // {"data": [...]}
+    if (parsed && Array.isArray(parsed.data)) {
+      return parsed.data;
+    }
+
+    // {"data": "[...]"}
+    if (parsed && typeof parsed.data === "string") {
+      try {
+        const inner = JSON.parse(parsed.data);
+
+        if (Array.isArray(inner)) {
+          return inner;
+        }
+      } catch {}
     }
   } catch {}
 
-  // URL encoded
+  // 2. URL encoded 값
   try {
     const decoded = decodeURIComponent(value);
 
@@ -193,11 +200,11 @@ function parseMonthValue(text, year, month) {
           return parsed;
         }
 
-        if (
-          parsed &&
-          typeof parsed === "object" &&
-          typeof parsed.value === "string"
-        ) {
+        if (parsed && Array.isArray(parsed.value)) {
+          return parsed.value;
+        }
+
+        if (parsed && typeof parsed.value === "string") {
           const inner = JSON.parse(parsed.value);
 
           if (Array.isArray(inner)) {
@@ -208,7 +215,7 @@ function parseMonthValue(text, year, month) {
     }
   } catch {}
 
-  // 문자열 안에 JSON 배열이 들어있는 경우
+  // 3. JSON 문자열 안에 JSON이 들어간 경우
   try {
     const first = JSON.parse(value);
 
@@ -221,9 +228,23 @@ function parseMonthValue(text, year, month) {
     }
   } catch {}
 
+  // 4. 응답에 배열 부분만 들어있는 경우
+  const match = value.match(/\[[\s\S]*\]/);
+
+  if (match) {
+    try {
+      const parsed = JSON.parse(match[0]);
+
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch {}
+  }
+
+  console.warn("KeyVal raw response:", text);
+
   return null;
 }
-
 function normalizeMonth(raw, year, month) {
   const days = daysInMonth(year, month);
   const result = new Array(days).fill(0);
