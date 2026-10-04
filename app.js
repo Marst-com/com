@@ -1,8 +1,11 @@
 const KEY = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 const API = "https://api.keyval.org";
 
-const START = new Date(2026, 9, 1);  // 2026-10-01
-const END = new Date(2027, 2, 31);   // 2027-03-31
+const START = new Date(2026, 9, 1);   // 2026-10-01
+const END   = new Date(2027, 2, 31);  // 2027-03-31
+
+const SYNC_INTERVAL = 500;
+const REQUEST_TIMEOUT = 5000;
 
 let data = {};
 let selectedDate = new Date(2026, 9, 4);
@@ -10,6 +13,8 @@ let currentMonth = new Date(2026, 9, 1);
 
 let snapshot = "";
 let isSaving = false;
+let syncLockedUntil = 0;
+let initialized = false;
 
 
 /* =========================
@@ -58,7 +63,7 @@ const minus = document.getElementById("minus");
 
 
 /* =========================
-   DATE HELPERS
+   DATE
 ========================= */
 
 function pad(n) {
@@ -66,16 +71,7 @@ function pad(n) {
 }
 
 function keyOf(date) {
-  return [
-    date.getFullYear(),
-    pad(date.getMonth() + 1),
-    pad(date.getDate())
-  ].join("-");
-}
-
-function dateFromKey(key) {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, m - 1, d);
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
 function isAllowed(date) {
@@ -109,8 +105,29 @@ function daysInMonth(year, month) {
 
 
 /* =========================
-   DATA
+   DATA VALIDATION
 ========================= */
+
+/*
+  중요한 부분:
+  서버에서 받은 값이 진짜 객체인지 확인한다.
+
+  null / 빈 문자열 / 이상한 응답이면
+  절대로 기존 데이터를 0으로 만들지 않는다.
+*/
+
+function isValidDataObject(value) {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  if (Array.isArray(value)) {
+    return false;
+  }
+
+  return true;
+}
+
 
 function normalize(raw) {
   const result = {};
@@ -124,14 +141,15 @@ function normalize(raw) {
   while (cursor <= END) {
     const key = keyOf(cursor);
 
-    const value =
+    if (
       raw &&
-      typeof raw === "object" &&
+      Object.prototype.hasOwnProperty.call(raw, key) &&
       Number.isFinite(Number(raw[key]))
-        ? Number(raw[key])
-        : 0;
-
-    result[key] = Math.trunc(value);
+    ) {
+      result[key] = Math.trunc(Number(raw[key]));
+    } else {
+      result[key] = 0;
+    }
 
     cursor.setDate(cursor.getDate() + 1);
   }
@@ -141,10 +159,14 @@ function normalize(raw) {
 
 
 /* =========================
-   KEYVAL
+   FETCH
 ========================= */
 
-async function fetchWithTimeout(url, options = {}, timeout = 5000) {
+async function fetchWithTimeout(
+  url,
+  options = {},
+  timeout = REQUEST_TIMEOUT
+) {
   const controller = new AbortController();
 
   const timer = setTimeout(
@@ -164,158 +186,283 @@ async function fetchWithTimeout(url, options = {}, timeout = 5000) {
 }
 
 
+/* =========================
+   KEYVAL PARSER
+========================= */
+
+function parseKeyValResponse(text) {
+  if (
+    typeof text !== "string" ||
+    text.trim() === ""
+  ) {
+    return null;
+  }
+
+  let value = text.trim();
+
+  /*
+    1차 JSON
+  */
+  try {
+    const parsed = JSON.parse(value);
+
+    if (isValidDataObject(parsed)) {
+      return parsed;
+    }
+
+    if (typeof parsed === "string") {
+      value = parsed;
+    }
+  } catch {}
+
+
+  /*
+    URL encoded JSON
+  */
+  try {
+    const decoded = decodeURIComponent(value);
+
+    if (decoded !== value) {
+      try {
+        const parsed = JSON.parse(decoded);
+
+        if (isValidDataObject(parsed)) {
+          return parsed;
+        }
+      } catch {}
+    }
+  } catch {}
+
+
+  /*
+    혹시 서버가 JSON 문자열 안에
+    다시 JSON을 넣어둔 경우
+  */
+  try {
+    const parsedAgain = JSON.parse(value);
+
+    if (typeof parsedAgain === "string") {
+      const second = JSON.parse(parsedAgain);
+
+      if (isValidDataObject(second)) {
+        return second;
+      }
+    }
+  } catch {}
+
+  return null;
+}
+
+
+/* =========================
+   GET
+========================= */
+
 async function getRemote() {
   const response = await fetchWithTimeout(
     `${API}/get/${KEY}?t=${Date.now()}`
   );
 
   if (!response.ok) {
-    throw new Error("GET failed");
+    throw new Error(`GET ${response.status}`);
   }
 
   const text = await response.text();
 
-  if (!text || text === "null") {
-    return {};
+  const parsed = parseKeyValResponse(text);
+
+  /*
+    여기서 null이면
+    "DB가 0이다"가 아니라
+    "DB 응답을 읽지 못했다"이다.
+  */
+
+  if (!isValidDataObject(parsed)) {
+    throw new Error("Invalid DB response");
   }
 
-  let value = text;
-
-  try {
-    value = JSON.parse(value);
-  } catch {}
-
-  if (typeof value === "string") {
-    try {
-      value = decodeURIComponent(value);
-    } catch {}
-
-    try {
-      value = JSON.parse(value);
-    } catch {}
-  }
-
-  if (value && typeof value === "object") {
-    return value;
-  }
-
-  return {};
+  return parsed;
 }
 
 
+/* =========================
+   SET
+========================= */
+
 async function setRemote(value) {
-  const encoded = encodeURIComponent(
-    JSON.stringify(value)
-  );
+  const json = JSON.stringify(value);
+  const encoded = encodeURIComponent(json);
 
   const response = await fetchWithTimeout(
     `${API}/set/${KEY}/${encoded}`,
     {
       method: "GET"
-    },
-    5000
+    }
   );
 
   if (!response.ok) {
-    throw new Error("SET failed");
+    throw new Error(`SET ${response.status}`);
   }
+
+  return true;
 }
 
 
 /* =========================
-   SYNC UI
+   STATUS
 ========================= */
 
 function setSyncStatus(type, text) {
   syncText.textContent = text;
 
-  const dot = document.querySelector(".sync i");
+  const dot =
+    document.querySelector(".sync i");
 
   if (!dot) return;
 
   if (type === "online") {
     dot.style.background = "#61efb9";
-    dot.style.boxShadow = "0 0 10px #61efb9";
+    dot.style.boxShadow =
+      "0 0 10px #61efb9";
   }
 
   if (type === "loading") {
     dot.style.background = "#ffcf5c";
-    dot.style.boxShadow = "0 0 10px #ffcf5c";
+    dot.style.boxShadow =
+      "0 0 10px #ffcf5c";
   }
 
   if (type === "offline") {
     dot.style.background = "#ff6687";
-    dot.style.boxShadow = "0 0 10px #ff6687";
+    dot.style.boxShadow =
+      "0 0 10px #ff6687";
   }
 }
 
 
 /* =========================
-   LOAD
+   INITIAL LOAD
 ========================= */
 
 async function load() {
-  setSyncStatus("loading", "Connecting...");
+  setSyncStatus(
+    "loading",
+    "Connecting..."
+  );
 
   try {
     const remote = await getRemote();
 
+    /*
+      정상적인 객체일 때만 적용
+    */
     data = normalize(remote);
     snapshot = JSON.stringify(data);
 
-    setSyncStatus("online", "Synced");
+    setSyncStatus(
+      "online",
+      "Synced"
+    );
 
   } catch (error) {
-    data = normalize({});
+    /*
+      DB가 비어 있거나 아직 생성되지 않은 경우
+      최초 1회만 0으로 시작한다.
 
-    setSyncStatus("offline", "Offline");
+      이후 sync에서 오류가 난다고
+      기존 데이터를 0으로 바꾸지는 않는다.
+    */
+
+    if (!initialized) {
+      data = normalize({});
+      snapshot = JSON.stringify(data);
+    }
+
+    setSyncStatus(
+      "offline",
+      "Offline"
+    );
   }
+
+  initialized = true;
 
   render();
 }
 
 
 /* =========================
-   SYNC
+   FAST SYNC
 ========================= */
 
 async function sync() {
+  if (!initialized) return;
+
   if (isSaving) return;
 
+  /*
+    저장 직후 일정 시간 동안
+    GET이 이전 DB 값을 가져오는 것을 방지.
+  */
+  if (Date.now() < syncLockedUntil) {
+    return;
+  }
+
   try {
-    const remote = normalize(
-      await getRemote()
-    );
+    const remote = await getRemote();
+
+    /*
+      정상 응답만 처리
+    */
+    if (!isValidDataObject(remote)) {
+      return;
+    }
+
+    const normalized =
+      normalize(remote);
 
     const nextSnapshot =
-      JSON.stringify(remote);
+      JSON.stringify(normalized);
 
+    /*
+      실제 값이 바뀌었을 때만 렌더링
+    */
     if (nextSnapshot !== snapshot) {
-      data = remote;
+      data = normalized;
       snapshot = nextSnapshot;
 
       render();
     }
 
-    setSyncStatus("online", "Synced");
+    setSyncStatus(
+      "online",
+      "Synced"
+    );
 
   } catch {
-    setSyncStatus("offline", "Offline");
+    /*
+      실패했다고 기존 data를 건드리지 않는다.
+    */
+
+    setSyncStatus(
+      "offline",
+      "Sync retry..."
+    );
   }
 }
 
 
 /* =========================
-   SELECT DATE
+   SELECT
 ========================= */
 
 function selectDate(date) {
-  if (!isAllowed(date)) return;
+  if (!isAllowed(date)) {
+    return;
+  }
 
   selectedDate = new Date(date);
 
   updateEditor();
-
   renderCalendar();
 }
 
@@ -337,13 +484,14 @@ function updateEditor() {
   infoValue.textContent = value;
 
   if (value > 0) {
-    editorScore.style.color = "#62efbe";
-    editorScore.style.webkitTextFillColor = "#62efbe";
+    editorScore.style.webkitTextFillColor =
+      "#62efbe";
   } else if (value < 0) {
-    editorScore.style.color = "#ff6e8b";
-    editorScore.style.webkitTextFillColor = "#ff6e8b";
+    editorScore.style.webkitTextFillColor =
+      "#ff6e8b";
   } else {
-    editorScore.style.webkitTextFillColor = "transparent";
+    editorScore.style.webkitTextFillColor =
+      "transparent";
   }
 }
 
@@ -353,14 +501,17 @@ function updateEditor() {
 ========================= */
 
 function changeInput(amount) {
-  let value = Number(scoreInput.value) || 0;
+  let value =
+    Number(scoreInput.value) || 0;
 
   value += amount;
 
   scoreInput.value = value;
+
   editorScore.textContent = value;
   infoValue.textContent = value;
 }
+
 
 function quickChange(amount) {
   changeInput(amount);
@@ -382,38 +533,97 @@ async function saveDate() {
 
   isSaving = true;
 
-  saveButton.textContent = "SAVING...";
+  /*
+    저장하는 동안 sync 차단
+  */
+  syncLockedUntil =
+    Date.now() + 2500;
+
+  saveButton.textContent =
+    "SAVING...";
 
   try {
     /*
-      저장 직전에 최신 서버값을 가져온다.
-      다른 기기에서 바뀐 날짜들을 덮어쓰는 것을 최소화.
+      최신 서버 데이터 가져오기
     */
     let latest;
 
     try {
-      latest = normalize(await getRemote());
+      const remote =
+        await getRemote();
+
+      if (isValidDataObject(remote)) {
+        latest = normalize(remote);
+      } else {
+        throw new Error(
+          "Invalid remote data"
+        );
+      }
+
     } catch {
-      latest = { ...data };
+      /*
+        서버 조회 실패 시
+        현재 정상 로컬 데이터를 기반으로 저장
+      */
+      latest = {
+        ...data
+      };
     }
 
+
+    /*
+      딱 선택한 날짜만 수정
+    */
     latest[key] = value;
 
+
+    /*
+      서버 저장
+    */
     await setRemote(latest);
 
-    data = latest;
-    snapshot = JSON.stringify(data);
 
-    setSyncStatus("online", "Saved");
+    /*
+      저장 성공했으므로 로컬 반영
+    */
+    data = latest;
+
+    snapshot =
+      JSON.stringify(data);
+
+
+    /*
+      저장 직후 2.5초간 sync 금지.
+      이전 서버 응답이 늦게 도착해서
+      저장값을 되돌리는 현상을 방지.
+    */
+    syncLockedUntil =
+      Date.now() + 2500;
+
+
+    setSyncStatus(
+      "online",
+      "Saved"
+    );
 
     render();
 
   } catch (error) {
-    setSyncStatus("offline", "Save failed");
+    console.error(
+      "Save failed:",
+      error
+    );
+
+    setSyncStatus(
+      "offline",
+      "Save failed"
+    );
 
   } finally {
     isSaving = false;
-    saveButton.textContent = "SAVE SCORE";
+
+    saveButton.textContent =
+      "SAVE SCORE";
   }
 }
 
@@ -425,34 +635,44 @@ async function saveDate() {
 function renderCalendar() {
   calendar.innerHTML = "";
 
-  const year = currentMonth.getFullYear();
-  const month = currentMonth.getMonth();
+  const year =
+    currentMonth.getFullYear();
 
-  monthTitle.textContent = monthName(currentMonth);
+  const month =
+    currentMonth.getMonth();
 
-  const totalDays = daysInMonth(
-    year,
-    month
-  );
+  monthTitle.textContent =
+    monthName(currentMonth);
+
+  const totalDays =
+    daysInMonth(year, month);
 
   monthMeta.textContent =
     `${totalDays} days`;
 
+
   /*
-    자기 달의 시작 요일만 빈칸으로 만든다.
-    앞/뒤 달 날짜는 절대 만들지 않는다.
+    현재 달 1일의 요일만 빈칸으로 만든다.
+    앞뒤 달 날짜는 절대 생성하지 않는다.
   */
 
   const firstDay =
     new Date(year, month, 1).getDay();
 
-  for (let i = 0; i < firstDay; i++) {
-    const empty = document.createElement("div");
+  for (
+    let i = 0;
+    i < firstDay;
+    i++
+  ) {
+    const empty =
+      document.createElement("div");
 
-    empty.className = "day empty";
+    empty.className =
+      "day empty";
 
     calendar.appendChild(empty);
   }
+
 
   for (
     let dayNumber = 1;
@@ -460,24 +680,25 @@ function renderCalendar() {
     dayNumber++
   ) {
     const date =
-      new Date(year, month, dayNumber);
-
-    const key = keyOf(date);
-
-    /*
-      기간 밖이면 날짜 자체를 표시하지 않음.
-      특히 2026년 10월 이전 / 2027년 4월 이후 제거.
-    */
+      new Date(
+        year,
+        month,
+        dayNumber
+      );
 
     if (!isAllowed(date)) {
-      const empty = document.createElement("div");
+      const empty =
+        document.createElement("div");
 
-      empty.className = "day empty";
+      empty.className =
+        "day empty";
 
       calendar.appendChild(empty);
 
       continue;
     }
+
+    const key = keyOf(date);
 
     const value =
       Number(data[key] || 0);
@@ -487,21 +708,31 @@ function renderCalendar() {
 
     cell.className = "day";
 
+
     if (
       key === keyOf(selectedDate)
     ) {
-      cell.classList.add("selected");
+      cell.classList.add(
+        "selected"
+      );
     }
+
 
     const now = new Date();
 
     if (
-      date.getFullYear() === now.getFullYear() &&
-      date.getMonth() === now.getMonth() &&
-      date.getDate() === now.getDate()
+      date.getFullYear() ===
+        now.getFullYear() &&
+      date.getMonth() ===
+        now.getMonth() &&
+      date.getDate() ===
+        now.getDate()
     ) {
-      cell.classList.add("today");
+      cell.classList.add(
+        "today"
+      );
     }
+
 
     let scoreClass = "zero";
 
@@ -513,16 +744,19 @@ function renderCalendar() {
       scoreClass = "negative";
     }
 
+
     const scoreText =
       value > 0
         ? `+${value}`
         : `${value}`;
+
 
     const barWidth =
       Math.min(
         Math.abs(value) * 10,
         100
       );
+
 
     cell.innerHTML = `
       <div class="day-number">
@@ -541,12 +775,12 @@ function renderCalendar() {
       </div>
     `;
 
+
     cell.addEventListener(
       "pointerdown",
-      () => {
-        selectDate(date);
-      }
+      () => selectDate(date)
     );
+
 
     calendar.appendChild(cell);
   }
@@ -564,8 +798,11 @@ function renderStats() {
   let active = 0;
   let best = 0;
 
-  for (const value of Object.values(data)) {
-    const n = Number(value) || 0;
+  for (
+    const value of Object.values(data)
+  ) {
+    const n =
+      Number(value) || 0;
 
     total += n;
 
@@ -584,22 +821,30 @@ function renderStats() {
     }
   }
 
+
   const allDays =
     Object.keys(data).length;
 
   const completed =
     Object.values(data)
-      .filter(v => Number(v) !== 0)
+      .filter(
+        value => Number(value) !== 0
+      )
       .length;
+
 
   const progress =
     allDays === 0
       ? 0
       : Math.round(
-          completed / allDays * 100
+          completed /
+          allDays *
+          100
         );
 
-  totalScore.textContent = total;
+
+  totalScore.textContent =
+    total;
 
   positiveScore.textContent =
     `+${positive}`;
@@ -614,22 +859,33 @@ function renderStats() {
     active;
 
   bestDay.textContent =
-    best > 0 ? `+${best}` : best;
+    best > 0
+      ? `+${best}`
+      : best;
 
-  progressBar.style.width =
-    `${Math.min(
+
+  /*
+    총점 표시용
+  */
+  const scorePercent =
+    Math.min(
       Math.max(
         (total + 100) / 200 * 100,
         0
       ),
       100
-    )}%`;
+    );
+
+  progressBar.style.width =
+    `${scorePercent}%`;
+
 
   periodProgress.textContent =
     `${progress}%`;
 
   periodProgressBar.style.width =
     `${progress}%`;
+
 
   if (total >= 100) {
     quote.textContent =
@@ -651,37 +907,38 @@ function renderStats() {
 
 
 /* =========================
-   MONTH NAVIGATION
+   MONTH
 ========================= */
 
 function canGoPrevious() {
   return (
-    currentMonth.getFullYear() > START.getFullYear() ||
+    currentMonth.getFullYear() >
+      START.getFullYear() ||
     (
-      currentMonth.getFullYear() === START.getFullYear() &&
-      currentMonth.getMonth() > START.getMonth()
+      currentMonth.getFullYear() ===
+        START.getFullYear() &&
+      currentMonth.getMonth() >
+        START.getMonth()
     )
   );
 }
 
+
 function canGoNext() {
   return (
-    currentMonth.getFullYear() < END.getFullYear() ||
+    currentMonth.getFullYear() <
+      END.getFullYear() ||
     (
-      currentMonth.getFullYear() === END.getFullYear() &&
-      currentMonth.getMonth() < END.getMonth()
+      currentMonth.getFullYear() ===
+        END.getFullYear() &&
+      currentMonth.getMonth() <
+        END.getMonth()
     )
   );
 }
 
 
 function moveMonth(direction) {
-  const next = new Date(
-    currentMonth.getFullYear(),
-    currentMonth.getMonth() + direction,
-    1
-  );
-
   if (
     direction < 0 &&
     !canGoPrevious()
@@ -696,7 +953,13 @@ function moveMonth(direction) {
     return;
   }
 
-  currentMonth = next;
+  currentMonth =
+    new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth() +
+        direction,
+      1
+    );
 
   renderCalendar();
 }
@@ -707,7 +970,8 @@ function moveMonth(direction) {
 ========================= */
 
 function resetEditor() {
-  const key = keyOf(selectedDate);
+  const key =
+    keyOf(selectedDate);
 
   scoreInput.value =
     Number(data[key] || 0);
@@ -721,13 +985,17 @@ function resetEditor() {
 ========================= */
 
 document
-  .querySelectorAll("[data-change]")
+  .querySelectorAll(
+    "[data-change]"
+  )
   .forEach(button => {
     button.addEventListener(
       "pointerdown",
       () => {
         quickChange(
-          Number(button.dataset.change)
+          Number(
+            button.dataset.change
+          )
         );
       }
     );
@@ -738,6 +1006,7 @@ plus.addEventListener(
   "pointerdown",
   () => changeInput(1)
 );
+
 
 minus.addEventListener(
   "pointerdown",
@@ -751,8 +1020,11 @@ scoreInput.addEventListener(
     const value =
       Number(scoreInput.value) || 0;
 
-    editorScore.textContent = value;
-    infoValue.textContent = value;
+    editorScore.textContent =
+      value;
+
+    infoValue.textContent =
+      value;
   }
 );
 
@@ -807,19 +1079,24 @@ function render() {
 ========================= */
 
 async function init() {
+  /*
+    화면 먼저 표시
+  */
   data = normalize({});
 
-  /*
-    네트워크 연결을 기다리지 않고
-    화면부터 즉시 보여준다.
-  */
   render();
 
+  /*
+    DB 최초 로드
+  */
   await load();
 
+  /*
+    500ms마다 빠른 동기화
+  */
   setInterval(
     sync,
-    1000
+    SYNC_INTERVAL
   );
 }
 
