@@ -1,126 +1,239 @@
 const BASE_KEY = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 const API = "https://api.keyval.org";
 
-const START = new Date(2026, 9, 1);
-const END = new Date(2027, 2, 31);
+const START = new Date(2026, 9, 1);  // 2026-10-01
+const END   = new Date(2027, 2, 31); // 2027-03-31
 
 const SYNC_INTERVAL = 1000;
 const REQUEST_TIMEOUT = 5000;
 
+
+/* =========================================================
+   MONTH DATABASE
+========================================================= */
+
 const MONTHS = [
-  { year: 2026, month: 9, key: `${BASE_KEY}-2026-10` },
-  { year: 2026, month: 10, key: `${BASE_KEY}-2026-11` },
-  { year: 2026, month: 11, key: `${BASE_KEY}-2026-12` },
-  { year: 2027, month: 0, key: `${BASE_KEY}-2027-01` },
-  { year: 2027, month: 1, key: `${BASE_KEY}-2027-02` },
-  { year: 2027, month: 2, key: `${BASE_KEY}-2027-03` }
+  {
+    year: 2026,
+    month: 9,
+    key: `${BASE_KEY}-2026-10`
+  },
+  {
+    year: 2026,
+    month: 10,
+    key: `${BASE_KEY}-2026-11`
+  },
+  {
+    year: 2026,
+    month: 11,
+    key: `${BASE_KEY}-2026-12`
+  },
+  {
+    year: 2027,
+    month: 0,
+    key: `${BASE_KEY}-2027-01`
+  },
+  {
+    year: 2027,
+    month: 1,
+    key: `${BASE_KEY}-2027-02`
+  },
+  {
+    year: 2027,
+    month: 2,
+    key: `${BASE_KEY}-2027-03`
+  }
 ];
 
+
+/* =========================================================
+   STATE
+========================================================= */
+
 let data = {};
-let selectedDate = new Date(2026, 9, 4);
-let currentMonth = new Date(2026, 9, 1);
+
+let selectedDate =
+  new Date(2026, 9, 4);
+
+let currentMonth =
+  new Date(2026, 9, 1);
 
 let initialized = false;
 let isSaving = false;
 let syncLockedUntil = 0;
 
-const $ = id => document.getElementById(id);
 
-const calendar = $("calendar");
-const monthTitle = $("monthTitle");
-const selectedDateText = $("selectedDate");
-const scoreInput = $("scoreInput");
-const totalScore = $("totalScore");
-const positiveScore = $("positiveScore");
-const negativeScore = $("negativeScore");
-const activeDays = $("activeDays");
-const bestDay = $("bestDay");
-const progressBar = $("progressBar");
-const syncStatus = $("syncStatus");
-const saveButton = $("saveButton");
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+const calendar =
+  $("calendar");
+
+const monthTitle =
+  $("monthTitle");
+
+const selectedDateText =
+  $("selectedDate");
+
+const scoreInput =
+  $("scoreInput");
+
+const totalScore =
+  $("totalScore");
+
+const positiveScore =
+  $("positiveScore");
+
+const negativeScore =
+  $("negativeScore");
+
+const activeDays =
+  $("activeDays");
+
+const bestDay =
+  $("bestDay");
+
+const progressBar =
+  $("progressBar");
+
+const syncStatus =
+  $("syncStatus");
+
+const saveButton =
+  $("saveButton");
 
 
-/* =========================
-   DATE
-========================= */
+/* =========================================================
+   DATE HELPERS
+========================================================= */
 
-function pad(n) {
-  return String(n).padStart(2, "0");
+function pad(number) {
+  return String(number).padStart(2, "0");
 }
+
 
 function keyOf(date) {
-  return [
-    date.getFullYear(),
-    pad(date.getMonth() + 1),
-    pad(date.getDate())
-  ].join("-");
+  return (
+    `${date.getFullYear()}-` +
+    `${pad(date.getMonth() + 1)}-` +
+    `${pad(date.getDate())}`
+  );
 }
+
+
+function monthKey(year, month) {
+  return (
+    `${year}-${pad(month + 1)}`
+  );
+}
+
 
 function daysInMonth(year, month) {
-  return new Date(year, month + 1, 0).getDate();
+  return new Date(
+    year,
+    month + 1,
+    0
+  ).getDate();
 }
+
 
 function monthName(date) {
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
+  return (
+    `${date.getFullYear()}년 ` +
+    `${date.getMonth() + 1}월`
+  );
 }
+
 
 function formatLong(date) {
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  return (
+    `${date.getFullYear()}년 ` +
+    `${date.getMonth() + 1}월 ` +
+    `${date.getDate()}일`
+  );
 }
+
 
 function formatWeekday(date) {
-  return ["일", "월", "화", "수", "목", "금", "토"][date.getDay()];
+  return [
+    "일요일",
+    "월요일",
+    "화요일",
+    "수요일",
+    "목요일",
+    "금요일",
+    "토요일"
+  ][date.getDay()];
 }
 
-function isAllowed(date) {
-  const time = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate()
-  ).getTime();
 
-  return (
-    time >= new Date(
+function isAllowed(date) {
+  const value =
+    new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    ).getTime();
+
+  const start =
+    new Date(
       START.getFullYear(),
       START.getMonth(),
       START.getDate()
-    ).getTime()
-    &&
-    time <= new Date(
+    ).getTime();
+
+  const end =
+    new Date(
       END.getFullYear(),
       END.getMonth(),
       END.getDate()
-    ).getTime()
+    ).getTime();
+
+  return (
+    value >= start &&
+    value <= end
   );
 }
+
 
 function getMonthInfo(year, month) {
   return MONTHS.find(
-    m => m.year === year && m.month === month
+    item =>
+      item.year === year &&
+      item.month === month
   );
 }
 
 
-/* =========================
-   DATA
-========================= */
+/* =========================================================
+   LOCAL DATA
+========================================================= */
 
 function buildEmptyData() {
   const result = {};
 
-  const date = new Date(
-    START.getFullYear(),
-    START.getMonth(),
-    START.getDate()
-  );
+  const cursor =
+    new Date(
+      START.getFullYear(),
+      START.getMonth(),
+      START.getDate()
+    );
 
-  while (date <= END) {
-    result[keyOf(date)] = 0;
-    date.setDate(date.getDate() + 1);
+  while (cursor <= END) {
+    result[keyOf(cursor)] = 0;
+
+    cursor.setDate(
+      cursor.getDate() + 1
+    );
   }
 
   return result;
 }
+
 
 function createEmptyMonth(year, month) {
   return new Array(
@@ -128,12 +241,23 @@ function createEmptyMonth(year, month) {
   ).fill(0);
 }
 
-function getLocalMonth(year, month) {
-  const result = createEmptyMonth(year, month);
 
-  for (let day = 1; day <= result.length; day++) {
+function getLocalMonth(year, month) {
+  const result =
+    createEmptyMonth(
+      year,
+      month
+    );
+
+  for (
+    let day = 1;
+    day <= result.length;
+    day++
+  ) {
     const key =
-      `${year}-${pad(month + 1)}-${pad(day)}`;
+      `${year}-` +
+      `${pad(month + 1)}-` +
+      `${pad(day)}`;
 
     result[day - 1] =
       Number(data[key]) || 0;
@@ -142,115 +266,199 @@ function getLocalMonth(year, month) {
   return result;
 }
 
-function applyMonth(year, month, values) {
-  if (!Array.isArray(values)) return;
 
-  const days = daysInMonth(year, month);
+function applyMonth(
+  year,
+  month,
+  values
+) {
+  if (!Array.isArray(values)) {
+    return;
+  }
 
-  for (let day = 1; day <= days; day++) {
+  const days =
+    daysInMonth(
+      year,
+      month
+    );
+
+  for (
+    let day = 1;
+    day <= days;
+    day++
+  ) {
     const key =
-      `${year}-${pad(month + 1)}-${pad(day)}`;
+      `${year}-` +
+      `${pad(month + 1)}-` +
+      `${pad(day)}`;
 
     const value =
       Number(values[day - 1]);
 
-    if (Number.isFinite(value)) {
-      data[key] = Math.trunc(value);
+    if (
+      Number.isFinite(value)
+    ) {
+      data[key] =
+        Math.trunc(value);
     }
   }
 }
 
 
-/* =========================
-   KEYVAL
-========================= */
+/* =========================================================
+   NETWORK
+========================================================= */
 
 async function fetchWithTimeout(
   url,
   options = {},
   timeout = REQUEST_TIMEOUT
 ) {
-  const controller = new AbortController();
+  const controller =
+    new AbortController();
 
-  const timer = setTimeout(
-    () => controller.abort(),
-    timeout
-  );
+  const timer =
+    setTimeout(
+      () => controller.abort(),
+      timeout
+    );
 
   try {
-    return await fetch(url, {
-      ...options,
-      signal: controller.signal,
-      cache: "no-store"
-    });
+    return await fetch(
+      url,
+      {
+        ...options,
+        signal: controller.signal,
+        cache: "no-store"
+      }
+    );
   } finally {
     clearTimeout(timer);
   }
 }
 
 
+/* =========================================================
+   KEYVAL PARSER
+========================================================= */
+
 /*
-  KeyVal 응답은 경우에 따라
+  저장 형식은:
 
-  [0,1,2]
-  {"value":[0,1,2]}
-  {"value":"[0,1,2]"}
-  "[0,1,2]"
+  0,0,1,0,-1,5,...
 
-  등으로 들어올 수 있음.
+  처럼 아주 짧은 CSV 형식으로 사용한다.
+
+  기존 JSON 형식도 읽을 수 있게 해둠.
 */
 
-function parseValue(text) {
-  if (text == null) {
+function parseMonthValue(text) {
+  if (
+    text === null ||
+    text === undefined
+  ) {
     return null;
   }
 
-  const raw = String(text).trim();
+  let raw =
+    String(text).trim();
 
   if (!raw) {
     return null;
   }
 
-  /* 직접 배열 */
-  try {
-    const parsed = JSON.parse(raw);
 
-    if (Array.isArray(parsed)) {
+  /* -----------------------------------------
+     1. CSV
+  ----------------------------------------- */
+
+  if (
+    /^[-+]?[\d\s.,]+$/.test(raw)
+  ) {
+    const parts =
+      raw.split(",");
+
+    if (parts.length >= 1) {
+      const values =
+        parts.map(
+          item => {
+            const number =
+              Number(item.trim());
+
+            return Number.isFinite(number)
+              ? Math.trunc(number)
+              : 0;
+          }
+        );
+
+      return values;
+    }
+  }
+
+
+  /* -----------------------------------------
+     2. JSON
+  ----------------------------------------- */
+
+  try {
+    const parsed =
+      JSON.parse(raw);
+
+    if (
+      Array.isArray(parsed)
+    ) {
       return parsed;
     }
 
-    /* { value: [...] } */
     if (
       parsed &&
-      typeof parsed === "object" &&
-      Array.isArray(parsed.value)
+      typeof parsed === "object"
     ) {
-      return parsed.value;
+      if (
+        Array.isArray(
+          parsed.value
+        )
+      ) {
+        return parsed.value;
+      }
+
+      if (
+        typeof parsed.value ===
+        "string"
+      ) {
+        try {
+          const inner =
+            JSON.parse(
+              parsed.value
+            );
+
+          if (
+            Array.isArray(inner)
+          ) {
+            return inner;
+          }
+        } catch {}
+      }
+
+      if (
+        Array.isArray(
+          parsed.data
+        )
+      ) {
+        return parsed.data;
+      }
     }
 
-    /* { value: "[...]" } */
     if (
-      parsed &&
-      typeof parsed === "object" &&
-      typeof parsed.value === "string"
+      typeof parsed === "string"
     ) {
-      try {
-        const inner =
-          JSON.parse(parsed.value);
-
-        if (Array.isArray(inner)) {
-          return inner;
-        }
-      } catch {}
-    }
-
-    /* JSON 문자열 "[...]" */
-    if (typeof parsed === "string") {
       try {
         const inner =
           JSON.parse(parsed);
 
-        if (Array.isArray(inner)) {
+        if (
+          Array.isArray(inner)
+        ) {
           return inner;
         }
       } catch {}
@@ -259,65 +467,63 @@ function parseValue(text) {
   } catch {}
 
 
-  /* URL encoded */
+  /* -----------------------------------------
+     3. URL encoded
+  ----------------------------------------- */
+
   try {
     const decoded =
       decodeURIComponent(raw);
 
     if (decoded !== raw) {
-      try {
-        const parsed =
-          JSON.parse(decoded);
+      const parsed =
+        parseMonthValue(
+          decoded
+        );
 
-        if (Array.isArray(parsed)) {
-          return parsed;
-        }
-
-        if (
-          parsed &&
-          typeof parsed === "object" &&
-          Array.isArray(parsed.value)
-        ) {
-          return parsed.value;
-        }
-
-        if (
-          parsed &&
-          typeof parsed === "object" &&
-          typeof parsed.value === "string"
-        ) {
-          const inner =
-            JSON.parse(parsed.value);
-
-          if (Array.isArray(inner)) {
-            return inner;
-          }
-        }
-
-      } catch {}
+      if (parsed) {
+        return parsed;
+      }
     }
-
   } catch {}
+
 
   return null;
 }
 
 
-function normalizeMonth(values, year, month) {
+/* =========================================================
+   NORMALIZE
+========================================================= */
+
+function normalizeMonth(
+  values,
+  year,
+  month
+) {
   if (!Array.isArray(values)) {
     return null;
   }
 
   const result =
-    createEmptyMonth(year, month);
+    createEmptyMonth(
+      year,
+      month
+    );
 
-  for (let i = 0; i < result.length; i++) {
-    const value =
+  for (
+    let i = 0;
+    i < result.length;
+    i++
+  ) {
+    const number =
       Number(values[i]);
 
-    if (Number.isFinite(value)) {
+    if (
+      Number.isFinite(number)
+    ) {
       result[i] =
-        Math.trunc(value);
+        Math.trunc(number);
     }
   }
 
@@ -325,20 +531,35 @@ function normalizeMonth(values, year, month) {
 }
 
 
-async function getMonth(year, month) {
+/* =========================================================
+   GET MONTH
+========================================================= */
+
+async function getMonth(
+  year,
+  month
+) {
   const info =
-    getMonthInfo(year, month);
+    getMonthInfo(
+      year,
+      month
+    );
 
   if (!info) {
-    throw new Error("Invalid month");
+    throw new Error(
+      "Invalid month"
+    );
   }
 
   const url =
-    `${API}/get/${encodeURIComponent(info.key)}` +
+    `${API}/get/` +
+    `${encodeURIComponent(info.key)}` +
     `?t=${Date.now()}`;
 
   const response =
-    await fetchWithTimeout(url);
+    await fetchWithTimeout(
+      url
+    );
 
   if (!response.ok) {
     throw new Error(
@@ -350,39 +571,49 @@ async function getMonth(year, month) {
     await response.text();
 
   /*
-    새 KeyVal 키는 아직 값이 없을 수 있음.
-
-    이 경우 에러로 처리하지 않고
-    해당 월을 0으로 시작한다.
+    아직 저장된 데이터가 없으면
+    0으로 시작.
   */
 
-  const parsed =
-    parseValue(text);
-
-  if (!parsed) {
+  if (!text.trim()) {
     return createEmptyMonth(
       year,
       month
     );
   }
 
-  const normalized =
+  const parsed =
+    parseMonthValue(text);
+
+  if (!parsed) {
+    console.warn(
+      "KeyVal response:",
+      text
+    );
+
+    return createEmptyMonth(
+      year,
+      month
+    );
+  }
+
+  return (
     normalizeMonth(
       parsed,
       year,
       month
-    );
-
-  if (!normalized) {
-    return createEmptyMonth(
+    ) ||
+    createEmptyMonth(
       year,
       month
-    );
-  }
-
-  return normalized;
+    )
+  );
 }
 
+
+/* =========================================================
+   SET MONTH
+========================================================= */
 
 async function setMonth(
   year,
@@ -390,27 +621,43 @@ async function setMonth(
   values
 ) {
   const info =
-    getMonthInfo(year, month);
+    getMonthInfo(
+      year,
+      month
+    );
 
   if (!info) {
-    throw new Error("Invalid month");
+    throw new Error(
+      "Invalid month"
+    );
   }
 
-  const json =
-    JSON.stringify(values);
+  /*
+    JSON 대신 CSV를 사용해서
+    KeyVal 값 길이를 최소화한다.
+  */
 
-  const encoded =
-    encodeURIComponent(json);
+  const value =
+    values
+      .map(
+        number =>
+          Math.trunc(
+            Number(number) || 0
+          )
+      )
+      .join(",");
 
   const url =
     `${API}/set/` +
     `${encodeURIComponent(info.key)}/` +
-    encoded;
+    `${encodeURIComponent(value)}`;
 
   const response =
     await fetchWithTimeout(
       url,
-      { method: "GET" }
+      {
+        method: "GET"
+      }
     );
 
   if (!response.ok) {
@@ -423,23 +670,29 @@ async function setMonth(
 }
 
 
-/* =========================
+/* =========================================================
    STATUS
-========================= */
+========================================================= */
 
-function setSyncStatus(type, text) {
-  if (!syncStatus) return;
+function setSyncStatus(
+  type,
+  text
+) {
+  if (!syncStatus) {
+    return;
+  }
 
-  syncStatus.textContent = text;
+  syncStatus.textContent =
+    text;
 
   syncStatus.className =
     `sync-status ${type}`;
 }
 
 
-/* =========================
-   LOAD
-========================= */
+/* =========================================================
+   LOAD ALL
+========================================================= */
 
 async function loadAll() {
   setSyncStatus(
@@ -452,15 +705,16 @@ async function loadAll() {
 
   const results =
     await Promise.allSettled(
-      MONTHS.map(month =>
-        getMonth(
-          month.year,
-          month.month
-        )
+      MONTHS.map(
+        month =>
+          getMonth(
+            month.year,
+            month.month
+          )
       )
     );
 
-  let success = 0;
+  let successCount = 0;
 
   results.forEach(
     (result, index) => {
@@ -477,7 +731,13 @@ async function loadAll() {
           result.value
         );
 
-        success++;
+        successCount++;
+      } else {
+        console.warn(
+          "Month load failed:",
+          month,
+          result.reason
+        );
       }
     }
   );
@@ -485,16 +745,19 @@ async function loadAll() {
   initialized = true;
 
   if (
-    success === MONTHS.length
+    successCount ===
+    MONTHS.length
   ) {
     setSyncStatus(
       "online",
       "Synced"
     );
-  } else if (success > 0) {
+  } else if (
+    successCount > 0
+  ) {
     setSyncStatus(
       "warning",
-      `${success}/${MONTHS.length} synced`
+      `${successCount}/${MONTHS.length} synced`
     );
   } else {
     setSyncStatus(
@@ -507,13 +770,18 @@ async function loadAll() {
 }
 
 
-/* =========================
+/* =========================================================
    SYNC
-========================= */
+========================================================= */
 
 async function sync() {
-  if (!initialized) return;
-  if (isSaving) return;
+  if (!initialized) {
+    return;
+  }
+
+  if (isSaving) {
+    return;
+  }
 
   if (
     Date.now() <
@@ -524,22 +792,16 @@ async function sync() {
 
   const results =
     await Promise.allSettled(
-      MONTHS.map(month =>
-        getMonth(
-          month.year,
-          month.month
-        )
+      MONTHS.map(
+        month =>
+          getMonth(
+            month.year,
+            month.month
+          )
       )
     );
 
-  let success = 0;
-
-  /*
-    서버에서 정상적으로 받은 월만
-    로컬 데이터에 적용한다.
-
-    실패한 월은 절대 0으로 덮지 않는다.
-  */
+  let successCount = 0;
 
   results.forEach(
     (result, index) => {
@@ -559,21 +821,24 @@ async function sync() {
         result.value
       );
 
-      success++;
+      successCount++;
     }
   );
 
   if (
-    success === MONTHS.length
+    successCount ===
+    MONTHS.length
   ) {
     setSyncStatus(
       "online",
       "Synced"
     );
-  } else if (success > 0) {
+  } else if (
+    successCount > 0
+  ) {
     setSyncStatus(
       "warning",
-      `${success}/${MONTHS.length} synced`
+      `${successCount}/${MONTHS.length} synced`
     );
   }
 
@@ -581,9 +846,9 @@ async function sync() {
 }
 
 
-/* =========================
-   DATE EDITOR
-========================= */
+/* =========================================================
+   DATE SELECTION
+========================================================= */
 
 function selectDate(date) {
   if (!isAllowed(date)) {
@@ -602,24 +867,52 @@ function selectDate(date) {
 }
 
 
+/* =========================================================
+   EDITOR
+========================================================= */
+
 function updateEditor() {
+  if (!selectedDate) {
+    return;
+  }
+
   if (selectedDateText) {
     selectedDateText.textContent =
-      formatLong(selectedDate);
+      formatLong(
+        selectedDate
+      );
+  }
+
+  const weekdayElement =
+    document.querySelector(
+      ".selected-weekday"
+    );
+
+  if (weekdayElement) {
+    weekdayElement.textContent =
+      formatWeekday(
+        selectedDate
+      );
   }
 
   if (scoreInput) {
     scoreInput.value =
-      data[keyOf(selectedDate)] ?? 0;
+      data[
+        keyOf(selectedDate)
+      ] ?? 0;
   }
 }
 
 
 function changeInput(amount) {
-  if (!scoreInput) return;
+  if (!scoreInput) {
+    return;
+  }
 
   const current =
-    Number(scoreInput.value) || 0;
+    Number(
+      scoreInput.value
+    ) || 0;
 
   scoreInput.value =
     Math.trunc(
@@ -629,21 +922,29 @@ function changeInput(amount) {
 
 
 function resetScoreInput() {
-  if (!scoreInput) return;
+  if (!scoreInput) {
+    return;
+  }
 
   scoreInput.value =
-    data[keyOf(selectedDate)] ?? 0;
+    data[
+      keyOf(selectedDate)
+    ] ?? 0;
 }
 
 
-/* =========================
+/* =========================================================
    SAVE
-========================= */
+========================================================= */
 
 async function saveDate() {
-  if (isSaving) return;
+  if (isSaving) {
+    return;
+  }
 
-  if (!scoreInput) return;
+  if (!scoreInput) {
+    return;
+  }
 
   const year =
     selectedDate.getFullYear();
@@ -659,7 +960,9 @@ async function saveDate() {
 
   const value =
     Math.trunc(
-      Number(scoreInput.value) || 0
+      Number(
+        scoreInput.value
+      ) || 0
     );
 
   isSaving = true;
@@ -669,14 +972,19 @@ async function saveDate() {
 
   if (saveButton) {
     saveButton.disabled = true;
+
     saveButton.textContent =
       "SAVING...";
   }
 
+  setSyncStatus(
+    "loading",
+    "Saving..."
+  );
+
   try {
     /*
-      서버의 최신 월을 가져온다.
-      없는 월이면 0 배열을 사용한다.
+      서버 최신 데이터 확보
     */
 
     let monthData;
@@ -695,8 +1003,17 @@ async function saveDate() {
         );
     }
 
-    monthData[day - 1] =
-      value;
+    /*
+      선택한 날짜만 변경
+    */
+
+    monthData[
+      day - 1
+    ] = value;
+
+    /*
+      서버 저장
+    */
 
     await setMonth(
       year,
@@ -705,7 +1022,7 @@ async function saveDate() {
     );
 
     /*
-      저장 성공 후 로컬 적용
+      로컬 반영
     */
 
     applyMonth(
@@ -723,7 +1040,7 @@ async function saveDate() {
 
   } catch (error) {
     console.error(
-      "SAVE ERROR:",
+      "Save failed:",
       error
     );
 
@@ -736,7 +1053,9 @@ async function saveDate() {
     isSaving = false;
 
     if (saveButton) {
-      saveButton.disabled = false;
+      saveButton.disabled =
+        false;
+
       saveButton.textContent =
         "SAVE SCORE";
     }
@@ -744,12 +1063,20 @@ async function saveDate() {
 }
 
 
-/* =========================
+/* =========================================================
    CALENDAR
-========================= */
+========================================================= */
 
 function renderCalendar() {
-  if (!calendar) return;
+  if (!calendar) {
+    return;
+  }
+
+  /*
+    주의:
+    HTML에 이미 SUN~SAT가 있으므로
+    JS에서는 요일을 만들지 않는다.
+  */
 
   calendar.innerHTML = "";
 
@@ -772,46 +1099,16 @@ function renderCalendar() {
       month
     );
 
+  const todayKey =
+    keyOf(new Date());
 
-  /* 요일 */
-
-  const weekdays = [
-    "SUN",
-    "MON",
-    "TUE",
-    "WED",
-    "THU",
-    "FRI",
-    "SAT"
-  ];
-
-  weekdays.forEach(day => {
-    const el =
-      document.createElement("div");
-
-    /*
-      기존 CSS가 .weekday-row span
-      구조를 기대한다.
-    */
-
-    el.className =
-      "weekday-row";
-
-    const span =
-      document.createElement("span");
-
-    span.textContent =
-      day;
-
-    el.appendChild(span);
-
-    calendar.appendChild(el);
-  });
+  const selectedKey =
+    keyOf(selectedDate);
 
 
-  /*
-    앞쪽 빈칸
-  */
+  /* -----------------------------------------
+     앞쪽 빈칸
+  ----------------------------------------- */
 
   for (
     let i = 0;
@@ -819,27 +1116,22 @@ function renderCalendar() {
     i++
   ) {
     const empty =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     empty.className =
       "day empty";
 
-    calendar.appendChild(empty);
+    calendar.appendChild(
+      empty
+    );
   }
 
 
-  /*
-    날짜
-  */
-
-  const today =
-    new Date();
-
-  const todayKey =
-    keyOf(today);
-
-  const selectedKey =
-    keyOf(selectedDate);
+  /* -----------------------------------------
+     날짜
+  ----------------------------------------- */
 
   for (
     let day = 1;
@@ -857,23 +1149,33 @@ function renderCalendar() {
       keyOf(date);
 
     const value =
-      Number(data[key]) || 0;
+      Number(
+        data[key]
+      ) || 0;
 
     const cell =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
 
     cell.type = "button";
 
     cell.className =
       "day";
 
-    if (key === selectedKey) {
+
+    if (
+      key === selectedKey
+    ) {
       cell.classList.add(
         "selected"
       );
     }
 
-    if (key === todayKey) {
+
+    if (
+      key === todayKey
+    ) {
       cell.classList.add(
         "today"
       );
@@ -881,7 +1183,9 @@ function renderCalendar() {
 
 
     const number =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     number.className =
       "day-number";
@@ -891,10 +1195,13 @@ function renderCalendar() {
 
 
     const score =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     score.className =
       "day-score";
+
 
     if (value > 0) {
       score.classList.add(
@@ -904,7 +1211,9 @@ function renderCalendar() {
       score.textContent =
         `+${value}`;
 
-    } else if (value < 0) {
+    } else if (
+      value < 0
+    ) {
       score.classList.add(
         "negative"
       );
@@ -922,29 +1231,42 @@ function renderCalendar() {
     }
 
 
-    cell.appendChild(number);
-    cell.appendChild(score);
+    cell.appendChild(
+      number
+    );
+
+    cell.appendChild(
+      score
+    );
 
 
     cell.addEventListener(
       "click",
-      () => selectDate(date)
+      () => {
+        selectDate(date);
+      }
     );
 
-    calendar.appendChild(cell);
+
+    calendar.appendChild(
+      cell
+    );
   }
 
 
-  /*
-    뒤쪽 빈칸
-  */
+  /* -----------------------------------------
+     뒤쪽 빈칸
+  ----------------------------------------- */
 
   const totalCells =
-    firstDay + totalDays;
+    firstDay +
+    totalDays;
 
   const remaining =
-    (7 -
-      (totalCells % 7)) % 7;
+    (
+      7 -
+      (totalCells % 7)
+    ) % 7;
 
   for (
     let i = 0;
@@ -952,25 +1274,31 @@ function renderCalendar() {
     i++
   ) {
     const empty =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
 
     empty.className =
       "day empty";
 
-    calendar.appendChild(empty);
+    calendar.appendChild(
+      empty
+    );
   }
 
 
   if (monthTitle) {
     monthTitle.textContent =
-      monthName(currentMonth);
+      monthName(
+        currentMonth
+      );
   }
 }
 
 
-/* =========================
-   STATS
-========================= */
+/* =========================================================
+   STATISTICS
+========================================================= */
 
 function renderStats() {
   let total = 0;
@@ -981,29 +1309,44 @@ function renderStats() {
   let bestKey = null;
   let bestValue = -Infinity;
 
+
   Object.entries(data)
     .forEach(
       ([key, value]) => {
-        const n =
+        const number =
           Number(value) || 0;
 
-        total += n;
+        total += number;
 
-        if (n > 0) {
-          positive += n;
+        if (
+          number > 0
+        ) {
+          positive +=
+            number;
         }
 
-        if (n < 0) {
-          negative += n;
+        if (
+          number < 0
+        ) {
+          negative +=
+            number;
         }
 
-        if (n !== 0) {
+        if (
+          number !== 0
+        ) {
           active++;
         }
 
-        if (n > bestValue) {
-          bestValue = n;
-          bestKey = key;
+        if (
+          number >
+          bestValue
+        ) {
+          bestValue =
+            number;
+
+          bestKey =
+            key;
         }
       }
     );
@@ -1016,25 +1359,29 @@ function renderStats() {
         : total;
   }
 
+
   if (positiveScore) {
     positiveScore.textContent =
       `+${positive}`;
   }
+
 
   if (negativeScore) {
     negativeScore.textContent =
       negative;
   }
 
+
   if (activeDays) {
     activeDays.textContent =
       active;
   }
 
+
   if (bestDay) {
     bestDay.textContent =
       bestKey
-        ? `${bestKey.slice(5)} : +${bestValue}`
+        ? `${bestKey.slice(5)} : ${bestValue >= 0 ? "+" : ""}${bestValue}`
         : "-";
   }
 
@@ -1046,8 +1393,12 @@ function renderStats() {
     totalDays === 0
       ? 0
       : Math.round(
-          active / totalDays * 100
+          (
+            active /
+            totalDays
+          ) * 100
         );
+
 
   if (progressBar) {
     progressBar.style.width =
@@ -1056,9 +1407,9 @@ function renderStats() {
 }
 
 
-/* =========================
+/* =========================================================
    RENDER
-========================= */
+========================================================= */
 
 function render() {
   renderCalendar();
@@ -1067,9 +1418,9 @@ function render() {
 }
 
 
-/* =========================
+/* =========================================================
    MONTH NAVIGATION
-========================= */
+========================================================= */
 
 function canGoPreviousMonth() {
   const previous =
@@ -1079,12 +1430,14 @@ function canGoPreviousMonth() {
       1
     );
 
-  return previous >=
+  const minimum =
     new Date(
       START.getFullYear(),
       START.getMonth(),
       1
     );
+
+  return previous >= minimum;
 }
 
 
@@ -1096,17 +1449,21 @@ function canGoNextMonth() {
       1
     );
 
-  return next <=
+  const maximum =
     new Date(
       END.getFullYear(),
       END.getMonth(),
       1
     );
+
+  return next <= maximum;
 }
 
 
 function previousMonth() {
-  if (!canGoPreviousMonth()) {
+  if (
+    !canGoPreviousMonth()
+  ) {
     return;
   }
 
@@ -1122,7 +1479,9 @@ function previousMonth() {
 
 
 function nextMonth() {
-  if (!canGoNextMonth()) {
+  if (
+    !canGoNextMonth()
+  ) {
     return;
   }
 
@@ -1137,9 +1496,12 @@ function nextMonth() {
 }
 
 
-/* =========================
+/* =========================================================
    EVENTS
-========================= */
+========================================================= */
+
+
+/* SAVE */
 
 if (saveButton) {
   saveButton.addEventListener(
@@ -1149,11 +1511,15 @@ if (saveButton) {
 }
 
 
+/* ENTER */
+
 if (scoreInput) {
   scoreInput.addEventListener(
     "keydown",
     event => {
-      if (event.key === "Enter") {
+      if (
+        event.key === "Enter"
+      ) {
         saveDate();
       }
     }
@@ -1161,37 +1527,51 @@ if (scoreInput) {
 }
 
 
+/* QUICK CHANGE */
+
 document
-  .querySelectorAll("[data-add]")
-  .forEach(button => {
-    button.addEventListener(
-      "click",
-      () => {
-        const amount =
-          Number(
-            button.dataset.add
-          );
+  .querySelectorAll(
+    "[data-add]"
+  )
+  .forEach(
+    button => {
+      button.addEventListener(
+        "click",
+        () => {
+          const amount =
+            Number(
+              button.dataset.add
+            );
 
-        if (
-          Number.isFinite(amount)
-        ) {
-          changeInput(amount);
+          if (
+            Number.isFinite(
+              amount
+            )
+          ) {
+            changeInput(
+              amount
+            );
+          }
         }
-      }
-    );
-  });
+      );
+    }
+  );
 
 
-const prevButton =
+/* PREVIOUS */
+
+const previousButton =
   $("prevMonth");
 
-if (prevButton) {
-  prevButton.addEventListener(
+if (previousButton) {
+  previousButton.addEventListener(
     "click",
     previousMonth
   );
 }
 
+
+/* NEXT */
 
 const nextButton =
   $("nextMonth");
@@ -1204,6 +1584,8 @@ if (nextButton) {
 }
 
 
+/* RESET */
+
 const resetButton =
   $("resetScore");
 
@@ -1215,22 +1597,36 @@ if (resetButton) {
 }
 
 
-/* =========================
+/* =========================================================
    START
-========================= */
+========================================================= */
 
 function init() {
   data =
     buildEmptyData();
 
+  /*
+    초기 화면:
+    2026-10-04 선택
+  */
+
   render();
 
+  /*
+    KeyVal 불러오기
+  */
+
   loadAll();
+
+  /*
+    자동 동기화
+  */
 
   setInterval(
     sync,
     SYNC_INTERVAL
   );
 }
+
 
 init();
