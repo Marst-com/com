@@ -1,25 +1,30 @@
 :root {
-    --bg: #050713;
 
-    --panel: rgba(12, 15, 34, .67);
-    --panel-soft: rgba(18, 19, 44, .52);
+    --bg: #02040c;
 
-    --border: rgba(160, 150, 255, .16);
-    --border-hover: rgba(180, 150, 255, .38);
-
-    --text: #f4f2ff;
-    --muted: #8585a4;
+    --text: #f7f4ff;
+    --muted: #8583a2;
 
     --purple: #a66cff;
-    --purple2: #6f4cff;
+    --purple2: #704cff;
 
-    --blue: #5ad9ff;
+    --blue: #56dcff;
+    --pink: #ff52a8;
+    --red: #ff5878;
 
-    --pink: #ff4fa4;
+    --green: #62f1b8;
 
-    --red: #ff5472;
+    --panel:
+        rgba(8, 10, 26, .30);
 
-    --green: #64f3ba;
+    --panel-dark:
+        rgba(5, 7, 19, .38);
+
+    --border:
+        rgba(190, 175, 255, .15);
+
+    --border-hover:
+        rgba(190, 140, 255, .42);
 }
 
 
@@ -30,13 +35,16 @@
 
 html,
 body {
+
     width: 100%;
     height: 100%;
+
     margin: 0;
 }
 
 
 body {
+
     overflow: hidden;
 
     color: var(--text);
@@ -49,26 +57,16 @@ body {
         sans-serif;
 
     background:
-        radial-gradient(
-            circle at 15% 15%,
-            rgba(83, 74, 255, .20),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 85% 20%,
-            rgba(255, 51, 169, .18),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(0, 180, 255, .13),
-            transparent 35%
-        ),
-        #050713;
+        #02040c;
 }
 
 
+/* =========================================================
+   BACKGROUND
+========================================================= */
+
 #background {
+
     position: fixed;
 
     inset: 0;
@@ -78,67 +76,94 @@ body {
 
     pointer-events: none;
 
-    opacity: .75;
+    z-index: 0;
+
+    opacity: .95;
 }
 
 
-/* =========================
+/* =========================================================
    APP
-========================= */
+========================================================= */
 
 .app {
+
     position: relative;
 
     z-index: 2;
 
-    width: calc(100vw - 40px);
-    height: calc(100vh - 40px);
+    width:
+        calc(100vw - 40px);
+
+    height:
+        calc(100vh - 40px);
 
     margin: 20px auto;
 
     display: flex;
+
     flex-direction: column;
 
     border:
         1px solid
-        rgba(190, 170, 255, .15);
+        rgba(200, 180, 255, .18);
 
     border-radius: 28px;
 
     background:
-        rgba(5, 7, 20, .48);
+        rgba(4, 6, 17, .25);
 
-    backdrop-filter: blur(22px);
+    /*
+       blur를 낮춰서 배경이
+       실제로 보이게 함.
+    */
+    backdrop-filter:
+        blur(8px);
+
+    -webkit-backdrop-filter:
+        blur(8px);
 
     box-shadow:
-        0 30px 100px rgba(0, 0, 0, .45),
-        inset 0 1px rgba(255, 255, 255, .04);
+        0 30px 100px
+        rgba(0,0,0,.48),
+
+        inset 0 1px
+        rgba(255,255,255,.06);
 
     overflow: hidden;
 }
 
 
-/* =========================
+/* =========================================================
    HEADER
-========================= */
+========================================================= */
 
 .topbar {
+
     height: 76px;
 
-    padding: 0 28px;
+    padding:
+        0 28px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     border-bottom:
         1px solid
-        rgba(180, 170, 255, .10);
+        rgba(190,175,255,.12);
+
+    background:
+        rgba(5,7,18,.20);
 }
 
 
 .brand {
+
     display: flex;
+
     align-items: center;
 
     gap: 13px;
@@ -146,79 +171,95 @@ body {
 
 
 .brand-logo {
-    width: 39px;
-    height: 39px;
+
+    width: 40px;
+    height: 40px;
 
     display: grid;
-    place-items: center;
 
-    border-radius: 50%;
+    place-items: center;
 
     border:
         1px solid
-        rgba(174, 125, 255, .65);
+        rgba(180,130,255,.75);
 
-    color: #d9c3ff;
+    border-radius: 50%;
+
+    color:
+        #dbc8ff;
 
     font-size: 11px;
-    font-weight: 800;
+
+    font-weight: 900;
+
+    background:
+        rgba(100,60,180,.08);
 
     box-shadow:
-        0 0 25px rgba(150, 100, 255, .25);
+        0 0 25px
+        rgba(150,90,255,.28);
 }
 
 
 .brand-name {
+
     font-size: 14px;
 
-    letter-spacing: .22em;
-
     font-weight: 800;
+
+    letter-spacing: .22em;
 }
 
 
 .brand-sub {
+
     margin-top: 3px;
 
-    color: var(--muted);
+    color:
+        #8c89a8;
 
     font-size: 9px;
 
-    letter-spacing: .10em;
+    letter-spacing: .11em;
 }
 
 
 .range-selector {
+
     display: flex;
+
     align-items: center;
 
-    gap: 16px;
+    gap: 14px;
 
-    padding: 8px 10px;
+    padding:
+        7px 9px;
 
     border:
         1px solid
-        rgba(190, 170, 255, .15);
+        rgba(190,175,255,.15);
 
     border-radius: 30px;
 
     background:
-        rgba(12, 13, 31, .42);
+        rgba(10,12,30,.32);
 }
 
 
-.range-selector button,
-.calendar-buttons button {
-    border: 0;
+.range-selector button {
 
-    width: 28px;
-    height: 28px;
+    width: 29px;
+    height: 29px;
+
+    border: 0;
 
     border-radius: 50%;
 
-    color: #aaa8c4;
+    color:
+        #aaa6c2;
 
-    background: transparent;
+    background:
+        transparent;
 
     font-size: 22px;
 
@@ -226,55 +267,65 @@ body {
 }
 
 
-.range-selector button:hover,
-.calendar-buttons button:hover {
+.range-selector button:hover {
+
     color: white;
 
     background:
-        rgba(160, 120, 255, .13);
+        rgba(160,120,255,.15);
 }
 
 
 #rangeText {
-    color: #d5d0ed;
 
-    font-size: 11px;
+    color:
+        #d8d3ec;
+
+    font-size: 10px;
+
+    letter-spacing: .06em;
+}
+
+
+.sync {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color:
+        #aaa7bf;
+
+    font-size: 9px;
 
     letter-spacing: .05em;
 }
 
 
-.sync {
-    display: flex;
-    align-items: center;
-
-    gap: 8px;
-
-    color: #9e9db7;
-
-    font-size: 10px;
-}
-
-
 .sync-light {
+
     width: 7px;
     height: 7px;
 
     border-radius: 50%;
 
-    background: var(--green);
+    background:
+        var(--green);
 
     box-shadow:
         0 0 13px
-        rgba(100, 243, 186, .9);
+        rgba(98,241,184,.9);
 }
 
 
-/* =========================
+/* =========================================================
    LAYOUT
-========================= */
+========================================================= */
 
 .layout {
+
     flex: 1;
 
     min-height: 0;
@@ -283,43 +334,50 @@ body {
 
     grid-template-columns:
         270px
-        minmax(450px, 1fr)
+        minmax(450px,1fr)
         300px;
 
-    gap: 16px;
+    gap: 15px;
 
-    padding: 16px;
+    padding: 15px;
 }
 
 
-/* =========================
-   COMMON PANEL
-========================= */
+/* =========================================================
+   PANELS
+========================================================= */
 
 .left-panel,
 .calendar-panel,
 .right-panel {
+
     border:
         1px solid
-        rgba(180, 165, 255, .14);
+        rgba(190,175,255,.14);
 
     background:
-        rgba(10, 12, 30, .48);
+        rgba(9,11,28,.30);
 
-    backdrop-filter: blur(18px);
+    backdrop-filter:
+        blur(6px);
+
+    -webkit-backdrop-filter:
+        blur(6px);
 }
 
 
-/* =========================
+/* =========================================================
    LEFT
-========================= */
+========================================================= */
 
 .left-panel {
+
     padding: 20px;
 
     border-radius: 22px;
 
     display: flex;
+
     flex-direction: column;
 
     gap: 14px;
@@ -327,151 +385,182 @@ body {
 
 
 .panel-title {
-    color: #8f8da9;
 
-    font-size: 10px;
+    color:
+        #918da9;
 
-    font-weight: 700;
+    font-size: 9px;
 
-    letter-spacing: .15em;
+    font-weight: 800;
+
+    letter-spacing: .16em;
 }
 
 
 .total-card {
+
     padding: 20px;
 
-    border-radius: 17px;
+    border-radius: 18px;
 
     border:
         1px solid
-        rgba(167, 111, 255, .25);
+        rgba(170,110,255,.27);
 
     background:
         linear-gradient(
             135deg,
-            rgba(117, 72, 255, .15),
-            rgba(24, 24, 62, .28)
+            rgba(110,65,255,.15),
+            rgba(35,30,70,.22)
         );
 
     box-shadow:
-        inset 0 1px rgba(255,255,255,.04);
+        inset 0 1px
+        rgba(255,255,255,.04);
 }
 
 
 .small-title {
-    color: #8e8ba9;
 
-    font-size: 10px;
+    color:
+        #908ba9;
 
-    letter-spacing: .10em;
+    font-size: 9px;
+
+    letter-spacing: .1em;
 }
 
 
 .total {
-    margin-top: 10px;
+
+    margin-top: 9px;
 
     font-size: 42px;
 
-    font-weight: 800;
+    font-weight: 900;
 
     letter-spacing: -.06em;
 }
 
 
 .total-line {
+
     height: 2px;
 
-    margin-top: 18px;
+    margin-top: 17px;
 
     border-radius: 99px;
 
     background:
         linear-gradient(
             90deg,
-            var(--purple),
-            var(--pink),
+            #704cff,
+            #d255ff,
             transparent
         );
 
-    opacity: .7;
+    box-shadow:
+        0 0 12px
+        rgba(170,80,255,.3);
 }
 
 
 .stats {
+
     display: flex;
+
     flex-direction: column;
 }
 
 
 .stat {
+
     display: flex;
+
     justify-content: space-between;
 
-    padding: 12px 5px;
+    padding:
+        12px 5px;
 
     border-bottom:
         1px solid
-        rgba(180, 170, 255, .07);
+        rgba(190,175,255,.07);
 
-    color: #777691;
+    color:
+        #77748e;
 
-    font-size: 10px;
+    font-size: 9px;
 }
 
 
 .stat strong {
-    color: #ddd9ee;
+
+    color:
+        #ddd8ee;
 
     font-size: 11px;
 }
 
 
 .positive {
-    color: #ae7cff !important;
+
+    color:
+        #ae7cff !important;
 }
 
 
 .negative {
-    color: #ff6580 !important;
+
+    color:
+        #ff627f !important;
 }
 
 
 .progress-card {
+
     margin-top: 4px;
 }
 
 
 .progress-head {
+
     display: flex;
+
     justify-content: space-between;
 
-    margin-bottom: 9px;
+    margin-bottom: 8px;
 
-    color: #777691;
+    color:
+        #79758e;
 
-    font-size: 9px;
+    font-size: 8px;
 }
 
 
 .progress-head strong {
-    color: #bdb7d5;
+
+    color:
+        #c0bad7;
 }
 
 
 .progress {
-    height: 7px;
+
+    height: 6px;
 
     border-radius: 99px;
 
     background:
-        rgba(255,255,255,.07);
+        rgba(255,255,255,.08);
 
     overflow: hidden;
 }
 
 
 .progress-fill {
+
     width: 0;
+
     height: 100%;
 
     border-radius: 99px;
@@ -480,22 +569,25 @@ body {
         linear-gradient(
             90deg,
             #704cff,
-            #bf5fff,
+            #bc58ff,
             #ff55aa
         );
 
     box-shadow:
-        0 0 14px
-        rgba(173, 89, 255, .55);
+        0 0 15px
+        rgba(170,80,255,.6);
 }
 
 
 .quote {
+
     margin-top: auto;
 
-    padding: 14px;
+    padding:
+        14px 4px;
 
-    color: #6f6d88;
+    color:
+        #716e87;
 
     font-size: 10px;
 
@@ -504,7 +596,9 @@ body {
 
 
 .quote-mark {
-    color: #a56fff;
+
+    color:
+        #a86cff;
 
     font-size: 25px;
 
@@ -513,82 +607,126 @@ body {
 
 
 .quote small {
+
     display: block;
 
-    margin-top: 6px;
+    margin-top: 5px;
 
-    color: #4f4d65;
+    color:
+        #504d65;
 }
 
 
-/* =========================
+/* =========================================================
    CALENDAR
-========================= */
+========================================================= */
 
 .calendar-panel {
+
     min-width: 0;
 
-    padding: 22px;
+    padding: 21px;
 
     border-radius: 24px;
 
     display: flex;
+
     flex-direction: column;
 }
 
 
 .calendar-header {
+
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
+
+    justify-content: space-between;
 
     margin-bottom: 15px;
 }
 
 
 .month-title {
+
     font-size: 22px;
 
-    font-weight: 800;
+    font-weight: 850;
 
     letter-spacing: -.04em;
 }
 
 
 .month-meta {
+
     margin-top: 4px;
 
-    color: #686681;
+    color:
+        #6f6b84;
 
-    font-size: 9px;
+    font-size: 8px;
 
     letter-spacing: .12em;
 }
 
 
 .calendar-buttons {
+
     display: flex;
 
     gap: 5px;
 }
 
 
+.calendar-buttons button {
+
+    width: 30px;
+    height: 30px;
+
+    border: 0;
+
+    border-radius: 50%;
+
+    color:
+        #aaa6bf;
+
+    background:
+        rgba(255,255,255,.035);
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+.calendar-buttons button:hover {
+
+    color: white;
+
+    background:
+        rgba(160,120,255,.15);
+}
+
+
 .weekdays {
+
     display: grid;
 
     grid-template-columns:
-        repeat(7, 1fr);
+        repeat(7,1fr);
 
     margin-bottom: 6px;
 }
 
 
 .weekdays span {
+
     padding: 5px;
 
     text-align: center;
 
-    color: #67657d;
+    color:
+        #68657c;
 
     font-size: 8px;
 
@@ -597,6 +735,7 @@ body {
 
 
 .calendar {
+
     min-height: 0;
 
     flex: 1;
@@ -604,88 +743,93 @@ body {
     display: grid;
 
     grid-template-columns:
-        repeat(7, 1fr);
+        repeat(7,1fr);
 
     grid-template-rows:
-        repeat(6, 1fr);
+        repeat(6,minmax(60px,1fr));
 
-    gap: 7px;
+    gap: 6px;
 }
 
 
 .day {
+
     position: relative;
 
     min-width: 0;
 
-    padding: 11px;
+    padding: 10px;
 
     border:
         1px solid
-        rgba(170, 160, 230, .09);
+        rgba(180,165,240,.10);
 
     border-radius: 14px;
 
     background:
-        rgba(16, 17, 38, .42);
+        rgba(15,17,39,.30);
 
     cursor: pointer;
 
     overflow: hidden;
 
     transition:
-        transform .18s,
-        border .18s,
-        background .18s;
+        transform .12s ease,
+        border-color .12s ease,
+        background .12s ease;
 }
 
 
 .day:hover {
-    transform: translateY(-2px);
+
+    transform:
+        translateY(-2px);
 
     border-color:
-        rgba(176, 129, 255, .32);
+        rgba(185,135,255,.40);
 
     background:
-        rgba(36, 28, 65, .48);
+        rgba(50,35,82,.35);
 }
 
 
 .day.empty {
-    opacity: .22;
+
+    opacity: .18;
 
     cursor: default;
 }
 
 
 .day.selected {
+
     border-color:
-        rgba(170, 102, 255, .85);
+        rgba(180,105,255,.9);
 
     background:
-        linear-gradient(
-            135deg,
-            rgba(115, 62, 255, .20),
-            rgba(39, 21, 65, .30)
-        );
+        rgba(115,65,255,.15);
 
     box-shadow:
-        0 0 24px
-        rgba(127, 65, 255, .12),
-        inset 0 0 20px
-        rgba(155, 90, 255, .06);
+        inset 0 0 22px
+        rgba(155,85,255,.07),
+
+        0 0 20px
+        rgba(130,70,255,.08);
 }
 
 
 .day.today {
+
     box-shadow:
         inset 0 0 0 1px
-        rgba(90, 217, 255, .5);
+        rgba(86,220,255,.65);
 }
 
 
 .day-number {
-    color: #9996b0;
+
+    color:
+        #9995ae;
 
     font-size: 10px;
 
@@ -694,35 +838,43 @@ body {
 
 
 .day-value {
-    margin-top: 8px;
+
+    margin-top: 7px;
 
     font-size: 15px;
 
-    font-weight: 800;
+    font-weight: 850;
 }
 
 
 .day-value.zero {
-    color: #515066;
+
+    color:
+        #535067;
 }
 
 
 .day-value.positive {
-    color: #b07cff;
+
+    color:
+        #b07cff;
 }
 
 
 .day-value.negative {
-    color: #ff617f;
+
+    color:
+        #ff627f;
 }
 
 
 .day-bar {
+
     position: absolute;
 
-    left: 11px;
-    right: 11px;
-    bottom: 9px;
+    left: 10px;
+    right: 10px;
+    bottom: 8px;
 
     height: 3px;
 
@@ -734,63 +886,77 @@ body {
 
 
 .day-bar-fill {
+
     width: 0;
+
     height: 100%;
 
     border-radius: 99px;
 
-    background: #a66cff;
+    background:
+        #a66cff;
 }
 
 
-.day.negative .day-bar-fill {
-    background: #ff5878;
+.day.negative
+.day-bar-fill {
+
+    background:
+        #ff5878;
 }
 
 
 .today-dot {
+
     position: absolute;
 
-    top: 10px;
-    right: 10px;
+    top: 9px;
+    right: 9px;
 
     width: 5px;
     height: 5px;
 
     border-radius: 50%;
 
-    background: #5ad9ff;
+    background:
+        #56dcff;
 
     box-shadow:
         0 0 10px
-        rgba(90,217,255,.8);
+        rgba(86,220,255,.9);
 }
 
 
 .calendar-footer {
+
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
 
-    margin-top: 9px;
+    justify-content: space-between;
 
-    padding: 10px 4px 0;
+    padding:
+        9px 4px 0;
 }
 
 
 .legend {
+
     display: flex;
 
-    gap: 15px;
+    gap: 14px;
 
-    color: #686681;
+    color:
+        #69657e;
 
     font-size: 8px;
 }
 
 
 .legend span {
+
     display: flex;
+
     align-items: center;
 
     gap: 5px;
@@ -798,6 +964,7 @@ body {
 
 
 .legend i {
+
     width: 6px;
     height: 6px;
 
@@ -806,166 +973,193 @@ body {
 
 
 .legend-positive {
-    background: #a66cff;
+
+    background:
+        #a66cff;
 }
 
 
 .legend-negative {
-    background: #ff5878;
+
+    background:
+        #ff5878;
 }
 
 
 .legend-zero {
-    background: #55546b;
+
+    background:
+        #55536b;
 }
 
 
 .hint {
-    color: #55536b;
+
+    color:
+        #57546b;
 
     font-size: 8px;
 }
 
 
-/* =========================
+/* =========================================================
    RIGHT
-========================= */
+========================================================= */
 
 .right-panel {
+
     padding: 21px;
 
     border-radius: 22px;
 
     display: flex;
+
     flex-direction: column;
 }
 
 
 .selected-header {
+
     display: flex;
+
     justify-content: space-between;
 }
 
 
 .status-dot {
-    width: 9px;
-    height: 9px;
+
+    width: 8px;
+    height: 8px;
 
     border-radius: 50%;
 
-    background: #b36cff;
+    background:
+        #b06cff;
 
     box-shadow:
         0 0 13px
-        rgba(179,108,255,.8);
+        rgba(176,108,255,.9);
 }
 
 
 .selected-date {
+
     margin-top: 19px;
 
     font-size: 22px;
 
-    font-weight: 800;
+    font-weight: 850;
 }
 
 
 .selected-weekday {
+
     margin-top: 4px;
 
-    color: #77758e;
+    color:
+        #77738d;
 
-    font-size: 10px;
+    font-size: 9px;
 }
 
 
 .wave {
-    height: 48px;
 
-    margin: 8px 0 17px;
+    height: 45px;
 
-    opacity: .8;
+    margin:
+        8px 0 17px;
 
     border-bottom:
         1px solid
-        rgba(190, 100, 255, .45);
+        rgba(190,100,255,.4);
 
     background:
         radial-gradient(
-            ellipse at 30% 90%,
-            transparent 55%,
-            rgba(182, 83, 255, .25)
+            ellipse at 30% 100%,
+            rgba(180,80,255,.18),
+            transparent 65%
         );
 }
 
 
 .edit-label {
-    color: #77758f;
 
-    font-size: 9px;
+    color:
+        #77738b;
+
+    font-size: 8px;
 
     letter-spacing: .12em;
 }
 
 
 .big-value {
-    margin: 7px 0 14px;
+
+    margin:
+        6px 0 13px;
 
     text-align: center;
 
-    color: #b17cff;
+    color:
+        #b17cff;
 
-    font-size: 43px;
+    font-size: 42px;
 
-    font-weight: 800;
+    font-weight: 900;
 
     letter-spacing: -.06em;
 
     text-shadow:
-        0 0 30px
-        rgba(164, 103, 255, .3);
+        0 0 25px
+        rgba(165,100,255,.3);
 }
 
 
 .quick-buttons {
+
     display: grid;
 
     grid-template-columns:
-        repeat(6, 1fr);
+        repeat(6,1fr);
 
     gap: 5px;
 }
 
 
 .quick-buttons button {
-    height: 31px;
+
+    height: 30px;
 
     border:
         1px solid
-        rgba(170,160,230,.13);
+        rgba(180,165,240,.13);
 
     border-radius: 9px;
 
-    color: #aaa7bf;
+    color:
+        #aaa6bd;
 
     background:
         rgba(255,255,255,.025);
 
-    font-size: 9px;
+    font-size: 8px;
 
     cursor: pointer;
 }
 
 
 .quick-buttons button:hover {
-    border-color:
-        rgba(174,116,255,.45);
 
     color: white;
+
+    border-color:
+        rgba(180,125,255,.45);
 }
 
 
 .value-editor {
+
     display: grid;
 
     grid-template-columns:
@@ -978,13 +1172,15 @@ body {
 
 
 .value-editor button {
+
     border:
         1px solid
-        rgba(170,160,230,.14);
+        rgba(180,165,240,.14);
 
     border-radius: 11px;
 
-    color: #bbb7d0;
+    color:
+        #bbb7ce;
 
     background:
         rgba(255,255,255,.035);
@@ -995,18 +1191,13 @@ body {
 }
 
 
-.value-editor button:hover {
-    background:
-        rgba(165,100,255,.12);
-}
-
-
 #valueInput {
+
     width: 100%;
 
     border:
         1px solid
-        rgba(170,160,230,.14);
+        rgba(180,165,240,.14);
 
     border-radius: 11px;
 
@@ -1026,12 +1217,14 @@ body {
 
 
 #valueInput:focus {
+
     border-color:
-        rgba(169,105,255,.65);
+        rgba(170,105,255,.65);
 }
 
 
 .save {
+
     height: 42px;
 
     margin-top: 9px;
@@ -1045,13 +1238,13 @@ body {
     background:
         linear-gradient(
             100deg,
-            #734cff,
+            #704cff,
             #bd55ff
         );
 
     box-shadow:
         0 8px 25px
-        rgba(131, 69, 255, .25);
+        rgba(130,70,255,.25);
 
     font-size: 10px;
 
@@ -1064,22 +1257,26 @@ body {
 
 
 .save:hover {
-    filter: brightness(1.12);
+
+    filter:
+        brightness(1.12);
 }
 
 
 .reset {
+
     height: 35px;
 
     margin-top: 6px;
 
     border:
         1px solid
-        rgba(170,160,230,.13);
+        rgba(180,165,240,.13);
 
     border-radius: 11px;
 
-    color: #76738b;
+    color:
+        #77738b;
 
     background:
         rgba(255,255,255,.025);
@@ -1090,68 +1287,76 @@ body {
 }
 
 
-.reset:hover {
-    color: #aaa7bb;
-}
-
-
 .day-info {
+
     margin-top: auto;
 
-    padding-top: 15px;
+    padding-top: 14px;
 
     border-top:
         1px solid
-        rgba(180,170,255,.08);
+        rgba(190,175,255,.08);
 }
 
 
 .info-title {
-    margin-bottom: 8px;
 
-    color: #6f6d86;
+    margin-bottom: 7px;
 
-    font-size: 9px;
+    color:
+        #6f6b84;
+
+    font-size: 8px;
 
     letter-spacing: .12em;
 }
 
 
 .info-row {
+
     display: flex;
+
     justify-content: space-between;
 
     padding: 6px 0;
 
-    color: #646278;
+    color:
+        #646078;
 
     font-size: 9px;
 }
 
 
 .info-row strong {
-    color: #aaa6bd;
+
+    color:
+        #aaa6bd;
 }
 
 
-/* =========================
+/* =========================================================
    FOOTER
-========================= */
+========================================================= */
 
 footer {
-    height: 34px;
 
-    padding: 0 20px;
+    height: 33px;
+
+    padding:
+        0 20px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
     border-top:
         1px solid
-        rgba(180,170,255,.08);
+        rgba(190,175,255,.08);
 
-    color: #4f4d65;
+    color:
+        #504d65;
 
     font-size: 8px;
 
@@ -1159,17 +1364,19 @@ footer {
 }
 
 
-/* =========================
+/* =========================================================
    RESPONSIVE
-========================= */
+========================================================= */
 
 @media(max-width:1100px) {
 
     .layout {
+
         grid-template-columns:
             220px
-            minmax(400px, 1fr)
+            minmax(400px,1fr)
             250px;
+
     }
 
 }
@@ -1183,53 +1390,75 @@ footer {
 
 
     .app {
-        width: calc(100vw - 16px);
+
+        width:
+            calc(100vw - 16px);
+
         height: auto;
-        min-height: calc(100vh - 16px);
+
+        min-height:
+            calc(100vh - 16px);
 
         margin: 8px;
 
         border-radius: 20px;
+
     }
 
 
     .topbar {
-        padding: 0 15px;
+
+        padding:
+            0 15px;
+
     }
 
 
     .range-selector {
+
         display: none;
+
     }
 
 
     .layout {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            1fr;
 
         padding: 10px;
+
     }
 
 
     .left-panel {
+
         min-height: 250px;
+
     }
 
 
     .calendar-panel {
-        min-height: 650px;
+
+        min-height: 620px;
+
     }
 
 
     .right-panel {
+
         min-height: 400px;
+
     }
 
 
     .calendar {
-        grid-template-rows:
-            repeat(6, 90px);
 
         flex: none;
+
+        grid-template-rows:
+            repeat(6,90px);
+
     }
 
 }
@@ -1258,17 +1487,21 @@ footer {
 
 
     .calendar {
+
         gap: 4px;
 
         grid-template-rows:
-            repeat(6, 66px);
+            repeat(6,66px);
+
     }
 
 
     .day {
+
         padding: 7px;
 
         border-radius: 9px;
+
     }
 
 
@@ -1278,9 +1511,11 @@ footer {
 
 
     .day-bar {
+
         left: 6px;
         right: 6px;
         bottom: 6px;
+
     }
 
 
