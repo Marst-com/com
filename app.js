@@ -1,19 +1,15 @@
+"use strict";
+
+
 /* =========================================================
-   DUOMARST DAILY SCORE
-   Cross-device synchronization
-========================================================= */
-
-
-/* =========================
    CONFIG
-========================= */
+========================================================= */
 
 const KEY =
     "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
 const API =
     "https://api.keyval.org";
-
 
 const START =
     new Date(2026, 8, 1);
@@ -22,65 +18,182 @@ const END =
     new Date(2027, 2, 31);
 
 
-/* =========================
+/* =========================================================
    STATE
-========================= */
+========================================================= */
 
 let data = {};
 
 let selectedDate = null;
 
 let currentMonth =
-    new Date(
-        2026,
-        8,
-        1
-    );
+    new Date(2026, 8, 1);
 
 let snapshot = "";
 
-
-/* =========================
-   ELEMENTS
-========================= */
-
-const $ = id =>
-    document.getElementById(id);
+let isSaving = false;
 
 
-/* =========================
-   DATE
-========================= */
+/* =========================================================
+   DOM
+========================================================= */
 
-function key(date) {
+const $ = selector =>
+    document.querySelector(selector);
+
+
+const calendar =
+    $("#calendar");
+
+const monthTitle =
+    $("#monthTitle");
+
+const monthMeta =
+    $("#monthMeta");
+
+const totalScore =
+    $("#totalScore");
+
+const totalDescription =
+    $("#totalDescription");
+
+const positiveScore =
+    $("#positiveScore");
+
+const negativeScore =
+    $("#negativeScore");
+
+const activeDays =
+    $("#activeDays");
+
+const bestDay =
+    $("#bestDay");
+
+const progressPercent =
+    $("#progressPercent");
+
+const progressBar =
+    $("#progressBar");
+
+const quote =
+    $("#quote");
+
+const selectedDateElement =
+    $("#selectedDate");
+
+const selectedWeekday =
+    $("#selectedWeekday");
+
+const editorValue =
+    $("#editorValue");
+
+const valueInput =
+    $("#valueInput");
+
+const infoDate =
+    $("#infoDate");
+
+const infoStatus =
+    $("#infoStatus");
+
+const infoValue =
+    $("#infoValue");
+
+const infoSync =
+    $("#infoSync");
+
+const syncDot =
+    $("#syncDot");
+
+const syncText =
+    $("#syncText");
+
+const prevMonth =
+    $("#prevMonth");
+
+const nextMonth =
+    $("#nextMonth");
+
+const saveButton =
+    $("#saveButton");
+
+const resetButton =
+    $("#resetButton");
+
+const minusButton =
+    $("#minusButton");
+
+const plusButton =
+    $("#plusButton");
+
+
+/* =========================================================
+   DATE HELPERS
+========================================================= */
+
+function pad(number) {
+
+    return String(number)
+        .padStart(2, "0");
+
+}
+
+
+function dateKey(date) {
 
     return [
         date.getFullYear(),
-
-        String(
-            date.getMonth() + 1
-        ).padStart(2, "0"),
-
-        String(
-            date.getDate()
-        ).padStart(2, "0")
-
+        pad(date.getMonth() + 1),
+        pad(date.getDate())
     ].join("-");
+
 }
 
 
-function sameDay(a, b) {
+function keyToDate(key) {
 
-    return a &&
-        b &&
+    const parts =
+        key.split("-")
+            .map(Number);
+
+    return new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2]
+    );
+
+}
+
+
+function cloneDate(date) {
+
+    return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+    );
+
+}
+
+
+function isSameDay(a, b) {
+
+    if (!a || !b) {
+
+        return false;
+
+    }
+
+    return (
         a.getFullYear() === b.getFullYear() &&
         a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate();
+        a.getDate() === b.getDate()
+    );
 
 }
 
 
-function allowed(date) {
+function isAllowedDate(date) {
 
     return (
         date >= START &&
@@ -90,24 +203,37 @@ function allowed(date) {
 }
 
 
-/* =========================
-   EMPTY DATABASE
-========================= */
+function monthStart(date) {
 
-function emptyData() {
+    return new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        1
+    );
 
-    const result = {};
-
-    const date =
-        new Date(START);
+}
 
 
-    while(date <= END) {
+/* =========================================================
+   ALL VALID DATES
+========================================================= */
 
-        result[key(date)] = 0;
+function makeDateKeys() {
 
-        date.setDate(
-            date.getDate() + 1
+    const result = [];
+
+    const cursor =
+        cloneDate(START);
+
+
+    while (cursor <= END) {
+
+        result.push(
+            dateKey(cursor)
+        );
+
+        cursor.setDate(
+            cursor.getDate() + 1
         );
 
     }
@@ -118,355 +244,1050 @@ function emptyData() {
 }
 
 
-/* =========================
-   KEYVAL GET
-========================= */
+const RANGE_KEYS =
+    makeDateKeys();
 
-async function getRemote() {
+
+/* =========================================================
+   NORMALIZE DATA
+========================================================= */
+
+function normalize(remote) {
+
+    const result = {};
+
+
+    for (
+        const key of RANGE_KEYS
+    ) {
+
+        result[key] = 0;
+
+    }
+
+
+    if (
+        !remote ||
+        typeof remote !== "object" ||
+        Array.isArray(remote)
+    ) {
+
+        return result;
+
+    }
+
+
+    for (
+        const key of RANGE_KEYS
+    ) {
+
+        const value =
+            remote[key];
+
+
+        if (
+            Number.isFinite(value)
+        ) {
+
+            result[key] =
+                Math.trunc(value);
+
+        }
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =========================================================
+   FETCH TIMEOUT
+========================================================= */
+
+async function fetchWithTimeout(
+    url,
+    options = {},
+    timeout = 5000
+) {
+
+    const controller =
+        new AbortController();
+
+
+    const timer =
+        setTimeout(
+            () => {
+                controller.abort();
+            },
+            timeout
+        );
+
 
     try {
 
-        const response =
-            await fetch(
-                `${API}/get/${KEY}?t=${Date.now()}`
-            );
+        return await fetch(
+            url,
+            {
+                ...options,
+                signal:
+                    controller.signal
+            }
+        );
+
+    } finally {
+
+        clearTimeout(timer);
+
+    }
+
+}
 
 
-        const text =
-            await response.text();
+/* =========================================================
+   PARSE KEYVAL RESPONSE
+========================================================= */
+
+function parseKeyValResponse(raw) {
+
+    if (
+        !raw ||
+        !raw.trim()
+    ) {
+
+        return {};
+
+    }
 
 
-        if(
-            !text ||
-            text === "null" ||
-            text === "undefined"
+    let value =
+        raw.trim();
+
+
+    /*
+       Try direct JSON first.
+    */
+
+    try {
+
+        const parsed =
+            JSON.parse(value);
+
+
+        if (
+            typeof parsed === "object" &&
+            parsed !== null
         ) {
 
-            return null;
+            return parsed;
 
         }
 
 
-        try {
+        if (
+            typeof parsed === "string"
+        ) {
 
-            return JSON.parse(text);
+            value = parsed;
 
-        } catch {
+        }
+
+    } catch {
+
+        // Continue.
+    }
+
+
+    /*
+       Try URL decoding.
+    */
+
+    try {
+
+        value =
+            decodeURIComponent(value);
+
+    } catch {
+
+        // Continue.
+    }
+
+
+    /*
+       Try JSON again.
+    */
+
+    try {
+
+        const parsed =
+            JSON.parse(value);
+
+
+        if (
+            typeof parsed === "string"
+        ) {
 
             try {
 
                 return JSON.parse(
-                    decodeURIComponent(text)
+                    parsed
                 );
 
             } catch {
 
-                return null;
+                return {};
 
             }
 
         }
 
-    } catch(error) {
 
-        console.error(
-            "KeyVal GET:",
-            error
-        );
+        return parsed;
 
-        return null;
+    } catch {
+
+        return {};
 
     }
 
 }
 
 
-/* =========================
-   KEYVAL SAVE
-========================= */
+/* =========================================================
+   GET REMOTE
+========================================================= */
+
+async function getRemote() {
+
+    const url =
+        `${API}/get/${KEY}?t=${Date.now()}`;
+
+
+    const response =
+        await fetchWithTimeout(
+            url,
+            {
+                method: "GET",
+
+                cache: "no-store",
+
+                headers: {
+                    "Accept":
+                        "application/json,text/plain,*/*"
+                }
+            },
+            5000
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            `KeyVal GET ${response.status}`
+        );
+
+    }
+
+
+    const raw =
+        await response.text();
+
+
+    return parseKeyValResponse(
+        raw
+    );
+
+}
+
+
+/* =========================================================
+   SET REMOTE
+========================================================= */
 
 async function setRemote(value) {
 
-    try {
-
-        const encoded =
-            encodeURIComponent(
-                JSON.stringify(value)
-            );
+    const json =
+        JSON.stringify(value);
 
 
-        const response =
-            await fetch(
-                `${API}/set/${KEY}/${encoded}`
-            );
+    const encoded =
+        encodeURIComponent(json);
 
 
-        return response.ok;
+    const url =
+        `${API}/set/${KEY}/${encoded}`;
 
-    } catch(error) {
 
-        console.error(
-            "KeyVal SET:",
-            error
+    const response =
+        await fetchWithTimeout(
+            url,
+            {
+                method: "GET",
+
+                cache: "no-store"
+            },
+            5000
         );
 
-        return false;
+
+    if (!response.ok) {
+
+        throw new Error(
+            `KeyVal SET ${response.status}`
+        );
 
     }
+
+
+    return true;
 
 }
 
 
-/* =========================
-   NORMALIZE
-========================= */
+/* =========================================================
+   CONNECTION UI
+========================================================= */
 
-function normalize(remote) {
+function setSyncStatus(
+    status,
+    message
+) {
 
-    const result =
-        emptyData();
+    syncDot.className =
+        "connection-dot";
 
 
-    if(
-        remote &&
-        typeof remote === "object"
+    if (
+        status === "online"
     ) {
 
-        for(
-            const date in remote
-        ) {
-
-            if(
-                Object.prototype.hasOwnProperty
-                    .call(result, date)
-            ) {
-
-                const value =
-                    Number(remote[date]);
-
-
-                result[date] =
-                    Number.isFinite(value)
-                        ? Math.trunc(value)
-                        : 0;
-
-            }
-
-        }
+        syncDot.classList.add(
+            "online"
+        );
 
     }
 
 
-    return result;
+    if (
+        status === "error"
+    ) {
+
+        syncDot.classList.add(
+            "error"
+        );
+
+    }
+
+
+    syncText.textContent =
+        message;
 
 }
 
 
-/* =========================
-   INITIAL LOAD
-========================= */
+/* =========================================================
+   LOAD
+========================================================= */
 
 async function load() {
 
-    setSync("LOADING...");
+    setSyncStatus(
+        "loading",
+        "Connecting..."
+    );
 
 
-    const remote =
-        await getRemote();
+    try {
 
+        const remote =
+            await getRemote();
 
-    data =
-        normalize(remote);
-
-
-    snapshot =
-        JSON.stringify(data);
-
-
-    render();
-
-
-    setSync("SYNCED");
-
-}
-
-
-/* =========================
-   SYNC
-========================= */
-
-async function sync() {
-
-    const remote =
-        await getRemote();
-
-
-    if(!remote) {
-
-        return;
-
-    }
-
-
-    const normalized =
-        normalize(remote);
-
-
-    const remoteSnapshot =
-        JSON.stringify(normalized);
-
-
-    if(
-        remoteSnapshot !== snapshot
-    ) {
 
         data =
-            normalized;
+            normalize(remote);
 
-        snapshot =
-            remoteSnapshot;
-
-        render();
-
-    }
-
-}
-
-
-/* =========================
-   SAVE DATE
-========================= */
-
-async function saveDate() {
-
-    if(!selectedDate) {
-
-        return;
-
-    }
-
-
-    const dateKey =
-        key(selectedDate);
-
-
-    const value =
-        Math.trunc(
-            Number(
-                $("valueInput").value
-            ) || 0
-        );
-
-
-    setSync("SAVING...");
-
-
-    /*
-       다른 기기에서 방금 수정했을 가능성을
-       줄이기 위해 저장 직전에 다시 읽는다.
-    */
-
-    const remote =
-        await getRemote();
-
-
-    const latest =
-        normalize(remote);
-
-
-    latest[dateKey] =
-        value;
-
-
-    const success =
-        await setRemote(latest);
-
-
-    if(success) {
-
-        data =
-            latest;
 
         snapshot =
             JSON.stringify(data);
 
 
-        setSync("SYNCED");
+        setSyncStatus(
+            "online",
+            "Synced"
+        );
 
-        $("daySync").textContent =
-            "SYNCED";
 
-        $("footerStatus").textContent =
-            "Saved";
+        infoSync.textContent =
+            "Connected";
 
-        render();
 
-    } else {
+    } catch (error) {
 
-        setSync("ERROR");
+        console.warn(
+            "Initial KeyVal connection failed:",
+            error
+        );
 
-        $("daySync").textContent =
-            "ERROR";
 
-        $("footerStatus").textContent =
-            "Save failed";
+        /*
+           서버가 실패해도
+           절대로 화면 렌더링을 막지 않는다.
+        */
+
+        data =
+            normalize({});
+
+
+        snapshot =
+            JSON.stringify(data);
+
+
+        setSyncStatus(
+            "error",
+            "Offline"
+        );
+
+
+        infoSync.textContent =
+            "Offline";
+
+    }
+
+
+    render();
+
+}
+
+
+/* =========================================================
+   SYNC
+========================================================= */
+
+async function sync() {
+
+    if (isSaving) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const remote =
+            await getRemote();
+
+
+        const normalized =
+            normalize(remote);
+
+
+        const nextSnapshot =
+            JSON.stringify(
+                normalized
+            );
+
+
+        if (
+            nextSnapshot !== snapshot
+        ) {
+
+            data =
+                normalized;
+
+
+            snapshot =
+                nextSnapshot;
+
+
+            render();
+
+        }
+
+
+        setSyncStatus(
+            "online",
+            "Synced"
+        );
+
+
+    } catch (error) {
+
+        console.warn(
+            "Sync failed:",
+            error
+        );
+
+
+        setSyncStatus(
+            "error",
+            "Offline"
+        );
 
     }
 
 }
 
 
-/* =========================
-   SYNC UI
-========================= */
+/* =========================================================
+   SAVE DATE
+========================================================= */
 
-function setSync(text) {
+async function saveDate() {
 
-    $("syncText").textContent =
-        text;
+    if (
+        !selectedDate ||
+        isSaving
+    ) {
+
+        return;
+
+    }
+
+
+    let value =
+        Number.parseInt(
+            valueInput.value,
+            10
+        );
+
+
+    if (
+        !Number.isFinite(value)
+    ) {
+
+        value = 0;
+
+    }
+
+
+    value =
+        Math.trunc(value);
+
+
+    isSaving = true;
+
+
+    saveButton.disabled =
+        true;
+
+
+    saveButton.innerHTML =
+        "<span>저장 중...</span>";
+
+
+    try {
+
+        /*
+           다른 기기에서 변경된 값이 있을 수 있으므로
+           저장 직전에 최신 서버 상태를 다시 가져온다.
+        */
+
+        const remote =
+            await getRemote();
+
+
+        const latest =
+            normalize(remote);
+
+
+        latest[selectedDate] =
+            value;
+
+
+        await setRemote(
+            latest
+        );
+
+
+        data =
+            latest;
+
+
+        snapshot =
+            JSON.stringify(
+                latest
+            );
+
+
+        setSyncStatus(
+            "online",
+            "Saved"
+        );
+
+
+        infoSync.textContent =
+            "Saved";
+
+
+        render();
+
+        updateEditor();
+
+
+    } catch (error) {
+
+        console.error(
+            "Save failed:",
+            error
+        );
+
+
+        setSyncStatus(
+            "error",
+            "Save failed"
+        );
+
+
+        infoSync.textContent =
+            "Failed";
+
+    } finally {
+
+        isSaving = false;
+
+        saveButton.disabled =
+            false;
+
+        saveButton.innerHTML =
+            "<span>저장</span><span>↗</span>";
+
+    }
 
 }
 
 
-/* =========================
-   CALENDAR
-========================= */
+/* =========================================================
+   SELECT DATE
+========================================================= */
 
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-];
+function selectDate(key) {
+
+    if (
+        !RANGE_KEYS.includes(key)
+    ) {
+
+        return;
+
+    }
 
 
-const weekdays = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-];
+    selectedDate =
+        key;
 
+
+    updateEditor();
+
+    renderCalendar();
+
+}
+
+
+/* =========================================================
+   UPDATE EDITOR
+========================================================= */
+
+function updateEditor() {
+
+    if (!selectedDate) {
+
+        return;
+
+    }
+
+
+    const date =
+        keyToDate(
+            selectedDate
+        );
+
+
+    const value =
+        data[selectedDate] ?? 0;
+
+
+    const weekdays = [
+        "일요일",
+        "월요일",
+        "화요일",
+        "수요일",
+        "목요일",
+        "금요일",
+        "토요일"
+    ];
+
+
+    selectedDateElement.textContent =
+        `${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())}`;
+
+
+    selectedWeekday.textContent =
+        weekdays[
+            date.getDay()
+        ];
+
+
+    editorValue.textContent =
+        formatScore(value);
+
+
+    valueInput.value =
+        String(value);
+
+
+    infoDate.textContent =
+        selectedDate;
+
+
+    infoValue.textContent =
+        formatScore(value);
+
+
+    editorValue.classList.remove(
+        "positive",
+        "negative"
+    );
+
+
+    infoValue.className =
+        "";
+
+
+    if (value > 0) {
+
+        editorValue.style.color =
+            "#a79aff";
+
+        infoValue.classList.add(
+            "positive"
+        );
+
+        infoStatus.textContent =
+            "Positive";
+
+    } else if (value < 0) {
+
+        editorValue.style.color =
+            "#ff7895";
+
+        infoValue.classList.add(
+            "negative"
+        );
+
+        infoStatus.textContent =
+            "Negative";
+
+    } else {
+
+        editorValue.style.color =
+            "#f1f2fa";
+
+        infoStatus.textContent =
+            "Zero";
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT SCORE
+========================================================= */
+
+function formatScore(value) {
+
+    if (value > 0) {
+
+        return `+${value}`;
+
+    }
+
+
+    return String(value);
+
+}
+
+
+/* =========================================================
+   UPDATE PREVIEW
+========================================================= */
+
+function updateEditorPreview() {
+
+    let value =
+        Number.parseInt(
+            valueInput.value,
+            10
+        );
+
+
+    if (
+        !Number.isFinite(value)
+    ) {
+
+        value = 0;
+
+    }
+
+
+    editorValue.textContent =
+        formatScore(value);
+
+
+    if (value > 0) {
+
+        editorValue.style.color =
+            "#a79aff";
+
+    } else if (value < 0) {
+
+        editorValue.style.color =
+            "#ff7895";
+
+    } else {
+
+        editorValue.style.color =
+            "#f1f2fa";
+
+    }
+
+}
+
+
+/* =========================================================
+   CHANGE INPUT
+========================================================= */
+
+function changeInput(delta) {
+
+    let value =
+        Number.parseInt(
+            valueInput.value,
+            10
+        );
+
+
+    if (
+        !Number.isFinite(value)
+    ) {
+
+        value = 0;
+
+    }
+
+
+    value += delta;
+
+
+    valueInput.value =
+        String(value);
+
+
+    updateEditorPreview();
+
+}
+
+
+/* =========================================================
+   QUICK BUTTONS
+========================================================= */
+
+document
+    .querySelectorAll(
+        ".quick-button"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "pointerdown",
+                event => {
+
+                    event.preventDefault();
+
+
+                    const delta =
+                        Number(
+                            button.dataset.delta
+                        );
+
+
+                    changeInput(
+                        delta
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   PLUS / MINUS
+========================================================= */
+
+minusButton.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.preventDefault();
+
+        changeInput(-1);
+
+    }
+);
+
+
+plusButton.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.preventDefault();
+
+        changeInput(1);
+
+    }
+);
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+valueInput.addEventListener(
+    "input",
+    updateEditorPreview
+);
+
+
+valueInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            saveDate();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+saveButton.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.preventDefault();
+
+        saveDate();
+
+    }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+resetButton.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.preventDefault();
+
+
+        valueInput.value =
+            "0";
+
+
+        updateEditorPreview();
+
+    }
+);
+
+
+/* =========================================================
+   MONTH NAVIGATION
+========================================================= */
+
+prevMonth.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.preventDefault();
+
+
+        const next =
+            new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth() - 1,
+                1
+            );
+
+
+        if (
+            next >= monthStart(START)
+        ) {
+
+            currentMonth =
+                next;
+
+
+            renderCalendar();
+
+        }
+
+    }
+);
+
+
+nextMonth.addEventListener(
+    "pointerdown",
+    event => {
+
+        event.preventDefault();
+
+
+        const next =
+            new Date(
+                currentMonth.getFullYear(),
+                currentMonth.getMonth() + 1,
+                1
+            );
+
+
+        if (
+            next <= monthStart(END)
+        ) {
+
+            currentMonth =
+                next;
+
+
+            renderCalendar();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CALENDAR RENDER
+========================================================= */
 
 function renderCalendar() {
-
-    const calendar =
-        $("calendar");
-
-
-    calendar.innerHTML = "";
-
 
     const year =
         currentMonth.getFullYear();
@@ -474,6 +1295,10 @@ function renderCalendar() {
 
     const month =
         currentMonth.getMonth();
+
+
+    monthTitle.textContent =
+        `${year}년 ${month + 1}월`;
 
 
     const first =
@@ -492,122 +1317,68 @@ function renderCalendar() {
         );
 
 
-    const days =
-        last.getDate();
+    monthMeta.textContent =
+        `${last.getDate()} DAYS`;
 
 
-    $("monthTitle").textContent =
-        `${months[month]} ${year}`;
+    const fragment =
+        document.createDocumentFragment();
 
 
-    $("monthMeta").textContent =
-        `${days} DAYS`;
+    const firstWeekday =
+        first.getDay();
 
 
-    const values =
-        Object.values(data)
-            .map(Number)
-            .map(Math.abs);
-
-
-    const max =
-        Math.max(
-            1,
-            ...values
-        );
-
-
-    for(
-        let i = 0;
-        i < 42;
-        i++
+    for (
+        let index = 0;
+        index < 42;
+        index++
     ) {
-
-        const number =
-            i - first.getDay() + 1;
-
-
-        if(
-            number < 1 ||
-            number > days
-        ) {
-
-            const empty =
-                document.createElement("div");
-
-            empty.className =
-                "day empty";
-
-            calendar.appendChild(
-                empty
-            );
-
-            continue;
-
-        }
-
 
         const date =
             new Date(
                 year,
                 month,
-                number
-            );
-
-
-        if(
-            !allowed(date)
-        ) {
-
-            const empty =
-                document.createElement("div");
-
-            empty.className =
-                "day empty";
-
-            calendar.appendChild(
-                empty
-            );
-
-            continue;
-
-        }
-
-
-        const dateKey =
-            key(date);
-
-
-        const value =
-            Number(
-                data[dateKey] || 0
+                index - firstWeekday + 1
             );
 
 
         const cell =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         cell.className =
             "day";
 
 
-        if(
-            sameDay(
-                date,
-                selectedDate
-            )
-        ) {
+        const allowed =
+            isAllowedDate(date);
+
+
+        if (!allowed) {
 
             cell.classList.add(
-                "selected"
+                "outside"
             );
 
         }
 
 
-        if(
-            sameDay(
+        const key =
+            dateKey(date);
+
+
+        const value =
+            allowed
+                ? (data[key] ?? 0)
+                : 0;
+
+
+        if (
+            allowed &&
+            isSameDay(
                 date,
                 new Date()
             )
@@ -620,7 +1391,28 @@ function renderCalendar() {
         }
 
 
-        if(value < 0) {
+        if (
+            allowed &&
+            selectedDate === key
+        ) {
+
+            cell.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        if (value > 0) {
+
+            cell.classList.add(
+                "positive"
+            );
+
+        }
+
+
+        if (value < 0) {
 
             cell.classList.add(
                 "negative"
@@ -629,94 +1421,85 @@ function renderCalendar() {
         }
 
 
-        const dayNumber =
-            document.createElement("div");
+        const number =
+            document.createElement(
+                "span"
+            );
 
-        dayNumber.className =
+
+        number.className =
             "day-number";
 
-        dayNumber.textContent =
-            number;
+
+        number.textContent =
+            date.getDate();
 
 
-        const dayValue =
-            document.createElement("div");
+        const score =
+            document.createElement(
+                "span"
+            );
 
-        dayValue.className =
+
+        score.className =
             "day-value";
 
 
-        if(value > 0) {
-
-            dayValue.classList.add(
-                "positive"
-            );
-
-            dayValue.textContent =
-                `+${value}`;
-
-        } else if(value < 0) {
-
-            dayValue.classList.add(
-                "negative"
-            );
-
-            dayValue.textContent =
-                value;
-
-        } else {
-
-            dayValue.classList.add(
-                "zero"
-            );
-
-            dayValue.textContent =
-                "0";
-
-        }
+        score.textContent =
+            formatScore(value);
 
 
         const bar =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         bar.className =
             "day-bar";
 
 
         const fill =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         fill.className =
             "day-bar-fill";
 
 
-        const percentage =
-            Math.min(
-                100,
-                Math.abs(value) /
-                max *
-                100
-            );
+        if (
+            value !== 0
+        ) {
+
+            const width =
+                Math.min(
+                    100,
+                    Math.max(
+                        12,
+                        Math.abs(value) * 8
+                    )
+                );
 
 
-        fill.style.width =
-            value === 0
-                ? "0%"
-                : `${Math.max(
-                    8,
-                    percentage
-                )}%`;
+            fill.style.width =
+                `${width}%`;
+
+        }
 
 
-        bar.appendChild(fill);
+        bar.appendChild(
+            fill
+        );
 
 
         cell.appendChild(
-            dayNumber
+            number
         );
 
         cell.appendChild(
-            dayValue
+            score
         );
 
         cell.appendChild(
@@ -724,417 +1507,263 @@ function renderCalendar() {
         );
 
 
-        if(
-            sameDay(
-                date,
-                new Date()
-            )
-        ) {
+        if (allowed) {
 
-            const dot =
-                document.createElement("div");
+            cell.addEventListener(
+                "pointerdown",
+                () => {
 
-            dot.className =
-                "today-dot";
+                    selectDate(key);
 
-            cell.appendChild(dot);
-
-        }
-
-
-        cell.addEventListener(
-            "click",
-            () => selectDate(date)
-        );
-
-
-        calendar.appendChild(cell);
-
-    }
-
-}
-
-
-/* =========================
-   SELECT DATE
-========================= */
-
-function selectDate(date) {
-
-    if(
-        !allowed(date)
-    ) {
-
-        return;
-
-    }
-
-
-    selectedDate =
-        new Date(date);
-
-
-    const value =
-        Number(
-            data[key(date)] || 0
-        );
-
-
-    $("selectedDate").textContent =
-        `${date.getFullYear()}.` +
-        `${String(
-            date.getMonth() + 1
-        ).padStart(2, "0")}.` +
-        `${String(
-            date.getDate()
-        ).padStart(2, "0")}`;
-
-
-    $("selectedWeekday").textContent =
-        weekdays[
-            date.getDay()
-        ];
-
-
-    $("valueInput").value =
-        value;
-
-
-    updateEditor(value);
-
-
-    renderCalendar();
-
-}
-
-
-/* =========================
-   EDITOR
-========================= */
-
-function updateEditor(value) {
-
-    const formatted =
-        value > 0
-            ? `+${value}`
-            : value;
-
-
-    $("bigValue").textContent =
-        formatted;
-
-
-    $("infoValue").textContent =
-        formatted;
-
-
-    $("status").textContent =
-        value > 0
-            ? "POSITIVE"
-            : value < 0
-                ? "NEGATIVE"
-                : "ZERO";
-
-
-    $("status").className =
-        value > 0
-            ? "positive"
-            : value < 0
-                ? "negative"
-                : "";
-
-}
-
-
-function changeValue(amount) {
-
-    const input =
-        $("valueInput");
-
-
-    const current =
-        Number(input.value) || 0;
-
-
-    const next =
-        current + amount;
-
-
-    input.value =
-        next;
-
-
-    updateEditor(next);
-
-}
-
-
-/* =========================
-   EVENTS
-========================= */
-
-document.querySelectorAll(
-    "[data-step]"
-).forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            changeValue(
-                Number(
-                    button.dataset.step
-                )
+                },
+                {
+                    passive: true
+                }
             );
 
         }
+
+
+        fragment.appendChild(
+            cell
+        );
+
+    }
+
+
+    calendar.replaceChildren(
+        fragment
     );
-
-});
-
-
-$("minus").addEventListener(
-    "click",
-    () => changeValue(-1)
-);
-
-
-$("plus").addEventListener(
-    "click",
-    () => changeValue(1)
-);
-
-
-$("valueInput").addEventListener(
-    "input",
-    () => {
-
-        updateEditor(
-            Number(
-                $("valueInput").value
-            ) || 0
-        );
-
-    }
-);
-
-
-$("valueInput").addEventListener(
-    "keydown",
-    event => {
-
-        if(
-            event.key === "Enter"
-        ) {
-
-            saveDate();
-
-        }
-
-    }
-);
-
-
-$("save").addEventListener(
-    "click",
-    saveDate
-);
-
-
-$("reset").addEventListener(
-    "click",
-    () => {
-
-        $("valueInput").value =
-            0;
-
-        updateEditor(0);
-
-    }
-);
-
-
-/* =========================
-   MONTH NAVIGATION
-========================= */
-
-function changeMonth(amount) {
-
-    const next =
-        new Date(
-            currentMonth.getFullYear(),
-            currentMonth.getMonth() + amount,
-            1
-        );
-
-
-    const startMonth =
-        new Date(
-            START.getFullYear(),
-            START.getMonth(),
-            1
-        );
-
-
-    const endMonth =
-        new Date(
-            END.getFullYear(),
-            END.getMonth(),
-            1
-        );
-
-
-    if(
-        next < startMonth ||
-        next > endMonth
-    ) {
-
-        return;
-
-    }
-
-
-    currentMonth =
-        next;
-
-
-    renderCalendar();
 
 }
 
 
-$("prevMonth").addEventListener(
-    "click",
-    () => changeMonth(-1)
-);
-
-
-$("nextMonth").addEventListener(
-    "click",
-    () => changeMonth(1)
-);
-
-
-$("calendarPrev").addEventListener(
-    "click",
-    () => changeMonth(-1)
-);
-
-
-$("calendarNext").addEventListener(
-    "click",
-    () => changeMonth(1)
-);
-
-
-/* =========================
-   STATISTICS
-========================= */
+/* =========================================================
+   STATS
+========================================================= */
 
 function renderStats() {
 
-    const values =
-        Object.values(data)
-            .map(Number);
+    let total = 0;
+
+    let positive = 0;
+
+    let negative = 0;
+
+    let active = 0;
+
+    let bestValue =
+        -Infinity;
+
+    let bestKey =
+        null;
 
 
-    const total =
-        values.reduce(
-            (a,b) => a + b,
-            0
-        );
+    for (
+        const key of RANGE_KEYS
+    ) {
+
+        const value =
+            data[key] ?? 0;
 
 
-    const positive =
-        values
-            .filter(v => v > 0)
-            .reduce(
-                (a,b) => a + b,
-                0
-            );
+        total += value;
 
 
-    const negative =
-        values
-            .filter(v => v < 0)
-            .reduce(
-                (a,b) => a + b,
-                0
-            );
+        if (
+            value > 0
+        ) {
+
+            positive += value;
+
+        }
 
 
-    const active =
-        values.filter(
-            v => v !== 0
-        ).length;
+        if (
+            value < 0
+        ) {
+
+            negative += value;
+
+        }
 
 
-    const best =
-        Math.max(
-            0,
-            ...values
-        );
+        if (
+            value !== 0
+        ) {
+
+            active++;
+
+        }
 
 
-    $("total").textContent =
-        total > 0
-            ? `+${total}`
-            : total;
+        if (
+            value > bestValue
+        ) {
+
+            bestValue =
+                value;
+
+            bestKey =
+                key;
+
+        }
+
+    }
 
 
-    $("positive").textContent =
+    totalScore.textContent =
+        formatScore(total);
+
+
+    positiveScore.textContent =
         `+${positive}`;
 
 
-    $("negative").textContent =
-        negative;
+    negativeScore.textContent =
+        String(negative);
 
 
-    $("active").textContent =
-        active;
+    activeDays.textContent =
+        String(active);
 
 
-    $("best").textContent =
-        `+${best}`;
+    if (
+        bestKey &&
+        bestValue > 0
+    ) {
+
+        bestDay.textContent =
+            `+${bestValue}`;
+
+        bestDay.title =
+            bestKey;
+
+    } else {
+
+        bestDay.textContent =
+            "—";
+
+        bestDay.title =
+            "";
+
+    }
 
 
-    const now =
+    /*
+       기간 진행률
+    */
+
+    const today =
         new Date();
 
 
-    let progress =
-        (
-            now - START
-        ) /
-        (
-            END - START
-        ) *
-        100;
+    const totalDays =
+        RANGE_KEYS.length;
 
 
-    progress =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                progress
-            )
+    let passedDays = 0;
+
+
+    if (
+        today < START
+    ) {
+
+        passedDays = 0;
+
+    } else if (
+        today > END
+    ) {
+
+        passedDays =
+            totalDays;
+
+    } else {
+
+        passedDays =
+            Math.floor(
+                (
+                    today - START
+                ) / 86400000
+            ) + 1;
+
+    }
+
+
+    const percent =
+        Math.round(
+            (
+                passedDays /
+                totalDays
+            ) * 100
         );
 
 
-    $("progressBar").style.width =
-        `${progress}%`;
+    progressPercent.textContent =
+        `${percent}%`;
 
 
-    $("progressText").textContent =
-        `${Math.round(progress)}%`;
+    progressBar.style.width =
+        `${percent}%`;
+
+
+    /*
+       설명
+    */
+
+    if (
+        active === 0
+    ) {
+
+        totalDescription.textContent =
+            "아직 기록이 없습니다.";
+
+    } else {
+
+        totalDescription.textContent =
+            `${active}일 기록됨 · 현재 ${formatScore(total)}`;
+
+    }
+
+
+    /*
+       문구
+    */
+
+    if (
+        total > 0
+    ) {
+
+        quote.textContent =
+            "좋은 기록이 조금씩 쌓이고 있다.";
+
+    } else if (
+        total < 0
+    ) {
+
+        quote.textContent =
+            "마이너스도 기록이다. 다시 쌓으면 된다.";
+
+    } else if (
+        active > 0
+    ) {
+
+        quote.textContent =
+            "플러스와 마이너스가 만나 현재는 0.";
+
+    } else {
+
+        quote.textContent =
+            "작은 점수도 쌓이면 기록이 된다.";
+
+    }
 
 }
 
 
-/* =========================
+/* =========================================================
    RENDER
-========================= */
+========================================================= */
 
 function render() {
 
@@ -1142,373 +1771,34 @@ function render() {
 
     renderStats();
 
-
-    if(selectedDate) {
-
-        const value =
-            Number(
-                data[key(selectedDate)] || 0
-            );
-
-
-        $("valueInput").value =
-            value;
-
-
-        updateEditor(value);
-
-    }
-
-}
-
-
-/* =========================
-   BACKGROUND NETWORK
-========================= */
-
-const canvas =
-    $("background");
-
-
-const ctx =
-    canvas.getContext("2d");
-
-
-let nodes = [];
-
-
-function resize() {
-
-    canvas.width =
-        window.innerWidth *
-        devicePixelRatio;
-
-
-    canvas.height =
-        window.innerHeight *
-        devicePixelRatio;
-
-
-    ctx.setTransform(
-        devicePixelRatio,
-        0,
-        0,
-        devicePixelRatio,
-        0,
-        0
-    );
-
-
-    createNodes();
-
-}
-
-
-function createNodes() {
-
-    nodes = [];
-
-
-    const count =
-        Math.min(
-            100,
-            Math.max(
-                40,
-                Math.floor(
-                    window.innerWidth / 15
-                )
-            )
-        );
-
-
-    for(
-        let i = 0;
-        i < count;
-        i++
+    if (
+        selectedDate
     ) {
 
-        nodes.push({
-
-            x:
-                Math.random() *
-                window.innerWidth,
-
-            y:
-                Math.random() *
-                window.innerHeight,
-
-            vx:
-                (
-                    Math.random() -
-                    .5
-                ) * .15,
-
-            vy:
-                (
-                    Math.random() -
-                    .5
-                ) * .15,
-
-            hue:
-                Math.random()
-
-        });
+        updateEditor();
 
     }
 
 }
 
 
-function backgroundAnimation() {
-
-    ctx.clearRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
-    );
-
-
-    /*
-       부드러운 색광
-    */
-
-    const glow1 =
-        ctx.createRadialGradient(
-            window.innerWidth * .15,
-            window.innerHeight * .2,
-            0,
-            window.innerWidth * .15,
-            window.innerHeight * .2,
-            500
-        );
-
-
-    glow1.addColorStop(
-        0,
-        "rgba(75,90,255,.10)"
-    );
-
-
-    glow1.addColorStop(
-        1,
-        "rgba(75,90,255,0)"
-    );
-
-
-    ctx.fillStyle =
-        glow1;
-
-
-    ctx.fillRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
-    );
-
-
-    const glow2 =
-        ctx.createRadialGradient(
-            window.innerWidth * .85,
-            window.innerHeight * .35,
-            0,
-            window.innerWidth * .85,
-            window.innerHeight * .35,
-            520
-        );
-
-
-    glow2.addColorStop(
-        0,
-        "rgba(255,55,170,.09)"
-    );
-
-
-    glow2.addColorStop(
-        1,
-        "rgba(255,55,170,0)"
-    );
-
-
-    ctx.fillStyle =
-        glow2;
-
-
-    ctx.fillRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
-    );
-
-
-    /*
-       움직이는 네트워크
-    */
-
-    for(
-        const node of nodes
-    ) {
-
-        node.x += node.vx;
-        node.y += node.vy;
-
-
-        if(
-            node.x < -50 ||
-            node.x >
-            window.innerWidth + 50
-        ) {
-
-            node.vx *= -1;
-
-        }
-
-
-        if(
-            node.y < -50 ||
-            node.y >
-            window.innerHeight + 50
-        ) {
-
-            node.vy *= -1;
-
-        }
-
-
-        ctx.beginPath();
-
-        ctx.arc(
-            node.x,
-            node.y,
-            1.4,
-            0,
-            Math.PI * 2
-        );
-
-
-        ctx.fillStyle =
-            node.hue > .5
-                ? "rgba(90,210,255,.65)"
-                : "rgba(210,90,255,.55)";
-
-
-        ctx.fill();
-
-    }
-
-
-    for(
-        let i = 0;
-        i < nodes.length;
-        i++
-    ) {
-
-        for(
-            let j = i + 1;
-            j < nodes.length;
-            j++
-        ) {
-
-            const a =
-                nodes[i];
-
-            const b =
-                nodes[j];
-
-
-            const dx =
-                a.x - b.x;
-
-            const dy =
-                a.y - b.y;
-
-
-            const distance =
-                Math.sqrt(
-                    dx * dx +
-                    dy * dy
-                );
-
-
-            if(
-                distance < 130
-            ) {
-
-                const alpha =
-                    .12 *
-                    (
-                        1 -
-                        distance / 130
-                    );
-
-
-                ctx.beginPath();
-
-                ctx.moveTo(
-                    a.x,
-                    a.y
-                );
-
-                ctx.lineTo(
-                    b.x,
-                    b.y
-                );
-
-
-                ctx.strokeStyle =
-                    `rgba(150,120,255,${alpha})`;
-
-
-                ctx.lineWidth =
-                    .6;
-
-
-                ctx.stroke();
-
-            }
-
-        }
-
-    }
-
-
-    requestAnimationFrame(
-        backgroundAnimation
-    );
-
-}
-
-
-window.addEventListener(
-    "resize",
-    resize
-);
-
-
-/* =========================
-   START
-========================= */
-
-async function init() {
-
-    resize();
-
-    backgroundAnimation();
-
-
-    /*
-       현재 날짜를 기본 선택.
-    */
+/* =========================================================
+   SELECT TODAY
+========================================================= */
+
+function selectToday() {
 
     const today =
         new Date();
 
 
-    if(
-        allowed(today)
+    if (
+        isAllowedDate(today)
     ) {
+
+        selectedDate =
+            dateKey(today);
+
 
         currentMonth =
             new Date(
@@ -1517,34 +1807,72 @@ async function init() {
                 1
             );
 
-
-        selectedDate =
-            new Date(today);
-
     } else {
 
         selectedDate =
-            new Date(START);
+            dateKey(START);
 
     }
 
+}
+
+
+/* =========================================================
+   KEYBOARD
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape" &&
+            document.activeElement === valueInput
+        ) {
+
+            valueInput.blur();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+async function init() {
+
+    /*
+       가장 먼저 화면을 만든다.
+       서버 연결 여부와 관계없이
+       사용자가 UI를 볼 수 있어야 한다.
+    */
+
+    data =
+        normalize({});
+
+
+    selectToday();
+
+    render();
+
+
+    /*
+       그 다음 KeyVal 연결.
+    */
 
     await load();
 
 
-    selectDate(
-        selectedDate
-    );
-
-
     /*
-       모든 기기에서 변경사항을
-       최대 1초 이내에 확인
+       1초마다 다른 기기 변경 확인.
     */
 
     setInterval(
         sync,
-        1000
+        100
     );
 
 }
