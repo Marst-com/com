@@ -1256,3 +1256,217 @@ footer {
     display: none;
   }
 }
+
+/* =========================================================
+   NEW APP.JS COMPATIBILITY
+   app.js의 새 calendar 클래스 대응
+   ========================================================= */
+
+/* 요일 */
+.calendar-weekday {
+  text-align: center;
+  color: #656c90;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  padding-bottom: 8px;
+}
+
+/* 빈 날짜 칸 */
+.calendar-empty {
+  min-height: 78px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* 날짜 */
+.calendar-day {
+  position: relative;
+
+  min-height: 78px;
+  width: 100%;
+
+  padding: 10px;
+
+  border: 1px solid rgba(140,115,255,.12);
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.035),
+      rgba(255,255,255,.012)
+    );
+
+  color: var(--text);
+  font-family: inherit;
+
+  cursor: pointer;
+  overflow: hidden;
+
+  text-align: left;
+
+  transition:
+    transform .15s ease,
+    border-color .15s ease,
+    background .15s ease,
+    box-shadow .15s ease;
+}
+
+.calendar-day:hover {
+  transform: translateY(-3px);
+
+  border-color: rgba(146,112,255,.55);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(129,81,255,.16),
+      rgba(47,202,255,.06)
+    );
+
+  box-shadow:
+    0 8px 28px rgba(85,62,180,.22);
+}
+
+.calendar-day:active {
+  transform: translateY(-1px) scale(.98);
+}
+
+/* 선택된 날짜 */
+.calendar-day.selected {
+  border-color: #9d72ff;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(128,76,255,.27),
+      rgba(49,197,255,.08)
+    );
+
+  box-shadow:
+    0 0 0 1px rgba(157,108,255,.2),
+    0 0 30px rgba(123,75,255,.25);
+}
+
+/* 숫자 */
+.calendar-day .day-number {
+  color: #b8bdd7;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* 점수 */
+.calendar-day .day-score {
+  position: absolute;
+
+  left: 10px;
+  bottom: 10px;
+
+  font-size: 19px;
+  font-weight: 800;
+
+  letter-spacing: -.5px;
+}
+
+/* 0 */
+.calendar-day.zero .day-score {
+  color: #4d536e;
+}
+
+/* 양수 */
+.calendar-day.positive .day-score {
+  color: #62efbe;
+
+  text-shadow:
+    0 0 15px rgba(98,239,190,.3);
+}
+
+/* 음수 */
+.calendar-day.negative .day-score {
+  color: #ff6e8b;
+
+  text-shadow:
+    0 0 15px rgba(255,110,139,.3);
+}
+
+/* Sync 상태 */
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 9px 13px;
+
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+
+  background: rgba(255,255,255,.025);
+
+  font-size: 11px;
+  color: #adb2d0;
+
+  transition:
+    color .15s ease,
+    border-color .15s ease;
+}
+
+.sync-status.loading {
+  color: #ffcf5c;
+}
+
+.sync-status.online {
+  color: #62efbe;
+}
+
+.sync-status.warning {
+  color: #ffcf5c;
+}
+
+.sync-status.offline {
+  color: #ff718d;
+}
+
+/* 저장 중 버튼 */
+.save-button:disabled {
+  opacity: .65;
+  cursor: wait;
+  transform: none;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1200px) {
+  .calendar-day,
+  .calendar-empty {
+    min-height: 70px;
+  }
+}
+
+@media (max-width: 650px) {
+  .calendar-day,
+  .calendar-empty {
+    min-height: 58px;
+  }
+
+  .calendar-day {
+    padding: 7px;
+    border-radius: 10px;
+  }
+
+  .calendar-day .day-number {
+    font-size: 9px;
+  }
+
+  .calendar-day .day-score {
+    left: 7px;
+    bottom: 7px;
+    font-size: 14px;
+  }
+
+  .calendar-weekday {
+    font-size: 7px;
+  }
+}
