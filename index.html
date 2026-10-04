@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>DuoMarst Score</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DuoMarst Daily Points</title>
 
 <style>
 *{
@@ -17,11 +17,7 @@ html,body{
     overflow:hidden;
     background:#020104;
     color:#fff;
-    font-family:
-        Inter,
-        Pretendard,
-        Arial,
-        sans-serif;
+    font-family:Inter,Pretendard,Arial,sans-serif;
 }
 
 body{
@@ -33,133 +29,351 @@ canvas{
     inset:0;
     width:100%;
     height:100%;
-    display:block;
+    opacity:.8;
 }
 
-.background{
+.bg{
     position:fixed;
     inset:0;
     pointer-events:none;
-
     background:
         radial-gradient(
-            ellipse at 50% 70%,
-            rgba(115,35,220,.08),
-            transparent 48%
-        ),
-        radial-gradient(
-            ellipse at 50% 100%,
-            rgba(70,20,130,.08),
+            ellipse at 50% 65%,
+            rgba(120,45,220,.09),
             transparent 55%
         );
 }
 
 
-/* =====================================================
-   MAIN PANEL
-===================================================== */
+/* =========================
+   MAIN
+========================= */
 
-.panel{
+.app{
     position:absolute;
+    z-index:5;
 
-    z-index:10;
-
-    width:680px;
-    height:470px;
+    width:min(900px,94vw);
+    height:min(700px,92vh);
 
     left:50%;
-    top:47%;
+    top:50%;
 
-    transform:
-        translate(-50%,-50%);
+    transform:translate(-50%,-50%);
 
-    background:
-        rgba(0,0,0,.965);
+    background:rgba(0,0,0,.94);
 
-    border:
-        1px solid
-        rgba(190,120,255,.18);
+    border:1px solid rgba(190,120,255,.18);
 
     box-shadow:
-        0 40px 140px
-        rgba(0,0,0,.85),
-
-        0 0 90px
-        rgba(100,30,190,.07);
+        0 40px 140px rgba(0,0,0,.9),
+        0 0 100px rgba(100,30,190,.06);
 
     display:flex;
     flex-direction:column;
-    align-items:center;
 }
 
 
-/* decorative corners */
+/* =========================
+   HEADER
+========================= */
 
-.panel:before,
-.panel:after{
-    content:"";
-    position:absolute;
-    pointer-events:none;
-}
+.header{
+    height:88px;
+    min-height:88px;
 
-.panel:before{
-    top:-1px;
-    left:34px;
+    padding:0 32px;
 
-    width:70px;
-    height:1px;
-
-    background:
-        #a855f7;
-}
-
-.panel:after{
-    right:-1px;
-    bottom:34px;
-
-    width:1px;
-    height:70px;
-
-    background:
-        #a855f7;
-}
-
-
-/* =====================================================
-   TOP BAR
-===================================================== */
-
-.top{
-    width:100%;
-
-    height:74px;
-
-    padding:
-        0 38px;
+    border-bottom:1px solid rgba(255,255,255,.06);
 
     display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.title small{
+    display:block;
+
+    color:#68636d;
+
+    font-size:9px;
+    letter-spacing:4px;
+
+    margin-bottom:7px;
+}
+
+.title strong{
+    font-size:19px;
+    font-weight:500;
+    letter-spacing:1px;
+}
+
+.total{
+    text-align:right;
+}
+
+.total small{
+    display:block;
+
+    color:#66616b;
+
+    font-size:8px;
+    letter-spacing:3px;
+
+    margin-bottom:4px;
+}
+
+#total{
+    font-size:34px;
+    font-weight:500;
+    letter-spacing:-2px;
+}
+
+#total.negative{
+    color:#ff5c7a;
+}
+
+
+/* =========================
+   MONTH BAR
+========================= */
+
+.monthbar{
+    height:64px;
+    min-height:64px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:28px;
+
+    border-bottom:1px solid rgba(255,255,255,.045);
+}
+
+.monthbar button{
+    width:34px;
+    height:34px;
+
+    border:1px solid #242027;
+    background:#08070a;
+
+    color:#77717d;
+
+    cursor:pointer;
+
+    font-size:17px;
+
+    transition:.15s;
+}
+
+.monthbar button:hover{
+    color:#fff;
+    border-color:#9149d6;
+}
+
+.monthbar button:disabled{
+    opacity:.2;
+    cursor:not-allowed;
+}
+
+#monthTitle{
+    min-width:190px;
+
+    text-align:center;
+
+    font-size:16px;
+    font-weight:500;
+
+    letter-spacing:2px;
+}
+
+
+/* =========================
+   WEEK
+========================= */
+
+.week{
+    display:grid;
+
+    grid-template-columns:
+        repeat(7,1fr);
+
+    padding:
+        0 22px;
+
+    height:36px;
+    min-height:36px;
 
     align-items:center;
 
-    justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.035);
+}
 
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.055);
+.week div{
+    text-align:center;
 
-    color:#5f5f63;
+    color:#514c55;
 
     font-size:9px;
 
-    letter-spacing:3px;
+    letter-spacing:2px;
+}
+
+.week div:first-child{
+    color:#79465c;
+}
+
+.week div:last-child{
+    color:#574d72;
+}
+
+
+/* =========================
+   CALENDAR
+========================= */
+
+.calendar{
+    flex:1;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(7,1fr);
+
+    grid-auto-rows:1fr;
+
+    gap:1px;
+
+    padding:8px 22px 18px;
+
+    overflow:hidden;
+}
+
+.day{
+    position:relative;
+
+    min-width:0;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:1px solid
+        rgba(255,255,255,.025);
+
+    cursor:pointer;
+
+    transition:
+        background .15s,
+        border-color .15s,
+        transform .15s;
+
+    padding:9px;
+}
+
+.day:hover{
+    background:
+        rgba(145,70,220,.09);
+
+    border-color:
+        rgba(170,90,255,.3);
+
+    transform:translateY(-1px);
+}
+
+.day.empty{
+    background:transparent;
+    border-color:transparent;
+    cursor:default;
+}
+
+.day.today{
+    border-color:
+        rgba(168,85,247,.65);
+
+    box-shadow:
+        inset 0 0 20px
+        rgba(130,50,220,.06);
+}
+
+.day-number{
+    color:#6d6872;
+
+    font-size:10px;
+}
+
+.day.today .day-number{
+    color:#c58cff;
+}
+
+.points{
+    position:absolute;
+
+    left:9px;
+    bottom:9px;
+
+    font-size:20px;
+
+    font-weight:500;
+
+    letter-spacing:-.5px;
+}
+
+.points.plus{
+    color:#b66cff;
+}
+
+.points.minus{
+    color:#ff5575;
+}
+
+.points.zero{
+    color:#3e3a42;
+}
+
+.edit-mark{
+    position:absolute;
+
+    right:8px;
+    top:8px;
+
+    width:3px;
+    height:3px;
+
+    border-radius:50%;
+
+    background:#7540a5;
+
+    opacity:.6;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    height:48px;
+    min-height:48px;
+
+    padding:0 24px;
+
+    border-top:1px solid rgba(255,255,255,.05);
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    color:#403b45;
+
+    font-size:8px;
+    letter-spacing:2px;
 }
 
 .connection{
     display:flex;
-
     align-items:center;
-
-    gap:8px;
+    gap:7px;
 }
 
 #statusDot{
@@ -171,158 +385,264 @@ canvas{
     background:#34c759;
 
     box-shadow:
-        0 0 10px
+        0 0 8px
         rgba(52,199,89,.7);
 }
 
 
-/* =====================================================
-   SCORE
-===================================================== */
+/* =========================
+   EDITOR
+========================= */
 
-.label{
-    margin-top:42px;
+.editor{
+    position:fixed;
 
-    color:#777;
+    z-index:20;
 
-    font-size:12px;
+    left:50%;
+    top:50%;
 
-    letter-spacing:9px;
+    transform:
+        translate(-50%,-50%)
+        scale(.96);
+
+    width:320px;
+
+    padding:24px;
+
+    background:#08070a;
+
+    border:1px solid
+        rgba(180,100,255,.3);
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,.9);
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.16s;
 }
 
-#score{
-    margin-top:8px;
+.editor.open{
+    opacity:1;
+    pointer-events:auto;
 
-    color:#f5f5f5;
-
-    font-size:148px;
-
-    font-weight:600;
-
-    line-height:1;
-
-    letter-spacing:-10px;
+    transform:
+        translate(-50%,-50%)
+        scale(1);
 }
 
-#score.pop{
-    animation:
-        scorePop
-        .23s
-        cubic-bezier(.2,.8,.2,1);
-}
-
-@keyframes scorePop{
-
-    0%{
-        transform:scale(1);
-    }
-
-    45%{
-        transform:scale(1.08);
-    }
-
-    100%{
-        transform:scale(1);
-    }
-}
-
-.subtitle{
-    margin-top:4px;
-
-    color:#4e4e52;
+.editor-date{
+    color:#706a75;
 
     font-size:9px;
-
     letter-spacing:3px;
+
+    margin-bottom:6px;
 }
 
+.editor-title{
+    font-size:20px;
 
-/* =====================================================
-   CONTROLS
-===================================================== */
+    margin-bottom:20px;
+}
 
-.controls{
-    margin-top:31px;
-
+.input-row{
     display:flex;
-
-    gap:10px;
+    gap:8px;
 }
 
-button{
-    width:72px;
-    height:40px;
+.input-row button{
+    width:46px;
+    height:42px;
 
-    border:
-        1px solid
-        #242126;
+    border:1px solid #29232e;
+    background:#100d13;
 
-    background:#080709;
-
-    color:#858187;
+    color:#a76ae1;
 
     font-size:20px;
 
     cursor:pointer;
-
-    transition:
-        .15s ease;
 }
 
-button:hover{
+#pointInput{
+    flex:1;
+
+    min-width:0;
+
+    height:42px;
+
+    background:#030204;
+
+    border:1px solid #29232e;
+
+    outline:none;
+
     color:#fff;
 
-    border-color:
-        rgba(168,85,247,.6);
+    text-align:center;
 
-    background:#100b15;
+    font-size:17px;
 }
 
-button:active{
-    transform:scale(.94);
+#pointInput:focus{
+    border-color:#9149d6;
 }
 
-
-/* =====================================================
-   BOTTOM INFORMATION
-===================================================== */
-
-.bottom{
-    position:absolute;
-
-    bottom:22px;
-
-    left:38px;
-    right:38px;
-
+.editor-buttons{
     display:flex;
 
-    justify-content:space-between;
+    gap:8px;
 
-    color:#3e3c42;
-
-    font-size:8px;
-
-    letter-spacing:2px;
+    margin-top:12px;
 }
 
+.editor-buttons button{
+    flex:1;
+
+    height:36px;
+
+    border:1px solid #28232d;
+
+    background:#0d0b10;
+
+    color:#77717d;
+
+    cursor:pointer;
+}
+
+.editor-buttons button:hover{
+    color:#fff;
+    border-color:#9149d6;
+}
+
+#saveDay{
+    color:#b16bff;
+}
+
+.overlay{
+    position:fixed;
+
+    inset:0;
+
+    z-index:15;
+
+    background:rgba(0,0,0,.45);
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.15s;
+}
+
+.overlay.open{
+    opacity:1;
+    pointer-events:auto;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:650px){
+
+    .app{
+        width:96vw;
+        height:94vh;
+    }
+
+    .header{
+        padding:0 18px;
+    }
+
+    .calendar{
+        padding:
+            6px 8px 12px;
+    }
+
+    .week{
+        padding:0 8px;
+    }
+
+    .points{
+        font-size:15px;
+    }
+
+    .day{
+        padding:6px;
+    }
+
+    .points{
+        left:6px;
+        bottom:6px;
+    }
+
+    .footer{
+        padding:0 12px;
+    }
+}
 </style>
 </head>
 
-
 <body>
 
-<div class="background"></div>
-
+<div class="bg"></div>
 <canvas id="canvas"></canvas>
 
+<div class="app">
 
-<div class="panel">
+    <header class="header">
 
-    <div class="top">
+        <div class="title">
+            <small>DUOMARST / POINT SYSTEM</small>
+            <strong>DAILY SCORE</strong>
+        </div>
+
+        <div class="total">
+            <small>TOTAL POINTS</small>
+            <div id="total">0</div>
+        </div>
+
+    </header>
+
+
+    <div class="monthbar">
+
+        <button id="prevMonth">‹</button>
+
+        <div id="monthTitle">
+            2026.09
+        </div>
+
+        <button id="nextMonth">›</button>
+
+    </div>
+
+
+    <div class="week">
+
+        <div>SUN</div>
+        <div>MON</div>
+        <div>TUE</div>
+        <div>WED</div>
+        <div>THU</div>
+        <div>FRI</div>
+        <div>SAT</div>
+
+    </div>
+
+
+    <div id="calendar" class="calendar"></div>
+
+
+    <footer class="footer">
 
         <span>
-            DUOMARST / SCORE SYSTEM
+            2026.09.01 — 2027.03.31
         </span>
 
         <span class="connection">
@@ -335,46 +655,52 @@ button:active{
 
         </span>
 
+    </footer>
+
+</div>
+
+
+<div id="overlay" class="overlay"></div>
+
+
+<div id="editor" class="editor">
+
+    <div id="editorDate" class="editor-date">
+        2026.10.04
     </div>
 
-
-    <div class="label">
-        SHARED SCORE
+    <div class="editor-title">
+        POINTS
     </div>
 
+    <div class="input-row">
 
-    <div id="score">
-        1
-    </div>
-
-
-    <div class="subtitle">
-        LIVE SYNCHRONIZED VALUE
-    </div>
-
-
-    <div class="controls">
-
-        <button id="minus">
+        <button id="minusOne">
             −
         </button>
 
-        <button id="plus">
+        <input
+            id="pointInput"
+            type="number"
+            step="1"
+            value="0"
+        >
+
+        <button id="plusOne">
             +
         </button>
 
     </div>
 
+    <div class="editor-buttons">
 
-    <div class="bottom">
+        <button id="cancelEdit">
+            CANCEL
+        </button>
 
-        <span>
-            NETWORK // ACTIVE
-        </span>
-
-        <span>
-            KEYVAL // REMOTE STORAGE
-        </span>
+        <button id="saveDay">
+            SAVE
+        </button>
 
     </div>
 
@@ -382,1022 +708,619 @@ button:active{
 
 
 <script>
-
 /* =====================================================
-   CANVAS
-===================================================== */
-
-const canvas =
-    document.getElementById(
-        "canvas"
-    );
-
-const ctx =
-    canvas.getContext(
-        "2d"
-    );
-
-let W =
-    innerWidth;
-
-let H =
-    innerHeight;
-
-
-function resize(){
-
-    W =
-        canvas.width =
-        innerWidth;
-
-    H =
-        canvas.height =
-        innerHeight;
-}
-
-
-resize();
-
-addEventListener(
-    "resize",
-    resize
-);
-
-
-/* =====================================================
-   MOUSE
-===================================================== */
-
-let mouseX = 0;
-let mouseY = 0;
-
-addEventListener(
-    "mousemove",
-    e => {
-
-        mouseX =
-            e.clientX /
-            W -
-            .5;
-
-        mouseY =
-            e.clientY /
-            H -
-            .5;
-    }
-);
-
-
-/* =====================================================
-   COLOR
-===================================================== */
-
-function randomPurple(){
-
-    return {
-
-        h:
-            255 +
-            Math.random()*38,
-
-        s:
-            72 +
-            Math.random()*23,
-
-        l:
-            48 +
-            Math.random()*27
-    };
-}
-
-
-function mix(a,b,t=.5){
-
-    return {
-
-        h:
-            a.h+
-            (b.h-a.h)*t,
-
-        s:
-            a.s+
-            (b.s-a.s)*t,
-
-        l:
-            a.l+
-            (b.l-a.l)*t
-    };
-}
-
-
-function rgb(c,a=1){
-
-    let h =
-        c.h/360;
-
-    let s =
-        c.s/100;
-
-    let l =
-        c.l/100;
-
-    let r,g,b;
-
-    if(!s){
-
-        r=g=b=l;
-
-    }else{
-
-        const q =
-            l<.5
-            ? l*(1+s)
-            : l+s-l*s;
-
-        const p =
-            2*l-q;
-
-        const hue =
-            t=>{
-
-                if(t<0)
-                    t+=1;
-
-                if(t>1)
-                    t-=1;
-
-                if(t<1/6)
-                    return p+
-                        (q-p)*6*t;
-
-                if(t<1/2)
-                    return q;
-
-                if(t<2/3)
-                    return p+
-                        (q-p)*
-                        (2/3-t)*6;
-
-                return p;
-            };
-
-        r=hue(h+1/3);
-        g=hue(h);
-        b=hue(h-1/3);
-    }
-
-    return `
-        rgba(
-            ${Math.round(r*255)},
-            ${Math.round(g*255)},
-            ${Math.round(b*255)},
-            ${a}
-        )
-    `;
-}
-
-
-/* =====================================================
-   3D NETWORK
-===================================================== */
-
-const COLS = 12;
-const ROWS = 7;
-
-const nodes = [];
-const edges = [];
-
-const edgeSet =
-    new Set();
-
-
-for(
-    let row=0;
-    row<ROWS;
-    row++
-){
-
-    const depth =
-        row/(ROWS-1);
-
-    /*
-       가까운 부분은 넓고
-       먼 부분은 좁아짐
-    */
-
-    const width =
-        1050-
-        depth*720;
-
-
-    const z =
-        420-
-        depth*2350;
-
-
-    const centerY =
-        80+
-        depth*430;
-
-
-    for(
-        let col=0;
-        col<COLS;
-        col++
-    ){
-
-        const normalized =
-            col/(COLS-1)-.5;
-
-
-        nodes.push({
-
-            x:
-                normalized*
-                width+
-                (Math.random()-.5)*
-                85,
-
-            y:
-                centerY+
-                (Math.random()-.5)*
-                85,
-
-            z:
-                z+
-                (Math.random()-.5)*
-                100,
-
-            color:
-                randomPurple(),
-
-            size:
-                1.7+
-                Math.random()*2.3,
-
-            phase:
-                Math.random()*
-                Math.PI*2
-        });
-    }
-}
-
-
-/* =====================================================
-   EDGES
-===================================================== */
-
-function addEdge(a,b){
-
-    const key =
-        a<b
-        ? `${a}-${b}`
-        : `${b}-${a}`;
-
-
-    if(
-        edgeSet.has(key)
-    )
-        return;
-
-
-    edgeSet.add(key);
-
-    edges.push({
-        a,
-        b
-    });
-}
-
-
-for(
-    let row=0;
-    row<ROWS;
-    row++
-){
-
-    for(
-        let col=0;
-        col<COLS;
-        col++
-    ){
-
-        const i =
-            row*COLS+
-            col;
-
-
-        if(
-            col<
-            COLS-1
-        ){
-
-            addEdge(
-                i,
-                i+1
-            );
-        }
-
-
-        if(
-            row<
-            ROWS-1
-        ){
-
-            addEdge(
-                i,
-                i+COLS
-            );
-
-
-            if(
-                col<
-                COLS-1
-            ){
-
-                addEdge(
-                    i,
-                    i+COLS+1
-                );
-            }
-
-
-            if(
-                col>0
-            ){
-
-                addEdge(
-                    i,
-                    i+COLS-1
-                );
-            }
-        }
-    }
-}
-
-
-/* =====================================================
-   TRIANGLES
-===================================================== */
-
-const triangles = [];
-
-const links =
-    new Map();
-
-
-for(
-    let i=0;
-    i<nodes.length;
-    i++
-){
-
-    links.set(
-        i,
-        new Set()
-    );
-}
-
-
-for(
-    const e of edges
-){
-
-    links
-        .get(e.a)
-        .add(e.b);
-
-    links
-        .get(e.b)
-        .add(e.a);
-}
-
-
-for(
-    let a=0;
-    a<nodes.length;
-    a++
-){
-
-    const n =
-        [
-            ...links.get(a)
-        ];
-
-
-    for(
-        let i=0;
-        i<n.length;
-        i++
-    ){
-
-        for(
-            let j=i+1;
-            j<n.length;
-            j++
-        ){
-
-            const b=n[i];
-            const c=n[j];
-
-
-            if(
-                links
-                    .get(b)
-                    .has(c)
-            ){
-
-                if(
-                    Math.random()<.35
-                ){
-
-                    triangles.push({
-                        a,
-                        b,
-                        c
-                    });
-                }
-            }
-        }
-    }
-}
-
-
-/* =====================================================
-   CAMERA
-===================================================== */
-
-let rotation =
-    0;
-
-
-/* =====================================================
-   PROJECT
-===================================================== */
-
-function project(
-    node,
-    time
-){
-
-    let x =
-        node.x+
-        Math.sin(
-            time*.00055+
-            node.phase
-        )*8;
-
-
-    let y =
-        node.y+
-        Math.cos(
-            time*.0005+
-            node.phase
-        )*5;
-
-
-    let z =
-        node.z;
-
-
-    /*
-       전체 구조 회전
-    */
-
-    const angle =
-        rotation+
-        mouseX*.035;
-
-
-    const cosY =
-        Math.cos(angle);
-
-    const sinY =
-        Math.sin(angle);
-
-
-    const rx =
-        x*cosY-
-        z*sinY;
-
-    const rz =
-        x*sinY+
-        z*cosY;
-
-
-    /*
-       위에서 내려다보는 시점
-    */
-
-    const pitch =
-        -.46+
-        mouseY*.025;
-
-
-    const cosX =
-        Math.cos(pitch);
-
-    const sinX =
-        Math.sin(pitch);
-
-
-    const ry =
-        y*cosX-
-        rz*sinX;
-
-    const finalZ =
-        y*sinX+
-        rz*cosX;
-
-
-    /*
-       perspective
-    */
-
-    const camera =
-        1050;
-
-
-    const scale =
-        camera/
-        (
-            camera+
-            finalZ
-        );
-
-
-    return {
-
-        x:
-            W*.5+
-            rx*scale,
-
-        y:
-            H*.60+
-            ry*scale,
-
-        z:
-            finalZ,
-
-        scale
-    };
-}
-
-
-/* =====================================================
-   RENDER
-===================================================== */
-
-function draw(time){
-
-    ctx.clearRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    ctx.fillStyle =
-        "#020104";
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    /*
-       아래쪽의 공간광
-    */
-
-    const glow =
-        ctx.createRadialGradient(
-            W*.5,
-            H*.9,
-            0,
-            W*.5,
-            H*.9,
-            H*.85
-        );
-
-
-    glow.addColorStop(
-        0,
-        "rgba(125,45,230,.09)"
-    );
-
-    glow.addColorStop(
-        .5,
-        "rgba(70,20,140,.025)"
-    );
-
-    glow.addColorStop(
-        1,
-        "rgba(0,0,0,0)"
-    );
-
-
-    ctx.fillStyle =
-        glow;
-
-    ctx.fillRect(
-        0,
-        H*.35,
-        W,
-        H*.65
-    );
-
-
-    rotation +=
-        .000018;
-
-
-    const p =
-        nodes.map(
-            n =>
-                project(
-                    n,
-                    time
-                )
-        );
-
-
-    /*
-       삼각형
-    */
-
-    for(
-        const t of
-        triangles
-    ){
-
-        const a=p[t.a];
-        const b=p[t.b];
-        const c=p[t.c];
-
-
-        const area =
-            Math.abs(
-                (b.x-a.x)*
-                (c.y-a.y)-
-                (b.y-a.y)*
-                (c.x-a.x)
-            );
-
-
-        if(
-            area<10
-        )
-            continue;
-
-
-        const col =
-            mix(
-                mix(
-                    nodes[t.a].color,
-                    nodes[t.b].color,
-                    .5
-                ),
-                nodes[t.c].color,
-                .5
-            );
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            a.x,
-            a.y
-        );
-
-        ctx.lineTo(
-            b.x,
-            b.y
-        );
-
-        ctx.lineTo(
-            c.x,
-            c.y
-        );
-
-        ctx.closePath();
-
-
-        ctx.fillStyle =
-            rgb(
-                col,
-                .025
-            );
-
-        ctx.fill();
-    }
-
-
-    /*
-       연결선
-    */
-
-    ctx.lineCap =
-        "round";
-
-
-    for(
-        const e of
-        edges
-    ){
-
-        const a=p[e.a];
-        const b=p[e.b];
-
-
-        const d =
-            Math.hypot(
-                a.x-b.x,
-                a.y-b.y
-            );
-
-
-        if(
-            d<4 ||
-            d>330
-        )
-            continue;
-
-
-        const col =
-            mix(
-                nodes[e.a].color,
-                nodes[e.b].color,
-                .5
-            );
-
-
-        const alpha =
-            Math.min(
-                .35,
-                Math.max(
-                    .07,
-                    .19*
-                    (
-                        a.scale+
-                        b.scale
-                    )
-                )
-            );
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            a.x,
-            a.y
-        );
-
-        ctx.lineTo(
-            b.x,
-            b.y
-        );
-
-
-        ctx.strokeStyle =
-            rgb(
-                col,
-                alpha
-            );
-
-
-        ctx.lineWidth =
-            .6+
-            (
-                a.scale+
-                b.scale
-            )*.32;
-
-
-        ctx.stroke();
-    }
-
-
-    /*
-       점
-    */
-
-    for(
-        let i=0;
-        i<nodes.length;
-        i++
-    ){
-
-        const q=p[i];
-
-        if(
-            q.x<-100 ||
-            q.x>W+100 ||
-            q.y<-100 ||
-            q.y>H+100
-        )
-            continue;
-
-
-        const node =
-            nodes[i];
-
-
-        const r =
-            Math.max(
-                .7,
-                node.size*
-                q.scale
-            );
-
-
-        /*
-           glow
-        */
-
-        ctx.beginPath();
-
-        ctx.arc(
-            q.x,
-            q.y,
-            r*3.2,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fillStyle =
-            rgb(
-                node.color,
-                .025
-            );
-
-        ctx.fill();
-
-
-        /*
-           core
-        */
-
-        ctx.beginPath();
-
-        ctx.arc(
-            q.x,
-            q.y,
-            r,
-            0,
-            Math.PI*2
-        );
-
-        ctx.fillStyle =
-            rgb(
-                node.color,
-                Math.min(
-                    .9,
-                    q.scale
-                )
-            );
-
-        ctx.fill();
-    }
-
-
-    requestAnimationFrame(
-        draw
-    );
-}
-
-
-requestAnimationFrame(
-    draw
-);
-
-
-/* =====================================================
-   SCORE / KEYVAL
+   KEYVAL
 ===================================================== */
 
 const KEY =
     "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
-
 const GET_URL =
-    "https://api.keyval.org/get/"+
-    KEY;
-
+    "https://api.keyval.org/get/" + KEY;
 
 const SET_URL =
     value =>
-        "https://api.keyval.org/set/"+
-        KEY+
-        "/"+
+        "https://api.keyval.org/set/" +
+        KEY +
+        "/" +
         encodeURIComponent(
             String(value)
         );
 
 
-const scoreEl =
-    document.getElementById(
-        "score"
+/* =====================================================
+   DATE RANGE
+===================================================== */
+
+const START =
+    new Date(
+        2026,
+        8,
+        1
     );
 
+const END =
+    new Date(
+        2027,
+        2,
+        31
+    );
+
+
+let currentYear = 2026;
+let currentMonth = 8;
+
+let data = {};
+
+let selectedDate = null;
+
+let busy = false;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const calendar =
+    document.getElementById(
+        "calendar"
+    );
+
+const totalEl =
+    document.getElementById(
+        "total"
+    );
+
+const monthTitle =
+    document.getElementById(
+        "monthTitle"
+    );
 
 const statusText =
     document.getElementById(
         "statusText"
     );
 
-
 const statusDot =
     document.getElementById(
         "statusDot"
     );
 
+const editor =
+    document.getElementById(
+        "editor"
+    );
 
-let score=1;
-let busy=false;
+const overlay =
+    document.getElementById(
+        "overlay"
+    );
+
+const editorDate =
+    document.getElementById(
+        "editorDate"
+    );
+
+const pointInput =
+    document.getElementById(
+        "pointInput"
+    );
 
 
-function render(
-    value,
-    animate=true
+/* =====================================================
+   DATE HELPERS
+===================================================== */
+
+function dateKey(
+    year,
+    month,
+    day
 ){
 
-    score=
-        Number(value);
+    return (
+        year +
+        "-" +
+        String(month+1)
+            .padStart(2,"0") +
+        "-" +
+        String(day)
+            .padStart(2,"0")
+    );
+}
 
 
-    if(
-        !Number.isFinite(score)
-    )
-        score=1;
+function isAllowedDate(
+    date
+){
+
+    return (
+        date >= START &&
+        date <= END
+    );
+}
 
 
-    scoreEl.textContent=
-        score;
+function todayKey(){
+
+    const d =
+        new Date();
+
+    return dateKey(
+        d.getFullYear(),
+        d.getMonth(),
+        d.getDate()
+    );
+}
 
 
-    if(
-        !animate
-    )
-        return;
+/* =====================================================
+   RENDER CALENDAR
+===================================================== */
+
+function renderCalendar(){
+
+    calendar.innerHTML = "";
+
+    monthTitle.textContent =
+        currentYear +
+        "." +
+        String(
+            currentMonth + 1
+        ).padStart(2,"0");
 
 
-    scoreEl.classList.remove(
-        "pop"
+    const first =
+        new Date(
+            currentYear,
+            currentMonth,
+            1
+        );
+
+    const last =
+        new Date(
+            currentYear,
+            currentMonth + 1,
+            0
+        );
+
+
+    const firstDay =
+        first.getDay();
+
+    const days =
+        last.getDate();
+
+
+    /*
+       빈 칸
+    */
+
+    for(
+        let i=0;
+        i<firstDay;
+        i++
+    ){
+
+        const empty =
+            document.createElement(
+                "div"
+            );
+
+        empty.className =
+            "day empty";
+
+        calendar.appendChild(
+            empty
+        );
+    }
+
+
+    /*
+       날짜
+    */
+
+    for(
+        let day=1;
+        day<=days;
+        day++
+    ){
+
+        const key =
+            dateKey(
+                currentYear,
+                currentMonth,
+                day
+            );
+
+
+        const date =
+            new Date(
+                currentYear,
+                currentMonth,
+                day
+            );
+
+
+        const allowed =
+            isAllowedDate(
+                date
+            );
+
+
+        const cell =
+            document.createElement(
+                "div"
+            );
+
+        cell.className =
+            "day";
+
+
+        if(
+            !allowed
+        ){
+
+            cell.classList.add(
+                "empty"
+            );
+
+        }else{
+
+            const value =
+                Number(
+                    data[key] ?? 0
+                );
+
+
+            const number =
+                document.createElement(
+                    "div"
+                );
+
+            number.className =
+                "day-number";
+
+            number.textContent =
+                day;
+
+
+            if(
+                key === todayKey()
+            ){
+
+                cell.classList.add(
+                    "today"
+                );
+            }
+
+
+            const points =
+                document.createElement(
+                    "div"
+                );
+
+            points.className =
+                "points " +
+                (
+                    value > 0
+                    ? "plus"
+                    : value < 0
+                    ? "minus"
+                    : "zero"
+                );
+
+
+            if(
+                value > 0
+            ){
+
+                points.textContent =
+                    "+" + value;
+
+            }else{
+
+                points.textContent =
+                    value;
+            }
+
+
+            if(
+                value !== 0
+            ){
+
+                const mark =
+                    document.createElement(
+                        "div"
+                    );
+
+                mark.className =
+                    "edit-mark";
+
+                cell.appendChild(
+                    mark
+                );
+            }
+
+
+            cell.appendChild(
+                number
+            );
+
+            cell.appendChild(
+                points
+            );
+
+
+            cell.onclick =
+                () =>
+                    openEditor(
+                        key,
+                        value
+                    );
+        }
+
+
+        calendar.appendChild(
+            cell
+        );
+    }
+
+
+    updateTotal();
+}
+
+
+/* =====================================================
+   TOTAL
+===================================================== */
+
+function updateTotal(){
+
+    let total = 0;
+
+    for(
+        const key in data
+    ){
+
+        const date =
+            new Date(
+                key +
+                "T00:00:00"
+            );
+
+        if(
+            isAllowedDate(
+                date
+            )
+        ){
+
+            const value =
+                Number(
+                    data[key]
+                );
+
+            if(
+                Number.isFinite(value)
+            ){
+
+                total += value;
+            }
+        }
+    }
+
+
+    totalEl.textContent =
+        total > 0
+        ? "+" + total
+        : total;
+
+
+    totalEl.classList.toggle(
+        "negative",
+        total < 0
+    );
+}
+
+
+/* =====================================================
+   EDITOR
+===================================================== */
+
+function openEditor(
+    key,
+    value
+){
+
+    selectedDate =
+        key;
+
+    editorDate.textContent =
+        key;
+
+    pointInput.value =
+        Number(value) || 0;
+
+    editor.classList.add(
+        "open"
     );
 
-
-    void scoreEl.offsetWidth;
-
-
-    scoreEl.classList.add(
-        "pop"
+    overlay.classList.add(
+        "open"
     );
-
 
     setTimeout(
-        ()=>{
-            scoreEl.classList.remove(
-                "pop"
-            );
+        () => {
+            pointInput.focus();
+            pointInput.select();
         },
-        230
+        50
     );
 }
 
 
-function connection(
-    ok
-){
+function closeEditor(){
 
-    statusText.textContent =
-        ok
-        ? "SYNC"
-        : "OFFLINE";
+    editor.classList.remove(
+        "open"
+    );
 
+    overlay.classList.remove(
+        "open"
+    );
 
-    statusDot.style.background =
-        ok
-        ? "#34c759"
-        : "#ff3b30";
-
-
-    statusDot.style.boxShadow =
-        ok
-        ? "0 0 10px rgba(52,199,89,.7)"
-        : "0 0 10px rgba(255,59,48,.7)";
+    selectedDate =
+        null;
 }
 
 
-async function getScore(){
+document
+    .getElementById(
+        "cancelEdit"
+    )
+    .onclick =
+        closeEditor;
+
+
+overlay.onclick =
+    closeEditor;
+
+
+document
+    .getElementById(
+        "minusOne"
+    )
+    .onclick =
+        () => {
+
+            pointInput.value =
+                (
+                    Number(
+                        pointInput.value
+                    ) || 0
+                ) - 1;
+        };
+
+
+document
+    .getElementById(
+        "plusOne"
+    )
+    .onclick =
+        () => {
+
+            pointInput.value =
+                (
+                    Number(
+                        pointInput.value
+                    ) || 0
+                ) + 1;
+        };
+
+
+/* =====================================================
+   SAVE DAY
+===================================================== */
+
+document
+    .getElementById(
+        "saveDay"
+    )
+    .onclick =
+        async () => {
+
+            if(
+                !selectedDate ||
+                busy
+            )
+                return;
+
+
+            const value =
+                Number(
+                    pointInput.value
+                );
+
+
+            if(
+                !Number.isFinite(value)
+            ){
+
+                alert(
+                    "숫자를 입력해줘."
+                );
+
+                return;
+            }
+
+
+            busy = true;
+
+
+            try{
+
+                /*
+                   저장 직전에 DB를 다시 읽음.
+                   다른 기기에서 바뀐 내용도 최대한 보존.
+                */
+
+                const latest =
+                    await getData();
+
+
+                latest[selectedDate] =
+                    Math.trunc(
+                        value
+                    );
+
+
+                await saveData(
+                    latest
+                );
+
+
+                data =
+                    latest;
+
+
+                renderCalendar();
+
+                closeEditor();
+
+                setConnection(
+                    true
+                );
+
+            }catch(error){
+
+                console.error(
+                    error
+                );
+
+                setConnection(
+                    false
+                );
+
+                alert(
+                    "저장 실패"
+                );
+
+            }
+
+
+            busy = false;
+        };
+
+
+/* =====================================================
+   KEYVAL GET
+===================================================== */
+
+async function getData(){
 
     const response =
         await fetch(
-            GET_URL+
-            "?t="+
+            GET_URL +
+            "?t=" +
             Date.now(),
             {
                 cache:
@@ -1417,68 +1340,123 @@ async function getScore(){
     ){
 
         throw new Error(
-            "GET "+
+            "GET " +
             response.status
         );
     }
 
 
-    let value=body;
+    if(
+        !body
+    ){
 
+        return {};
+    }
+
+
+    let value =
+        body;
+
+
+    /*
+       KeyVal 응답 형식이
+       JSON / 문자열 등으로 올 수 있어서
+       여러 형태를 처리
+    */
 
     try{
 
-        const json=
+        const parsed =
             JSON.parse(
-                value
+                body
             );
 
 
         if(
-            json &&
-            typeof json===
+            parsed &&
+            typeof parsed ===
             "object"
         ){
 
-            value=
-                json.val ??
-                json.value ??
-                json.data ??
-                value;
+            if(
+                parsed.val !== undefined
+            ){
+
+                value =
+                    parsed.val;
+
+            }else if(
+                parsed.value !== undefined
+            ){
+
+                value =
+                    parsed.value;
+
+            }else if(
+                parsed.data !== undefined
+            ){
+
+                value =
+                    parsed.data;
+            }
         }
 
     }catch{}
 
 
-    const number=
-        Number(
-            String(
-                value
-            ).trim()
-        );
-
+    /*
+       문자열로 들어온 JSON
+    */
 
     if(
-        !Number.isFinite(number)
+        typeof value ===
+        "string"
     ){
 
-        throw new Error(
-            "Invalid score"
-        );
+        try{
+
+            value =
+                JSON.parse(
+                    value
+                );
+
+        }catch{
+
+            return {};
+        }
     }
 
 
-    return number;
+    if(
+        !value ||
+        typeof value !==
+        "object" ||
+        Array.isArray(value)
+    ){
+
+        return {};
+    }
+
+
+    return value;
 }
 
 
-async function saveScore(
+/* =====================================================
+   KEYVAL SAVE
+===================================================== */
+
+async function saveData(
     value
 ){
 
     const response =
         await fetch(
-            SET_URL(value),
+            SET_URL(
+                JSON.stringify(
+                    value
+                )
+            ),
             {
                 cache:
                     "no-store"
@@ -1491,12 +1469,43 @@ async function saveScore(
     ){
 
         throw new Error(
-            "SET "+
+            "SET " +
             response.status
         );
     }
 }
 
+
+/* =====================================================
+   CONNECTION
+===================================================== */
+
+function setConnection(
+    ok
+){
+
+    statusText.textContent =
+        ok
+        ? "SYNC"
+        : "OFFLINE";
+
+
+    statusDot.style.background =
+        ok
+        ? "#34c759"
+        : "#ff3b30";
+
+
+    statusDot.style.boxShadow =
+        ok
+        ? "0 0 8px rgba(52,199,89,.7)"
+        : "0 0 8px rgba(255,59,48,.7)";
+}
+
+
+/* =====================================================
+   SYNC
+===================================================== */
 
 async function sync(){
 
@@ -1508,75 +1517,196 @@ async function sync(){
 
     try{
 
-        const value =
-            await getScore();
+        const latest =
+            await getData();
 
 
         /*
-           DB와 현재 값이 다를 때만
-           애니메이션
+           내용이 바뀌었을 때만
+           달력을 다시 그림
         */
 
         if(
-            value!==score
+            JSON.stringify(latest) !==
+            JSON.stringify(data)
         ){
 
-            render(
-                value,
-                true
-            );
+            data =
+                latest;
+
+            renderCalendar();
         }
 
 
-        connection(true);
-
-    }catch(error){
-
-        console.error(
-            error
-        );
-
-        connection(false);
-    }
-}
-
-
-async function change(
-    amount
-){
-
-    if(
-        busy
-    )
-        return;
-
-
-    busy=true;
-
-
-    try{
-
-        const current =
-            await getScore();
-
-
-        const next =
-            current+
-            amount;
-
-
-        render(
-            next,
+        setConnection(
             true
         );
 
+    }catch(error){
 
-        await saveScore(
-            next
+        console.error(
+            error
+        );
+
+        setConnection(
+            false
+        );
+    }
+}
+
+
+/* =====================================================
+   MONTH NAVIGATION
+===================================================== */
+
+function canMoveTo(
+    year,
+    month
+){
+
+    const first =
+        new Date(
+            year,
+            month,
+            1
+        );
+
+    const last =
+        new Date(
+            year,
+            month + 1,
+            0
         );
 
 
-        connection(true);
+    return (
+        last >= START &&
+        first <= END
+    );
+}
+
+
+document
+    .getElementById(
+        "prevMonth"
+    )
+    .onclick =
+        () => {
+
+            let y =
+                currentYear;
+
+            let m =
+                currentMonth - 1;
+
+
+            if(
+                m < 0
+            ){
+
+                m = 11;
+                y--;
+            }
+
+
+            if(
+                canMoveTo(y,m)
+            ){
+
+                currentYear =
+                    y;
+
+                currentMonth =
+                    m;
+
+                renderCalendar();
+            }
+        };
+
+
+document
+    .getElementById(
+        "nextMonth"
+    )
+    .onclick =
+        () => {
+
+            let y =
+                currentYear;
+
+            let m =
+                currentMonth + 1;
+
+
+            if(
+                m > 11
+            ){
+
+                m = 0;
+                y++;
+            }
+
+
+            if(
+                canMoveTo(y,m)
+            ){
+
+                currentYear =
+                    y;
+
+                currentMonth =
+                    m;
+
+                renderCalendar();
+            }
+        };
+
+
+/* =====================================================
+   ENTER = SAVE
+===================================================== */
+
+pointInput.addEventListener(
+    "keydown",
+    e => {
+
+        if(
+            e.key ===
+            "Enter"
+        ){
+
+            document
+                .getElementById(
+                    "saveDay"
+                )
+                .click();
+        }
+
+        if(
+            e.key ===
+            "Escape"
+        ){
+
+            closeEditor();
+        }
+    }
+);
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+async function init(){
+
+    try{
+
+        data =
+            await getData();
+
+        setConnection(
+            true
+        );
 
     }catch(error){
 
@@ -1584,34 +1714,285 @@ async function change(
             error
         );
 
-        connection(false);
+        data = {};
 
+        setConnection(
+            false
+        );
     }
 
 
-    busy=false;
+    renderCalendar();
 }
 
 
-document
-    .getElementById("minus")
-    .onclick=
-    ()=>change(-1);
+init();
 
 
-document
-    .getElementById("plus")
-    .onclick=
-    ()=>change(1);
-
-
-sync();
+/*
+   1초마다 다른 기기와 동기화
+*/
 
 setInterval(
     sync,
     1000
 );
 
+
+/* =====================================================
+   PLEXUS BACKGROUND
+===================================================== */
+
+const canvas =
+    document.getElementById(
+        "canvas"
+    );
+
+const ctx =
+    canvas.getContext(
+        "2d"
+    );
+
+
+let W =
+    innerWidth;
+
+let H =
+    innerHeight;
+
+
+function resize(){
+
+    W =
+        canvas.width =
+        innerWidth;
+
+    H =
+        canvas.height =
+        innerHeight;
+}
+
+resize();
+
+addEventListener(
+    "resize",
+    resize
+);
+
+
+const nodes = [];
+
+for(
+    let i=0;
+    i<85;
+    i++
+){
+
+    nodes.push({
+
+        x:
+            Math.random(),
+
+        y:
+            .55 +
+            Math.random()*.45,
+
+        z:
+            Math.random(),
+
+        vx:
+            (Math.random()-.5)*
+            .00005,
+
+        vy:
+            (Math.random()-.5)*
+            .000025,
+
+        hue:
+            255+
+            Math.random()*35
+    });
+}
+
+
+function drawNetwork(){
+
+    ctx.clearRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+
+    /*
+       점 위치
+    */
+
+    for(
+        const n of nodes
+    ){
+
+        n.x += n.vx;
+        n.y += n.vy;
+
+
+        if(
+            n.x < -.05 ||
+            n.x > 1.05
+        ){
+
+            n.vx *= -1;
+        }
+
+
+        if(
+            n.y < .52 ||
+            n.y > 1.05
+        ){
+
+            n.vy *= -1;
+        }
+    }
+
+
+    /*
+       연결선
+    */
+
+    for(
+        let i=0;
+        i<nodes.length;
+        i++
+    ){
+
+        for(
+            let j=i+1;
+            j<nodes.length;
+            j++
+        ){
+
+            const a =
+                nodes[i];
+
+            const b =
+                nodes[j];
+
+
+            const ax =
+                a.x*W;
+
+            const ay =
+                a.y*H;
+
+            const bx =
+                b.x*W;
+
+            const by =
+                b.y*H;
+
+
+            const d =
+                Math.hypot(
+                    ax-bx,
+                    ay-by
+                );
+
+
+            if(
+                d > 145
+            )
+                continue;
+
+
+            const alpha =
+                (
+                    1-
+                    d/145
+                )*.14;
+
+
+            const hue =
+                (
+                    a.hue+
+                    b.hue
+                )/2;
+
+
+            ctx.beginPath();
+
+            ctx.moveTo(
+                ax,
+                ay
+            );
+
+            ctx.lineTo(
+                bx,
+                by
+            );
+
+
+            ctx.strokeStyle =
+                `hsla(
+                    ${hue},
+                    80%,
+                    65%,
+                    ${alpha}
+                )`;
+
+            ctx.lineWidth =
+                .6;
+
+            ctx.stroke();
+        }
+    }
+
+
+    /*
+       점
+    */
+
+    for(
+        const n of nodes
+    ){
+
+        const x =
+            n.x*W;
+
+        const y =
+            n.y*H;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            1.5,
+            0,
+            Math.PI*2
+        );
+
+
+        ctx.fillStyle =
+            `hsla(
+                ${n.hue},
+                80%,
+                65%,
+                .32
+            )`;
+
+        ctx.fill();
+    }
+
+
+    requestAnimationFrame(
+        drawNetwork
+    );
+}
+
+
+drawNetwork();
 </script>
 
 </body>
