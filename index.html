@@ -6,351 +6,871 @@
 <title>DuoMarst Point Calendar</title>
 
 <style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #070812;
+    --panel: rgba(13, 16, 34, 0.92);
+    --panel2: rgba(18, 22, 48, 0.95);
+    --line: rgba(135, 120, 255, 0.24);
+    --purple: #9b6cff;
+    --blue: #5ca8ff;
+    --cyan: #4de8ff;
+    --text: #f4f5ff;
+    --muted: #8e94b7;
+    --green: #55f0a0;
+    --red: #ff647f;
+}
+
 html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
-body{
-    min-height:100vh;
+body {
+    font-family:
+        Inter,
+        Pretendard,
+        "Noto Sans KR",
+        Arial,
+        sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(circle at 15% 10%, rgba(115, 71, 255, .18), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(0, 200, 255, .13), transparent 28%),
+        radial-gradient(circle at 50% 100%, rgba(100, 55, 255, .12), transparent 35%),
+        #070812;
 }
 
-.app{
-    width:min(1450px,94vw);
-    height:100vh;
-    margin:auto;
-    padding:18px 0;
-    display:grid;
-    grid-template-rows:auto auto 1fr auto;
-    gap:14px;
-    overflow:hidden;
+/* ---------- BACKGROUND ---------- */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(rgba(120, 100, 255, .035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120, 100, 255, .035) 1px, transparent 1px);
+
+    background-size: 36px 36px;
 }
 
-/* 상단 */
-.topbar{
-    margin:0;
-    min-height:42px;
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle at 20% 30%, rgba(155,108,255,.08) 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 70%, rgba(77,232,255,.08) 0 1px, transparent 2px);
+
+    background-size: 90px 90px;
 }
 
-/* 포인트 메인 */
-.hero{
-    padding:20px 28px;
-    border-radius:22px;
+/* ---------- APP ---------- */
+
+.app {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    height: 100vh;
+
+    padding: 14px 18px;
+
+    display: grid;
+    grid-template-rows: 42px minmax(190px, 27vh) minmax(0, 1fr) 34px;
+
+    gap: 10px;
+
+    overflow: hidden;
 }
 
-.hero-label{
-    margin-bottom:3px;
+/* ---------- TOP ---------- */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    min-width: 0;
 }
 
-.hero-date{
-    margin-bottom:8px;
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -.5px;
 }
 
-.score-number{
-    font-size:clamp(48px,5vw,72px);
-    letter-spacing:-4px;
+.brand-icon {
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(135deg, var(--purple), var(--blue));
+
+    box-shadow:
+        0 0 20px rgba(130, 100, 255, .45);
+
+    font-size: 14px;
 }
 
-.point-visual{
-    margin-top:15px;
+.brand span {
+    color: #fff;
 }
 
-.quick{
-    margin-top:13px;
+.period {
+    color: var(--muted);
+    font-size: 12px;
 }
 
-/* 메인 영역 */
-.content{
-    min-height:0;
-    margin:0;
-    grid-template-columns:minmax(0,1fr) 280px;
+.sync {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: var(--muted);
+    font-size: 11px;
 }
 
-/* 달력 */
-.calendar-card{
-    min-height:0;
-    padding:17px;
-    overflow:hidden;
+.sync-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+
+    box-shadow: 0 0 10px var(--cyan);
 }
 
-.calendar-head{
-    margin-bottom:10px;
+/* ---------- HERO ---------- */
+
+.hero {
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+
+    gap: 12px;
 }
 
-.calendar-title{
-    font-size:18px;
+.hero-main,
+.stats-panel,
+.calendar-card,
+.editor-card {
+    background: linear-gradient(
+        145deg,
+        rgba(18, 20, 43, .96),
+        rgba(10, 12, 27, .96)
+    );
+
+    border: 1px solid var(--line);
+    border-radius: 18px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.25),
+        inset 0 1px rgba(255,255,255,.035);
 }
 
-.weekdays{
-    margin-bottom:4px;
+/* ---------- TODAY ---------- */
+
+.hero-main {
+    min-width: 0;
+    min-height: 0;
+
+    padding: 18px 24px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    overflow: hidden;
 }
 
-.weekday{
-    padding:4px 0;
+.today-label {
+    color: var(--cyan);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
 }
 
-.calendar{
-    height:calc(100% - 65px);
-    grid-auto-rows:1fr;
+.today-date {
+    margin-top: 3px;
+
+    color: var(--muted);
+    font-size: 12px;
 }
 
-.day{
-    min-height:0;
-    padding:7px;
+.today-score {
+    margin-top: 2px;
+
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
 }
 
-.day-score{
-    margin-top:7px;
-    font-size:15px;
+.today-number {
+    font-size: clamp(38px, 5vw, 62px);
+    line-height: .95;
+
+    font-weight: 900;
+    letter-spacing: -3px;
+
+    background:
+        linear-gradient(
+            100deg,
+            #fff,
+            #bdaaff 48%,
+            #65eaff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    filter: drop-shadow(0 0 14px rgba(155,108,255,.3));
 }
 
-.day-bar{
-    bottom:6px;
+.today-unit {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
 }
 
-/* 에디터 */
-.editor{
-    padding:18px;
-    min-height:0;
+/* ---------- POINT LINE ---------- */
+
+.point-title {
+    margin-top: 10px;
+
+    display: flex;
+    justify-content: space-between;
+
+    font-size: 10px;
+    color: var(--muted);
 }
 
-.editor-title{
-    font-size:17px;
+.point-line {
+    position: relative;
+
+    height: 34px;
+    margin-top: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 3px;
+
+    overflow: hidden;
 }
 
-.input-label{
-    margin-top:15px;
+.point-line::before {
+    content: "";
+
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(155,108,255,.25),
+            rgba(77,232,255,.55)
+        );
 }
 
-.score-input{
-    height:48px;
-    font-size:21px;
+.point {
+    position: relative;
+    z-index: 1;
+
+    width: 7px;
+    height: 22px;
+
+    flex: 0 0 auto;
+
+    border-radius: 4px;
+
+    background: rgba(120, 110, 180, .18);
+
+    border: 1px solid rgba(140,130,210,.15);
 }
 
-.editor-preview{
-    margin-top:9px;
-    padding:10px;
+.point.active {
+    background: linear-gradient(
+        180deg,
+        var(--purple),
+        var(--cyan)
+    );
+
+    border-color: rgba(255,255,255,.15);
+
+    box-shadow:
+        0 0 7px rgba(155,108,255,.5);
 }
 
-.editor-buttons{
-    margin-top:10px;
+.point.negative {
+    background: var(--red);
+    opacity: .8;
 }
 
-/* 통계 */
-.stats{
-    margin:0;
-    gap:8px;
+.point-scale {
+    display: flex;
+    justify-content: space-between;
+
+    color: #676d91;
+    font-size: 9px;
 }
 
-.stat{
-    padding:10px 14px;
+/* ---------- QUICK BUTTONS ---------- */
+
+.quick {
+    display: flex;
+    gap: 6px;
+
+    margin-top: 8px;
 }
 
-.stat-value{
-    margin-top:3px;
-    font-size:18px;
+.quick button {
+    height: 28px;
+    min-width: 42px;
+
+    padding: 0 9px;
+
+    border: 1px solid rgba(140,130,230,.2);
+    border-radius: 7px;
+
+    color: #cbd0ef;
+    background: rgba(255,255,255,.035);
+
+    cursor: pointer;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    transition:
+        background .12s,
+        border-color .12s,
+        transform .08s;
 }
 
-/* 작은 화면 */
-@media(max-width:900px){
+.quick button:hover {
+    background: rgba(155,108,255,.15);
+    border-color: rgba(155,108,255,.45);
+}
 
-    .app{
-        width:96vw;
-        padding:12px 0;
-        gap:9px;
+.quick button:active {
+    transform: translateY(1px);
+}
+
+/* ---------- STATS ---------- */
+
+.stats-panel {
+    min-height: 0;
+
+    padding: 14px;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    gap: 8px;
+
+    overflow: hidden;
+}
+
+.stat {
+    min-width: 0;
+
+    padding: 10px;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(150,140,220,.08);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.stat-value {
+    margin-top: 5px;
+
+    font-size: 21px;
+    font-weight: 850;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-value.green {
+    color: var(--green);
+}
+
+.stat-value.red {
+    color: var(--red);
+}
+
+.progress-box {
+    grid-column: 1 / -1;
+
+    padding: 9px 10px;
+}
+
+.progress-top {
+    display: flex;
+    justify-content: space-between;
+
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.progress {
+    height: 5px;
+    margin-top: 6px;
+
+    background: rgba(255,255,255,.06);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        var(--purple),
+        var(--cyan)
+    );
+
+    border-radius: inherit;
+}
+
+/* ---------- CONTENT ---------- */
+
+.content {
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 245px;
+
+    gap: 10px;
+
+    overflow: hidden;
+}
+
+/* ---------- CALENDAR ---------- */
+
+.calendar-card {
+    min-width: 0;
+    min-height: 0;
+
+    padding: 13px;
+
+    display: grid;
+    grid-template-rows: 38px minmax(0, 1fr);
+
+    overflow: hidden;
+}
+
+.calendar-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.month-info {
+    min-width: 0;
+}
+
+.month-title {
+    font-size: 18px;
+    font-weight: 850;
+}
+
+.month-desc {
+    margin-top: 2px;
+
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.month-nav {
+    display: flex;
+    gap: 5px;
+}
+
+.month-nav button {
+    width: 28px;
+    height: 27px;
+
+    border-radius: 7px;
+    border: 1px solid rgba(150,140,220,.18);
+
+    color: #d9dcff;
+    background: rgba(255,255,255,.035);
+
+    cursor: pointer;
+}
+
+.month-nav button:hover {
+    background: rgba(155,108,255,.15);
+}
+
+/* ---------- CALENDAR GRID ---------- */
+
+.calendar {
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-rows:
+        18px repeat(6, minmax(0, 1fr));
+
+    gap: 4px;
+
+    overflow: hidden;
+}
+
+.weekday {
+    display: grid;
+    place-items: center;
+
+    color: #676d91;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.day {
+    min-width: 0;
+    min-height: 0;
+
+    position: relative;
+
+    border-radius: 8px;
+    border: 1px solid rgba(130,120,200,.08);
+
+    background: rgba(255,255,255,.025);
+
+    cursor: pointer;
+
+    overflow: hidden;
+}
+
+.day:hover {
+    border-color: rgba(155,108,255,.45);
+    background: rgba(155,108,255,.08);
+}
+
+.day.selected {
+    border-color: var(--cyan);
+
+    box-shadow:
+        0 0 0 1px rgba(77,232,255,.2),
+        0 0 13px rgba(77,232,255,.1);
+}
+
+.day.today {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(155,108,255,.16),
+            rgba(77,232,255,.08)
+        );
+}
+
+.day-number {
+    position: absolute;
+    top: 5px;
+    left: 6px;
+
+    color: #aeb4d4;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.day.today .day-number {
+    color: var(--cyan);
+}
+
+.day-score {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+
+    font-size: 12px;
+    font-weight: 850;
+
+    color: var(--purple);
+}
+
+.day-score.positive {
+    color: var(--green);
+}
+
+.day-score.negative {
+    color: var(--red);
+}
+
+.day-empty {
+    border: none;
+    background: transparent;
+}
+
+/* ---------- EDITOR ---------- */
+
+.editor-card {
+    min-height: 0;
+
+    padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.editor-title {
+    font-size: 13px;
+    font-weight: 850;
+}
+
+.editor-date {
+    margin-top: 3px;
+
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.editor-label {
+    margin-top: 15px;
+
+    color: var(--muted);
+    font-size: 9px;
+}
+
+.editor-input {
+    width: 100%;
+    height: 39px;
+
+    margin-top: 5px;
+
+    padding: 0 10px;
+
+    border-radius: 8px;
+    border: 1px solid rgba(150,140,220,.2);
+
+    outline: none;
+
+    color: white;
+    background: rgba(0,0,0,.25);
+
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.editor-input:focus {
+    border-color: var(--purple);
+
+    box-shadow:
+        0 0 0 2px rgba(155,108,255,.1);
+}
+
+.editor-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 6px;
+
+    margin-top: 8px;
+}
+
+.editor-buttons button {
+    height: 32px;
+
+    border-radius: 7px;
+    border: 1px solid rgba(150,140,220,.2);
+
+    color: #d9dcff;
+    background: rgba(255,255,255,.04);
+
+    cursor: pointer;
+
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.editor-buttons button:hover {
+    background: rgba(155,108,255,.13);
+}
+
+.editor-buttons .save {
+    border-color: rgba(77,232,255,.3);
+
+    color: #9ef4ff;
+
+    background: rgba(77,232,255,.06);
+}
+
+.editor-buttons .save:hover {
+    background: rgba(77,232,255,.13);
+}
+
+.db-info {
+    margin-top: auto;
+
+    padding-top: 10px;
+
+    border-top: 1px solid rgba(140,130,220,.1);
+}
+
+.db-row {
+    display: flex;
+    justify-content: space-between;
+
+    margin-top: 4px;
+
+    color: #6f7597;
+    font-size: 8px;
+}
+
+.db-row strong {
+    max-width: 135px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    color: #aeb4d4;
+    font-weight: 600;
+}
+
+/* ---------- FOOTER ---------- */
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    color: #555b7c;
+    font-size: 9px;
+}
+
+.footer strong {
+    color: #858baa;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 900px) {
+    .app {
+        padding: 10px;
+        grid-template-rows: 36px 190px minmax(0, 1fr) 26px;
+        gap: 7px;
     }
 
-    .content{
-        grid-template-columns:minmax(0,1fr) 230px;
+    .hero {
+        grid-template-columns: 1fr;
     }
 
-    .hero{
-        padding:15px 20px;
+    .stats-panel {
+        display: none;
     }
 
-    .score-number{
-        font-size:48px;
+    .content {
+        grid-template-columns: 1fr;
     }
 
-    .point-visual{
-        margin-top:10px;
+    .editor-card {
+        display: none;
     }
 
-    .quick{
-        margin-top:8px;
-    }
-
-    .quick button{
-        padding:6px 10px;
-        min-width:45px;
-    }
-
-    .calendar-card{
-        padding:12px;
-    }
-
-    .editor{
-        padding:12px;
+    .calendar-card {
+        padding: 9px;
     }
 }
 
-@media(max-width:650px){
-
-    /*
-      모바일에서는 달력/에디터를
-      겹치게 하지 않고 한 화면에 맞춘다.
-    */
-
-    .app{
-        padding:8px 0;
-        gap:6px;
+@media (max-height: 700px) {
+    .app {
+        padding: 8px 12px;
+        grid-template-rows: 32px 175px minmax(0, 1fr) 22px;
+        gap: 6px;
     }
 
-    .topbar{
-        min-height:32px;
+    .hero-main {
+        padding: 13px 18px;
     }
 
-    .brand-name{
-        font-size:16px;
+    .today-number {
+        font-size: 42px;
     }
 
-    .brand-sub{
-        display:none;
+    .point-line {
+        height: 27px;
     }
 
-    .logo{
-        width:32px;
-        height:32px;
+    .quick {
+        margin-top: 5px;
     }
 
-    .sync{
-        padding:5px 8px;
-        font-size:10px;
+    .quick button {
+        height: 24px;
+        min-width: 36px;
+        font-size: 9px;
     }
 
-    .hero{
-        padding:12px 15px;
-        border-radius:16px;
+    .calendar-card {
+        padding: 9px;
     }
 
-    .hero-label{
-        font-size:9px;
+    .calendar {
+        gap: 3px;
+    }
+}
+
+@media (max-width: 600px) {
+    .period {
+        display: none;
     }
 
-    .hero-date{
-        font-size:11px;
-        margin-bottom:5px;
+    .brand {
+        font-size: 15px;
     }
 
-    .score-number{
-        font-size:40px;
+    .today-number {
+        font-size: 39px;
     }
 
-    .score-unit{
-        font-size:12px;
+    .quick {
+        gap: 3px;
     }
 
-    .point-visual{
-        margin-top:7px;
-    }
-
-    .point-line-header{
-        font-size:9px;
-        margin-bottom:4px;
-    }
-
-    .point-track{
-        height:10px;
-    }
-
-    .point-markers{
-        display:none;
-    }
-
-    .quick{
-        margin-top:7px;
-        gap:4px;
-    }
-
-    .quick button{
-        padding:4px 6px;
-        min-width:0;
-        font-size:11px;
-    }
-
-    .content{
-        grid-template-columns:1fr;
-        min-height:0;
-    }
-
-    .editor{
-        display:none;
-    }
-
-    .calendar-card{
-        padding:8px;
-    }
-
-    .calendar-head{
-        margin-bottom:5px;
-    }
-
-    .calendar-title{
-        font-size:15px;
-    }
-
-    .calendar-desc{
-        display:none;
-    }
-
-    .month-buttons button{
-        width:28px;
-        height:28px;
-    }
-
-    .day{
-        border-radius:7px;
-        padding:4px;
-    }
-
-    .day-number{
-        font-size:9px;
-    }
-
-    .day-score{
-        margin-top:4px;
-        font-size:12px;
-    }
-
-    .day-bar{
-        left:4px;
-        right:4px;
-        bottom:4px;
-    }
-
-    .stats{
-        grid-template-columns:repeat(4,1fr);
-        gap:4px;
-    }
-
-    .stat{
-        padding:6px;
-        border-radius:8px;
-    }
-
-    .stat-label{
-        font-size:7px;
-    }
-
-    .stat-value{
-        font-size:13px;
-    }
-
-    .progress{
-        margin-top:3px;
-        height:3px;
+    .quick button {
+        min-width: 31px;
+        padding: 0 5px;
     }
 }
 </style>
@@ -360,261 +880,214 @@ body{
 
 <div class="app">
 
+    <!-- TOP -->
     <header class="topbar">
         <div class="brand">
-            <div class="logo">D</div>
+            <div class="brand-icon">D</div>
+            <span>DuoMarst</span>
+        </div>
 
-            <div>
-                <div class="brand-name">DuoMarst Points</div>
-                <div class="brand-sub">2026.10 — 2027.03</div>
-            </div>
+        <div class="period">
+            2026.10.01 — 2027.03.31
         </div>
 
         <div class="sync">
-            <span class="sync-dot"></span>
-            <span id="syncText">Connecting...</span>
+            <div class="sync-dot" id="syncDot"></div>
+            <span id="syncText">준비 중</span>
         </div>
     </header>
 
 
-    <!-- POINT FIRST -->
+    <!-- HERO -->
     <section class="hero">
 
-        <div class="hero-label">TODAY'S SCORE</div>
+        <div class="hero-main">
 
-        <div class="hero-date" id="heroDate">
-            2026년 10월 4일 일요일
-        </div>
-
-        <div class="score">
-            <div class="score-number" id="todayScore">+0</div>
-            <div class="score-unit">POINTS</div>
-        </div>
-
-        <div class="point-visual">
-
-            <div class="point-line-header">
-                <span class="point-line-title">
-                    TODAY'S ACCUMULATION
-                </span>
-
-                <span
-                    class="point-line-count"
-                    id="pointLineCount"
-                >
-                    0 / 50
-                </span>
+            <div class="today-label">
+                TODAY'S SCORE
             </div>
 
-            <div class="point-track">
-                <div
-                    class="point-fill"
-                    id="pointFill"
-                ></div>
+            <div class="today-date" id="selectedDate">
+                2026년 10월 4일
             </div>
 
-            <div
-                class="point-markers"
-                id="pointMarkers"
-            ></div>
+            <div class="today-score">
+                <div class="today-number" id="editorScore">
+                    +0
+                </div>
+
+                <div class="today-unit">
+                    POINTS
+                </div>
+            </div>
+
+            <div class="point-title">
+                <span>POINT ACCUMULATION</span>
+                <span id="pointMax">0 / 50</span>
+            </div>
+
+            <div class="point-line" id="pointLine"></div>
+
+            <div class="point-scale">
+                <span>0</span>
+                <span>10</span>
+                <span>20</span>
+                <span>30</span>
+                <span>40</span>
+                <span>50+</span>
+            </div>
+
+            <div class="quick">
+                <button data-delta="-10">−10</button>
+                <button data-delta="-5">−5</button>
+                <button data-delta="-1">−1</button>
+                <button data-delta="1">+1</button>
+                <button data-delta="5">+5</button>
+                <button data-delta="10">+10</button>
+            </div>
 
         </div>
 
 
-        <div class="quick">
+        <!-- STATS -->
+        <div class="stats-panel">
 
-            <button class="minus" data-delta="-10">−10</button>
-            <button class="minus" data-delta="-5">−5</button>
-            <button class="minus" data-delta="-1">−1</button>
+            <div class="stat">
+                <div class="stat-label">TOTAL SCORE</div>
+                <div class="stat-value" id="totalScore">0</div>
+            </div>
 
-            <button class="plus" data-delta="1">+1</button>
-            <button class="plus" data-delta="5">+5</button>
-            <button class="plus" data-delta="10">+10</button>
+            <div class="stat">
+                <div class="stat-label">ACTIVE DAYS</div>
+                <div class="stat-value" id="activeDays">0</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">POSITIVE</div>
+                <div class="stat-value green" id="positiveScore">0</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">NEGATIVE</div>
+                <div class="stat-value red" id="negativeScore">0</div>
+            </div>
+
+            <div class="stat progress-box">
+                <div class="progress-top">
+                    <span>PROGRESS</span>
+                    <span id="progressText">0%</span>
+                </div>
+
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+            </div>
 
         </div>
 
     </section>
 
 
-    <div class="content">
+    <!-- CONTENT -->
+    <main class="content">
 
         <!-- CALENDAR -->
-        <section class="card calendar-card">
+        <section class="calendar-card">
 
             <div class="calendar-head">
 
-                <div>
-                    <div
-                        class="calendar-title"
-                        id="monthTitle"
-                    >
+                <div class="month-info">
+                    <div class="month-title" id="monthTitle">
                         2026년 10월
                     </div>
 
-                    <div
-                        class="calendar-desc"
-                        id="monthDesc"
-                    >
-                        점수 기록
+                    <div class="month-desc" id="monthDesc">
+                        Daily Point History
                     </div>
                 </div>
 
-                <div class="month-buttons">
+                <div class="month-nav">
                     <button id="prevMonth">‹</button>
                     <button id="nextMonth">›</button>
                 </div>
 
             </div>
 
-
-            <div class="weekdays">
-                <div class="weekday">SUN</div>
-                <div class="weekday">MON</div>
-                <div class="weekday">TUE</div>
-                <div class="weekday">WED</div>
-                <div class="weekday">THU</div>
-                <div class="weekday">FRI</div>
-                <div class="weekday">SAT</div>
-            </div>
-
-            <div
-                class="calendar"
-                id="calendar"
-            ></div>
+            <div class="calendar" id="calendar"></div>
 
         </section>
 
 
         <!-- EDITOR -->
-        <aside class="card editor">
+        <aside class="editor-card">
 
             <div class="editor-title">
-                Point Editor
+                DAY EDITOR
             </div>
 
-            <div
-                class="editor-date"
-                id="selectedDate"
-            >
-                2026년 10월 4일
+            <div class="editor-date" id="selectedWeekday">
+                2026년 10월 4일 일요일
             </div>
 
-            <label class="input-label">
-                SELECTED DAY
-            </label>
+            <div class="editor-label">
+                POINT VALUE
+            </div>
 
             <input
-                class="score-input"
+                class="editor-input"
                 id="scoreInput"
                 type="number"
                 value="0"
             >
 
-            <div class="editor-preview">
-
-                <div class="preview-label">
-                    CURRENT VALUE
-                </div>
-
-                <div
-                    class="preview-score"
-                    id="editorScore"
-                >
-                    +0
-                </div>
-
-            </div>
-
-
             <div class="editor-buttons">
-
-                <button id="minusButton">
-                    −1
-                </button>
-
-                <button id="plusButton">
-                    +1
-                </button>
-
-                <button
-                    class="save"
-                    id="saveButton"
-                >
-                    SAVE POINT
-                </button>
-
                 <button id="resetButton">
                     RESET
                 </button>
+
+                <button class="save" id="saveButton">
+                    SAVE
+                </button>
+            </div>
+
+            <div class="db-info">
+
+                <div class="db-row">
+                    <span>DATABASE</span>
+                    <strong>KeyVal</strong>
+                </div>
+
+                <div class="db-row">
+                    <span>KEY</span>
+                    <strong id="selectedKey">-</strong>
+                </div>
+
+                <div class="db-row">
+                    <span>VALUE</span>
+                    <strong id="selectedValue">0</strong>
+                </div>
 
             </div>
 
         </aside>
 
-    </div>
+    </main>
 
 
-    <!-- TOTAL STATS -->
-    <section class="stats">
-
-        <div class="stat">
-            <div class="stat-label">TOTAL SCORE</div>
-            <div
-                class="stat-value"
-                id="totalScore"
-            >
-                +0
-            </div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-label">POSITIVE</div>
-            <div
-                class="stat-value"
-                id="positiveScore"
-            >
-                +0
-            </div>
-        </div>
-
-        <div class="stat">
-            <div class="stat-label">NEGATIVE</div>
-            <div
-                class="stat-value"
-                id="negativeScore"
-            >
-                0
-            </div>
-        </div>
-
-        <div class="stat">
-
-            <div class="stat-label">
-                PERIOD PROGRESS
-            </div>
-
-            <div
-                class="stat-value"
-                id="progressText"
-            >
-                0%
-            </div>
-
-            <div class="progress">
-                <div
-                    class="progress-fill"
-                    id="progressBar"
-                ></div>
-            </div>
-
-        </div>
-
-    </section>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <span>DuoMarst Point Calendar</span>
+        <strong>LOCAL UI · CLOUD SYNC</strong>
+    </footer>
 
 </div>
 
 
 <script>
+/* =========================================================
+   CONFIG
+========================================================= */
+
 const BASE_KEY =
     "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
@@ -622,24 +1095,19 @@ const API =
     "https://api.keyval.org";
 
 const START =
-    new Date(2026, 9, 1);
+    "2026-10-01";
 
 const END =
-    new Date(2027, 2, 31);
+    "2027-03-31";
 
-const SYNC_MONTHS = [
-    "2026-10",
-    "2026-11",
-    "2026-12",
-    "2027-01",
-    "2027-02",
-    "2027-03"
-];
 
-let data = {};
+/* =========================================================
+   STATE
+========================================================= */
 
-let selectedDate =
-    new Date(2026, 9, 4);
+const data = {};
+
+let selectedDate = "2026-10-04";
 
 let currentMonth =
     new Date(2026, 9, 1);
@@ -647,413 +1115,643 @@ let currentMonth =
 let saving = false;
 
 
-/* ---------- DATE ---------- */
+/* =========================================================
+   ELEMENTS
+========================================================= */
 
-function dateKey(date){
+const $ = id =>
+    document.getElementById(id);
 
-    const y =
-        date.getFullYear();
+const calendar =
+    $("calendar");
 
-    const m =
-        String(date.getMonth()+1)
-        .padStart(2,"0");
+const monthTitle =
+    $("monthTitle");
 
-    const d =
-        String(date.getDate())
-        .padStart(2,"0");
+const monthDesc =
+    $("monthDesc");
 
-    return `${y}-${m}-${d}`;
+const selectedDateEl =
+    $("selectedDate");
+
+const selectedWeekday =
+    $("selectedWeekday");
+
+const scoreInput =
+    $("scoreInput");
+
+const editorScore =
+    $("editorScore");
+
+const totalScore =
+    $("totalScore");
+
+const positiveScore =
+    $("positiveScore");
+
+const negativeScore =
+    $("negativeScore");
+
+const activeDays =
+    $("activeDays");
+
+const progressText =
+    $("progressText");
+
+const progressBar =
+    $("progressBar");
+
+const pointLine =
+    $("pointLine");
+
+const pointMax =
+    $("pointMax");
+
+const selectedKey =
+    $("selectedKey");
+
+const selectedValue =
+    $("selectedValue");
+
+const syncText =
+    $("syncText");
+
+const syncDot =
+    $("syncDot");
+
+
+/* =========================================================
+   DATE HELPERS
+========================================================= */
+
+function pad(n) {
+    return String(n).padStart(2, "0");
 }
 
 
-function monthKey(date){
-
-    const y =
-        date.getFullYear();
-
-    const m =
-        String(date.getMonth()+1)
-        .padStart(2,"0");
-
-    return `${y}-${m}`;
+function dateKey(year, month, day) {
+    return (
+        year +
+        "-" +
+        pad(month + 1) +
+        "-" +
+        pad(day)
+    );
 }
 
 
-function isSameDay(a,b){
+function parseDate(key) {
+    const [y, m, d] =
+        key.split("-").map(Number);
+
+    return new Date(
+        y,
+        m - 1,
+        d
+    );
+}
+
+
+function formatKoreanDate(key) {
+    const date = parseDate(key);
 
     return (
-        a.getFullYear() === b.getFullYear() &&
-        a.getMonth() === b.getMonth() &&
-        a.getDate() === b.getDate()
+        date.getFullYear() +
+        "년 " +
+        (date.getMonth() + 1) +
+        "월 " +
+        date.getDate() +
+        "일"
     );
 }
 
 
-function inRange(date){
+function weekdayKorean(key) {
+    const date = parseDate(key);
 
+    const names = [
+        "일요일",
+        "월요일",
+        "화요일",
+        "수요일",
+        "목요일",
+        "금요일",
+        "토요일"
+    ];
+
+    return names[date.getDay()];
+}
+
+
+function isValidDateKey(key) {
     return (
-        date >= START &&
-        date <= END
+        key >= START &&
+        key <= END
     );
 }
 
 
-/* ---------- DATA ---------- */
-
-function getScore(date){
-
-    return Number(
-        data[dateKey(date)] ?? 0
+function monthKey(date) {
+    return (
+        date.getFullYear() +
+        "-" +
+        pad(date.getMonth() + 1)
     );
 }
 
 
-function setScore(date,value){
-
-    data[dateKey(date)] =
-        Math.trunc(Number(value) || 0);
+function monthApiKey(date) {
+    return BASE_KEY + "-" + monthKey(date);
 }
 
 
-function formatScore(value){
-
-    value = Number(value) || 0;
-
-    return value > 0
-        ? `+${value}`
-        : `${value}`;
+function daysInMonth(year, month) {
+    return new Date(
+        year,
+        month + 1,
+        0
+    ).getDate();
 }
 
 
-/* ---------- API ---------- */
+/* =========================================================
+   INITIAL DATA
+========================================================= */
 
-async function getMonth(month){
+function initializeData() {
 
-    const key =
-        `${BASE_KEY}-${month}`;
+    const start =
+        parseDate(START);
 
-    const response =
-        await fetch(
-            `${API}/get/${key}`,
-            {
-                cache:"no-store"
-            }
+    const end =
+        parseDate(END);
+
+    const cursor =
+        new Date(start);
+
+    while (cursor <= end) {
+
+        const key =
+            dateKey(
+                cursor.getFullYear(),
+                cursor.getMonth(),
+                cursor.getDate()
+            );
+
+        data[key] = 0;
+
+        cursor.setDate(
+            cursor.getDate() + 1
         );
+    }
+}
 
-    if(!response.ok){
-        throw new Error("GET failed");
+
+/* =========================================================
+   KEYVAL PARSER
+========================================================= */
+
+function parseKeyVal(raw) {
+
+    if (
+        raw === null ||
+        raw === undefined
+    ) {
+        return null;
     }
 
-    const raw =
-        await response.text();
+    if (
+        typeof raw === "object"
+    ) {
+        if (
+            Object.prototype.hasOwnProperty.call(
+                raw,
+                "value"
+            )
+        ) {
+            return parseKeyVal(
+                raw.value
+            );
+        }
 
-    let value =
-        raw.trim();
+        return raw;
+    }
 
-    /*
-      KeyVal 응답 형식이
-      문자열 / JSON / {value:...}
-      어느 쪽이어도 최대한 처리
-    */
+    const text =
+        String(raw).trim();
 
-    try{
+    if (!text) {
+        return null;
+    }
+
+    try {
 
         const parsed =
-            JSON.parse(value);
+            JSON.parse(text);
 
-        if(typeof parsed === "string"){
-            value = parsed;
-        }
-        else if(parsed?.value != null){
-            value = parsed.value;
-        }
-        else if(
-            parsed?.data?.value != null
-        ){
-            value = parsed.data.value;
+        if (
+            parsed !== null &&
+            parsed !== text
+        ) {
+            return parseKeyVal(
+                parsed
+            );
         }
 
-    }catch{}
+    } catch (_) {}
 
-    if(!value){
-        return [];
-    }
-
-    if(Array.isArray(value)){
-        return value.map(
-            x => Number(x)||0
-        );
-    }
-
-    return String(value)
-        .split(",")
-        .map(x => Number(x)||0);
+    return text;
 }
 
 
-async function saveMonth(month){
+/* =========================================================
+   MONTH LOAD
+========================================================= */
+
+async function loadMonth(date) {
 
     const key =
-        `${BASE_KEY}-${month}`;
+        monthApiKey(date);
 
-    const days =
-        new Date(
-            Number(month.slice(0,4)),
-            Number(month.slice(5,7)),
-            0
-        ).getDate();
+    try {
+
+        const response =
+            await fetch(
+                API +
+                "/get/" +
+                encodeURIComponent(key),
+                {
+                    cache: "no-store"
+                }
+            );
+
+        if (!response.ok) {
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+        }
+
+        const raw =
+            await response.text();
+
+        const parsed =
+            parseKeyVal(raw);
+
+        if (
+            parsed === null
+        ) {
+            return;
+        }
+
+        let values = null;
+
+        if (
+            Array.isArray(parsed)
+        ) {
+            values = parsed;
+        }
+
+        else if (
+            typeof parsed === "string"
+        ) {
+
+            values =
+                parsed
+                .split(",")
+                .map(v => {
+                    const n =
+                        Number(
+                            String(v).trim()
+                        );
+
+                    return Number.isFinite(n)
+                        ? Math.trunc(n)
+                        : 0;
+                });
+        }
+
+        else if (
+            parsed &&
+            Array.isArray(parsed.values)
+        ) {
+            values =
+                parsed.values;
+        }
+
+        if (!values) {
+            return;
+        }
+
+        const year =
+            date.getFullYear();
+
+        const month =
+            date.getMonth();
+
+        const count =
+            daysInMonth(
+                year,
+                month
+            );
+
+        for (
+            let day = 1;
+            day <= count;
+            day++
+        ) {
+
+            const index =
+                day - 1;
+
+            if (
+                index >= values.length
+            ) {
+                break;
+            }
+
+            const value =
+                Number(values[index]);
+
+            if (
+                Number.isFinite(value)
+            ) {
+
+                const key =
+                    dateKey(
+                        year,
+                        month,
+                        day
+                    );
+
+                data[key] =
+                    Math.trunc(value);
+            }
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "Month load failed:",
+            key,
+            error
+        );
+
+        /*
+         * 중요:
+         * 서버에서 실패했다고
+         * 기존 데이터를 0으로 덮어쓰지 않는다.
+         */
+    }
+}
+
+
+/* =========================================================
+   LOAD ALL
+========================================================= */
+
+async function loadAll() {
+
+    setSync(
+        "불러오는 중...",
+        false
+    );
+
+    const months = [
+        new Date(2026, 9, 1),
+        new Date(2026, 10, 1),
+        new Date(2026, 11, 1),
+        new Date(2027, 0, 1),
+        new Date(2027, 1, 1),
+        new Date(2027, 2, 1)
+    ];
+
+    await Promise.all(
+        months.map(loadMonth)
+    );
+
+    renderAll();
+
+    setSync(
+        "동기화 완료",
+        true
+    );
+}
+
+
+/* =========================================================
+   SAVE MONTH
+========================================================= */
+
+async function saveMonth(date) {
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        date.getMonth();
+
+    const count =
+        daysInMonth(
+            year,
+            month
+        );
 
     const values = [];
 
-    for(
+    for (
         let day = 1;
-        day <= days;
+        day <= count;
         day++
-    ){
+    ) {
 
-        const date =
-            `${month}-${String(day).padStart(2,"0")}`;
+        const key =
+            dateKey(
+                year,
+                month,
+                day
+            );
 
         values.push(
-            Number(data[date] ?? 0)
+            Number(data[key] || 0)
         );
     }
 
     const value =
         values.join(",");
 
+    const key =
+        monthApiKey(date);
+
     const response =
         await fetch(
-            `${API}/set/${key}/${encodeURIComponent(value)}`,
+            API +
+            "/set/" +
+            encodeURIComponent(key) +
+            "/" +
+            encodeURIComponent(value),
             {
-                method:"GET",
-                cache:"no-store"
+                method: "GET",
+                cache: "no-store"
             }
         );
 
-    if(!response.ok){
-        throw new Error("SET failed");
+    if (!response.ok) {
+
+        throw new Error(
+            "저장 실패 HTTP " +
+            response.status
+        );
     }
 }
 
 
-/* ---------- LOAD ---------- */
+/* =========================================================
+   SAVE SELECTED DATE
+========================================================= */
 
-async function loadData(){
+async function saveSelected() {
 
-    setSync("Loading...");
-
-    try{
-
-        const results =
-            await Promise.all(
-                SYNC_MONTHS.map(
-                    month => getMonth(month)
-                        .then(values => ({
-                            month,
-                            values
-                        }))
-                        .catch(() => ({
-                            month,
-                            values:null
-                        }))
-                )
-            );
-
-        for(const result of results){
-
-            if(!result.values)
-                continue;
-
-            result.values.forEach(
-                (score,index) => {
-
-                    const date =
-                        `${result.month}-${String(index+1).padStart(2,"0")}`;
-
-                    data[date] = score;
-                }
-            );
-        }
-
-        setSync("Synced");
-
-    }catch(error){
-
-        console.error(error);
-
-        setSync("Offline");
-    }
-
-    renderAll();
-}
-
-
-/* ---------- SAVE ---------- */
-
-async function saveSelected(){
-
-    if(saving)
+    if (saving) {
         return;
-
-    saving = true;
-
-    const key =
-        dateKey(selectedDate);
+    }
 
     const value =
         Math.trunc(
             Number(
-                document.getElementById(
-                    "scoreInput"
-                ).value
-            ) || 0
+                scoreInput.value
+            )
         );
 
-    setScore(
-        selectedDate,
-        value
-    );
+    if (!Number.isFinite(value)) {
+
+        scoreInput.value =
+            data[selectedDate] || 0;
+
+        return;
+    }
+
+    const oldValue =
+        data[selectedDate] || 0;
+
+    data[selectedDate] =
+        value;
 
     renderAll();
 
-    setSync("Saving...");
+    saving = true;
 
-    try{
+    setSync(
+        "저장 중...",
+        false
+    );
 
-        await saveMonth(
-            monthKey(selectedDate)
+    try {
+
+        const date =
+            parseDate(
+                selectedDate
+            );
+
+        await saveMonth(date);
+
+        setSync(
+            "저장 완료",
+            true
         );
 
-        setSync("Saved");
-
-    }catch(error){
+    } catch (error) {
 
         console.error(error);
 
-        setSync("Save failed");
-    }
+        /*
+         * 로컬 UI의 값은 유지한다.
+         * 서버 실패가 곧 데이터 삭제는 아니다.
+         */
 
-    saving = false;
-}
-
-
-/* ---------- RENDER ---------- */
-
-function renderToday(){
-
-    const score =
-        getScore(selectedDate);
-
-    const number =
-        document.getElementById(
-            "todayScore"
+        setSync(
+            "저장 실패",
+            false
         );
 
-    number.textContent =
-        formatScore(score);
+        data[selectedDate] =
+            value;
 
-    number.style.color =
-        score > 0
-            ? "var(--cyan)"
-            : score < 0
-                ? "var(--red)"
-                : "white";
+        renderAll();
 
+    } finally {
 
-    document.getElementById(
-        "heroDate"
-    ).textContent =
-        selectedDate.toLocaleDateString(
-            "ko-KR",
-            {
-                year:"numeric",
-                month:"long",
-                day:"numeric",
-                weekday:"long"
-            }
-        );
-
-
-    /*
-      포인트 시각화
-
-      0~50은 정확히 비례.
-      50 이상은 꽉 찬 상태.
-    */
-
-    const positive =
-        Math.max(score,0);
-
-    const negative =
-        Math.max(-score,0);
-
-    const visual =
-        Math.min(positive,50);
-
-    document.getElementById(
-        "pointFill"
-    ).style.width =
-        `${visual * 2}%`;
-
-
-    document.getElementById(
-        "pointLineCount"
-    ).textContent =
-        score >= 0
-            ? `${positive} / 50`
-            : `−${negative}`;
-
-
-    const markers =
-        document.getElementById(
-            "pointMarkers"
-        );
-
-    markers.innerHTML = "";
-
-    const count =
-        Math.min(
-            Math.max(Math.abs(score),1),
-            50
-        );
-
-    for(
-        let i=0;
-        i<count;
-        i++
-    ){
-
-        const marker =
-            document.createElement("div");
-
-        marker.className =
-            "point-marker";
-
-        if(score < 0){
-            marker.classList.add(
-                "negative"
-            );
-        }else{
-            marker.classList.add(
-                "active"
-            );
-        }
-
-        markers.appendChild(marker);
+        saving = false;
     }
 }
 
 
-function renderCalendar(){
+/* =========================================================
+   QUICK CHANGE
+========================================================= */
 
-    const calendar =
-        document.getElementById(
-            "calendar"
+async function changeScore(delta) {
+
+    if (saving) {
+        return;
+    }
+
+    const current =
+        Number(
+            data[selectedDate] || 0
         );
 
-    calendar.innerHTML = "";
+    data[selectedDate] =
+        current + delta;
 
+    renderAll();
+
+    await saveSelected();
+}
+
+
+/* =========================================================
+   SYNC UI
+========================================================= */
+
+function setSync(textValue, ok) {
+
+    syncText.textContent =
+        textValue;
+
+    syncDot.style.background =
+        ok
+            ? "var(--green)"
+            : "var(--cyan)";
+
+    syncDot.style.boxShadow =
+        ok
+            ? "0 0 10px var(--green)"
+            : "0 0 10px var(--cyan)";
+}
+
+
+/* =========================================================
+   RENDER ALL
+========================================================= */
+
+function renderAll() {
+
+    renderCalendar();
+
+    renderSelected();
+
+    renderStats();
+
+    renderPointLine();
+}
+
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+function renderCalendar() {
 
     const year =
         currentMonth.getFullYear();
@@ -1061,12 +1759,42 @@ function renderCalendar(){
     const month =
         currentMonth.getMonth();
 
+    monthTitle.textContent =
+        year +
+        "년 " +
+        (month + 1) +
+        "월";
 
-    document.getElementById(
-        "monthTitle"
-    ).textContent =
-        `${year}년 ${month+1}월`;
+    monthDesc.textContent =
+        "Daily Point History · " +
+        daysInMonth(year, month) +
+        " days";
 
+    calendar.innerHTML = "";
+
+    const weekdays = [
+        "일",
+        "월",
+        "화",
+        "수",
+        "목",
+        "금",
+        "토"
+    ];
+
+    for (const name of weekdays) {
+
+        const el =
+            document.createElement("div");
+
+        el.className =
+            "weekday";
+
+        el.textContent =
+            name;
+
+        calendar.appendChild(el);
+    }
 
     const firstDay =
         new Date(
@@ -1075,471 +1803,474 @@ function renderCalendar(){
             1
         ).getDay();
 
-
-    const days =
-        new Date(
+    const count =
+        daysInMonth(
             year,
-            month+1,
-            0
-        ).getDate();
-
+            month
+        );
 
     /*
-      앞/뒤 달 날짜는 표시하지 않고
-      빈 칸만 만든다.
-    */
-
-    for(
-        let i=0;
-        i<firstDay;
+     * 앞쪽 빈칸
+     */
+    for (
+        let i = 0;
+        i < firstDay;
         i++
-    ){
+    ) {
 
         const empty =
             document.createElement("div");
 
         empty.className =
-            "day empty";
+            "day day-empty";
 
         calendar.appendChild(empty);
     }
 
-
-    for(
-        let day=1;
-        day<=days;
+    for (
+        let day = 1;
+        day <= count;
         day++
-    ){
+    ) {
 
-        const date =
-            new Date(
+        const key =
+            dateKey(
                 year,
                 month,
                 day
             );
 
-        const button =
+        const value =
+            Number(
+                data[key] || 0
+            );
+
+        const cell =
             document.createElement("button");
 
-        button.className =
+        cell.type =
+            "button";
+
+        cell.className =
             "day";
 
-        if(
-            isSameDay(
-                date,
-                selectedDate
-            )
-        ){
-            button.classList.add(
+        if (
+            key === selectedDate
+        ) {
+            cell.classList.add(
                 "selected"
             );
         }
 
-
         const today =
             new Date();
 
-        if(
-            isSameDay(
-                date,
-                today
-            )
-        ){
-            button.classList.add(
+        const todayKey =
+            dateKey(
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
+            );
+
+        if (
+            key === todayKey
+        ) {
+            cell.classList.add(
                 "today"
             );
         }
 
+        const number =
+            document.createElement("span");
+
+        number.className =
+            "day-number";
+
+        number.textContent =
+            day;
 
         const score =
-            getScore(date);
+            document.createElement("span");
 
+        score.className =
+            "day-score";
 
-        const scoreClass =
-            score > 0
-                ? "positive"
-                : score < 0
-                    ? "negative"
-                    : "zero";
-
-
-        const bar =
-            Math.min(
-                Math.abs(score) * 5,
-                100
+        if (value > 0) {
+            score.classList.add(
+                "positive"
             );
 
+            score.textContent =
+                "+" + value;
+        }
 
-        button.innerHTML = `
-            <div class="day-number">
-                ${day}
-            </div>
+        else if (value < 0) {
 
-            <div class="day-score ${scoreClass}">
-                ${formatScore(score)}
-            </div>
+            score.classList.add(
+                "negative"
+            );
 
-            <div
-                class="day-bar"
-                style="--bar:${bar}%"
-            ></div>
-        `;
+            score.textContent =
+                value;
+        }
 
+        else {
+            score.textContent =
+                "0";
+        }
 
-        button.addEventListener(
+        cell.appendChild(number);
+        cell.appendChild(score);
+
+        cell.addEventListener(
             "click",
             () => {
 
                 selectedDate =
-                    new Date(date);
-
-                currentMonth =
-                    new Date(
-                        date.getFullYear(),
-                        date.getMonth(),
-                        1
-                    );
+                    key;
 
                 renderAll();
             }
         );
 
-
-        calendar.appendChild(button);
+        calendar.appendChild(cell);
     }
 
-
     /*
-      뒤쪽 빈칸
-    */
-
-    const total =
-        firstDay + days;
+     * 뒤쪽 빈칸.
+     * 다른 달 날짜는 절대로 표시하지 않는다.
+     */
+    const totalCells =
+        firstDay + count;
 
     const remaining =
-        (7 - (total % 7)) % 7;
+        42 - totalCells;
 
-    for(
-        let i=0;
-        i<remaining;
+    for (
+        let i = 0;
+        i < remaining;
         i++
-    ){
+    ) {
 
         const empty =
             document.createElement("div");
 
         empty.className =
-            "day empty";
+            "day day-empty";
 
         calendar.appendChild(empty);
     }
 }
 
 
-function renderEditor(){
+/* =========================================================
+   SELECTED DATE
+========================================================= */
 
-    const score =
-        getScore(selectedDate);
+function renderSelected() {
 
-    document.getElementById(
-        "selectedDate"
-    ).textContent =
-        selectedDate.toLocaleDateString(
-            "ko-KR",
-            {
-                year:"numeric",
-                month:"long",
-                day:"numeric",
-                weekday:"long"
-            }
+    const value =
+        Number(
+            data[selectedDate] || 0
         );
 
+    selectedDateEl.textContent =
+        formatKoreanDate(
+            selectedDate
+        );
 
-    document.getElementById(
-        "scoreInput"
-    ).value =
-        score;
+    selectedWeekday.textContent =
+        formatKoreanDate(
+            selectedDate
+        ) +
+        " " +
+        weekdayKorean(
+            selectedDate
+        );
 
+    editorScore.textContent =
+        value >= 0
+            ? "+" + value
+            : value;
 
-    document.getElementById(
-        "editorScore"
-    ).textContent =
-        formatScore(score);
+    scoreInput.value =
+        value;
+
+    selectedValue.textContent =
+        value;
+
+    const date =
+        parseDate(
+            selectedDate
+        );
+
+    selectedKey.textContent =
+        monthApiKey(date);
 }
 
 
-function renderStats(){
+/* =========================================================
+   POINT LINE
+========================================================= */
+
+function renderPointLine() {
+
+    const value =
+        Number(
+            data[selectedDate] || 0
+        );
+
+    pointLine.innerHTML = "";
+
+    const amount =
+        Math.min(
+            Math.max(
+                Math.abs(value),
+                0
+            ),
+            50
+        );
+
+    pointMax.textContent =
+        value + " / 50";
+
+    for (
+        let i = 0;
+        i < 50;
+        i++
+    ) {
+
+        const point =
+            document.createElement("div");
+
+        point.className =
+            "point";
+
+        if (
+            i < amount
+        ) {
+
+            point.classList.add(
+                value < 0
+                    ? "negative"
+                    : "active"
+            );
+        }
+
+        pointLine.appendChild(
+            point
+        );
+    }
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function renderStats() {
 
     let total = 0;
     let positive = 0;
     let negative = 0;
     let active = 0;
 
-    Object.values(data).forEach(
-        value => {
+    const values =
+        Object.values(data);
 
-            value =
-                Number(value)||0;
+    for (const value of values) {
 
-            total += value;
+        const n =
+            Number(value || 0);
 
-            if(value > 0)
-                positive += value;
+        total += n;
 
-            if(value < 0)
-                negative += value;
-
-            if(value !== 0)
-                active++;
+        if (n > 0) {
+            positive += n;
         }
-    );
 
+        if (n < 0) {
+            negative += n;
+        }
 
-    document.getElementById(
-        "totalScore"
-    ).textContent =
-        formatScore(total);
+        if (n !== 0) {
+            active++;
+        }
+    }
 
+    totalScore.textContent =
+        total >= 0
+            ? "+" + total
+            : total;
 
-    document.getElementById(
-        "positiveScore"
-    ).textContent =
-        `+${positive}`;
+    positiveScore.textContent =
+        "+" + positive;
 
-
-    document.getElementById(
-        "negativeScore"
-    ).textContent =
+    negativeScore.textContent =
         negative;
 
+    activeDays.textContent =
+        active;
 
-    const totalDays =
-        Math.round(
-            (
-                END - START
-            ) /
-            86400000
-        ) + 1;
+    /*
+     * 목표값은 150점.
+     */
+    const target = 150;
 
-
-    const percent =
-        Math.round(
-            active /
-            totalDays *
-            100
+    const progress =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                (total / target) * 100
+            )
         );
 
+    progressText.textContent =
+        Math.round(progress) +
+        "%";
 
-    document.getElementById(
-        "progressText"
-    ).textContent =
-        `${percent}%`;
-
-
-    document.getElementById(
-        "progressBar"
-    ).style.width =
-        `${percent}%`;
+    progressBar.style.width =
+        progress + "%";
 }
 
 
-function renderAll(){
+/* =========================================================
+   MONTH NAVIGATION
+========================================================= */
 
-    renderToday();
-    renderCalendar();
-    renderEditor();
-    renderStats();
-}
+$("prevMonth").addEventListener(
+    "click",
+    () => {
 
-
-/* ---------- SYNC UI ---------- */
-
-function setSync(text){
-
-    document.getElementById(
-        "syncText"
-    ).textContent =
-        text;
-}
-
-
-/* ---------- QUICK POINTS ---------- */
-
-document.querySelectorAll(
-    "[data-delta]"
-).forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            const delta =
-                Number(
-                    button.dataset.delta
-                );
-
-            const current =
-                getScore(selectedDate);
-
-            setScore(
-                selectedDate,
-                current + delta
+        const next =
+            new Date(
+                currentMonth
             );
 
-            document.getElementById(
-                "scoreInput"
-            ).value =
-                getScore(selectedDate);
+        next.setMonth(
+            next.getMonth() - 1
+        );
 
-            renderAll();
-
-            saveSelected();
+        if (
+            next < new Date(2026, 9, 1)
+        ) {
+            return;
         }
-    );
-});
 
+        currentMonth =
+            next;
 
-/* ---------- EDITOR ---------- */
-
-document.getElementById(
-    "scoreInput"
-).addEventListener(
-    "input",
-    () => {
-
-        const value =
-            Number(
-                document.getElementById(
-                    "scoreInput"
-                ).value
-            ) || 0;
-
-        document.getElementById(
-            "editorScore"
-        ).textContent =
-            formatScore(value);
+        renderCalendar();
     }
 );
 
 
-document.getElementById(
-    "minusButton"
-).addEventListener(
+$("nextMonth").addEventListener(
     "click",
     () => {
 
-        const value =
-            getScore(selectedDate) - 1;
+        const next =
+            new Date(
+                currentMonth
+            );
 
-        setScore(
-            selectedDate,
-            value
+        next.setMonth(
+            next.getMonth() + 1
         );
 
-        renderAll();
+        if (
+            next > new Date(2027, 2, 1)
+        ) {
+            return;
+        }
+
+        currentMonth =
+            next;
+
+        renderCalendar();
     }
 );
 
 
-document.getElementById(
-    "plusButton"
-).addEventListener(
-    "click",
-    () => {
+/* =========================================================
+   QUICK BUTTON EVENTS
+========================================================= */
 
-        const value =
-            getScore(selectedDate) + 1;
+document
+    .querySelectorAll(
+        ".quick button"
+    )
+    .forEach(button => {
 
-        setScore(
-            selectedDate,
-            value
+        button.addEventListener(
+            "click",
+            () => {
+
+                const delta =
+                    Number(
+                        button.dataset.delta
+                    );
+
+                changeScore(
+                    delta
+                );
+            }
         );
-
-        renderAll();
-    }
-);
+    });
 
 
-document.getElementById(
-    "saveButton"
-).addEventListener(
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+$("saveButton").addEventListener(
     "click",
     saveSelected
 );
 
 
-document.getElementById(
-    "resetButton"
-).addEventListener(
+/* =========================================================
+   RESET BUTTON
+========================================================= */
+
+$("resetButton").addEventListener(
     "click",
     () => {
 
-        setScore(
-            selectedDate,
-            0
-        );
-
-        renderAll();
+        scoreInput.value =
+            0;
     }
 );
 
 
-/* ---------- MONTH ---------- */
+/* =========================================================
+   ENTER TO SAVE
+========================================================= */
 
-document.getElementById(
-    "prevMonth"
-).addEventListener(
-    "click",
-    () => {
+scoreInput.addEventListener(
+    "keydown",
+    event => {
 
-        const next =
-            new Date(
-                currentMonth.getFullYear(),
-                currentMonth.getMonth()-1,
-                1
-            );
+        if (
+            event.key === "Enter"
+        ) {
 
-        if(
-            next < new Date(2026,9,1)
-        )
-            return;
-
-        currentMonth = next;
-
-        renderCalendar();
+            saveSelected();
+        }
     }
 );
 
 
-document.getElementById(
-    "nextMonth"
-).addEventListener(
-    "click",
-    () => {
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
-        const next =
-            new Date(
-                currentMonth.getFullYear(),
-                currentMonth.getMonth()+1,
-                1
-            );
-
-        if(
-            next > new Date(2027,2,1)
-        )
-            return;
-
-        currentMonth = next;
-
-        renderCalendar();
-    }
-);
-
-
-/* ---------- START ---------- */
+initializeData();
 
 renderAll();
-loadData();
+
+loadAll();
 
 </script>
 
