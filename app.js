@@ -310,7 +310,7 @@ async function getMonth(year, month) {
     return createEmptyMonth(year, month);
   }
 
-  const parsed = parseMonthValue(text, year, month);
+  const parsed = parseMonthValue(text);
 
   if (!parsed) {
     throw new Error(
