@@ -2,1660 +2,938 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DuoMarst Point Calendar</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
 :root{
-    --bg:#060711;
-    --panel:#0d1020;
-    --panel2:#11152a;
-    --panel3:#171b35;
-
-    --purple:#9a6cff;
-    --purple2:#7145ff;
-    --blue:#5b9cff;
-    --cyan:#42e8ff;
-
-    --green:#52eca0;
-    --red:#ff5f7d;
-    --yellow:#ffd66b;
-
-    --text:#f6f7ff;
-    --muted:#858ba9;
-    --dim:#565c79;
-
-    --border:rgba(145,130,255,.18);
+  --bg:#070817;
+  --panel:rgba(16,18,42,.88);
+  --panel2:rgba(21,24,55,.94);
+  --line:rgba(130,145,255,.20);
+  --purple:#8b5cf6;
+  --blue:#4f8cff;
+  --cyan:#22d3ee;
+  --green:#35e69a;
+  --red:#ff5f7a;
+  --yellow:#ffd166;
+  --text:#f4f7ff;
+  --muted:#8f9abb;
+  --shadow:0 0 35px rgba(91,83,255,.13);
 }
 
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
 }
 
 body{
-    font-family:
-        Inter,
-        Pretendard,
-        "Noto Sans KR",
-        Arial,
-        sans-serif;
-
-    color:var(--text);
-
-    background:
-        radial-gradient(
-            circle at 8% 8%,
-            rgba(119,72,255,.22),
-            transparent 27%
-        ),
-        radial-gradient(
-            circle at 92% 18%,
-            rgba(44,207,255,.13),
-            transparent 26%
-        ),
-        radial-gradient(
-            circle at 50% 110%,
-            rgba(114,54,255,.16),
-            transparent 35%
-        ),
-        var(--bg);
+  font-family:
+    Inter,
+    Pretendard,
+    "Noto Sans KR",
+    Arial,
+    sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 10% 10%,rgba(91,70,255,.25),transparent 28%),
+    radial-gradient(circle at 90% 20%,rgba(0,210,255,.16),transparent 25%),
+    radial-gradient(circle at 50% 100%,rgba(145,50,255,.15),transparent 32%),
+    linear-gradient(135deg,#050611,#090b1d 50%,#060713);
 }
 
+/* background grid */
 body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-
-    background-image:
-        linear-gradient(
-            rgba(140,120,255,.025) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(140,120,255,.025) 1px,
-            transparent 1px
-        );
-
-    background-size:36px 36px;
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.23;
+  background-image:
+    linear-gradient(rgba(120,140,255,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,140,255,.07) 1px,transparent 1px);
+  background-size:42px 42px;
 }
 
-button,
-input{
-    font:inherit;
-}
-
-button{
-    color:inherit;
-}
-
-
-/* =========================================================
-   APP
-========================================================= */
+/* ---------- APP ---------- */
 
 .app{
-    position:relative;
-    z-index:1;
-
-    width:100%;
-    height:100vh;
-
-    padding:12px 16px;
-
-    display:grid;
-
-    grid-template-rows:
-        36px
-        minmax(185px,26vh)
-        minmax(0,1fr)
-        24px;
-
-    gap:9px;
-
-    overflow:hidden;
+  width:100%;
+  height:100vh;
+  padding:14px 18px;
+  display:grid;
+  grid-template-rows:52px 178px minmax(0,1fr) 25px;
+  gap:10px;
+  position:relative;
+  z-index:1;
 }
 
-
-/* =========================================================
-   TOPBAR
-========================================================= */
+/* ---------- TOP ---------- */
 
 .topbar{
-    min-width:0;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 16px;
+  border:1px solid var(--line);
+  background:rgba(10,12,31,.82);
+  border-radius:15px;
+  box-shadow:var(--shadow);
 }
 
-.brand{
-    display:flex;
-    align-items:center;
-    gap:9px;
-
-    font-size:17px;
-    font-weight:900;
-    letter-spacing:-.6px;
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  letter-spacing:.5px;
 }
 
-.brand-icon{
-    width:29px;
-    height:29px;
+.logo-icon{
+  width:31px;
+  height:31px;
+  border-radius:9px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:white;
+  box-shadow:0 0 18px rgba(90,120,255,.45);
+}
 
-    display:grid;
-    place-items:center;
-
-    border-radius:9px;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--purple),
-            var(--blue)
-        );
-
-    box-shadow:
-        0 0 20px rgba(132,92,255,.35);
-
-    font-size:13px;
+.logo span{
+  color:#b9c5ff;
 }
 
 .period{
-    color:var(--muted);
-    font-size:10px;
-    letter-spacing:.5px;
+  font-size:12px;
+  color:var(--muted);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:7px 12px;
+  background:rgba(255,255,255,.025);
 }
 
 .sync{
-    display:flex;
-    align-items:center;
-    gap:6px;
-
-    color:var(--muted);
-    font-size:10px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:12px;
+  color:var(--muted);
 }
 
 .sync-dot{
-    width:7px;
-    height:7px;
-
-    border-radius:50%;
-
-    background:var(--cyan);
-
-    box-shadow:
-        0 0 10px var(--cyan);
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 10px var(--green);
 }
 
-
-/* =========================================================
-   HERO
-========================================================= */
+/* ---------- HERO ---------- */
 
 .hero{
-    min-height:0;
-
-    display:grid;
-
-    grid-template-columns:
-        minmax(0,1fr)
-        330px;
-
-    gap:9px;
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr;
+  gap:10px;
+  min-height:0;
 }
 
-.hero-main,
-.stats-panel,
-.calendar-card,
-.editor-card{
-    background:
-        linear-gradient(
-            145deg,
-            rgba(17,20,40,.96),
-            rgba(8,10,22,.97)
-        );
-
-    border:1px solid var(--border);
-
-    border-radius:18px;
-
-    box-shadow:
-        0 15px 45px rgba(0,0,0,.24),
-        inset 0 1px rgba(255,255,255,.035);
+.card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:linear-gradient(
+    145deg,
+    rgba(18,20,49,.95),
+    rgba(9,11,28,.93)
+  );
+  box-shadow:var(--shadow);
 }
 
+/* today */
 
-/* =========================================================
-   TODAY PANEL
-========================================================= */
-
-.hero-main{
-    position:relative;
-
-    min-width:0;
-    min-height:0;
-
-    padding:17px 22px;
-
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-
-    overflow:hidden;
+.today-card{
+  padding:17px 20px;
+  position:relative;
+  overflow:hidden;
 }
 
-.hero-main::after{
-    content:"";
-
-    position:absolute;
-
-    width:260px;
-    height:260px;
-
-    right:-80px;
-    top:-100px;
-
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(120,80,255,.18),
-            transparent 70%
-        );
-
-    pointer-events:none;
+.today-card::after{
+  content:"";
+  position:absolute;
+  width:210px;
+  height:210px;
+  right:-80px;
+  top:-100px;
+  border-radius:50%;
+  background:rgba(91,92,255,.18);
+  filter:blur(15px);
 }
 
-.today-label{
-    color:var(--cyan);
-
-    font-size:9px;
-    font-weight:900;
-
-    letter-spacing:2.5px;
+.kicker{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:1.5px;
+  color:var(--cyan);
+  text-transform:uppercase;
 }
 
 .today-date{
-    margin-top:3px;
-
-    color:var(--muted);
-
-    font-size:11px;
+  margin-top:3px;
+  font-size:13px;
+  color:var(--muted);
 }
 
 .today-score{
-    margin-top:2px;
-
-    display:flex;
-    align-items:baseline;
-    gap:8px;
+  display:flex;
+  align-items:baseline;
+  gap:7px;
+  margin-top:5px;
 }
 
-.today-number{
-    font-size:clamp(42px,5vw,66px);
-
-    line-height:.9;
-
-    font-weight:950;
-
-    letter-spacing:-4px;
-
-    background:
-        linear-gradient(
-            100deg,
-            #ffffff,
-            #c0adff 45%,
-            #65eaff
-        );
-
-    -webkit-background-clip:text;
-    background-clip:text;
-
-    color:transparent;
-
-    filter:
-        drop-shadow(
-            0 0 15px
-            rgba(155,108,255,.3)
-        );
+.today-score strong{
+  font-size:48px;
+  line-height:1;
+  font-weight:950;
+  letter-spacing:-2px;
+  text-shadow:0 0 25px rgba(99,125,255,.35);
 }
 
-.today-unit{
-    color:var(--muted);
-
-    font-size:11px;
-    font-weight:800;
+.today-score span{
+  font-size:15px;
+  color:var(--muted);
 }
 
-
-/* =========================================================
-   POINT METER
-========================================================= */
-
-.meter-header{
-    margin-top:9px;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+.today-label{
+  margin-top:8px;
+  font-size:12px;
+  color:#aeb8d7;
 }
 
-.meter-title{
-    color:#aeb3d0;
+/* total */
 
-    font-size:9px;
-    font-weight:800;
-
-    letter-spacing:1px;
+.total-card{
+  padding:16px 18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
-.meter-value{
-    color:var(--cyan);
-
-    font-size:10px;
-    font-weight:900;
+.card-title{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
 
-.point-line{
-    position:relative;
-
-    width:100%;
-    height:30px;
-
-    margin-top:4px;
-
-    display:flex;
-    align-items:center;
-
-    gap:2px;
-
-    overflow:hidden;
+.total-number{
+  font-size:38px;
+  line-height:1;
+  font-weight:950;
+  margin-top:7px;
 }
 
-.point-line::before{
-    content:"";
-
-    position:absolute;
-
-    left:0;
-    right:0;
-
-    top:50%;
-
-    height:2px;
-
-    transform:translateY(-50%);
-
-    background:
-        linear-gradient(
-            90deg,
-            rgba(155,108,255,.2),
-            rgba(77,232,255,.5)
-        );
+.total-number.positive{
+  color:var(--green);
+  text-shadow:0 0 20px rgba(53,230,154,.25);
 }
 
-.point{
-    position:relative;
-    z-index:1;
-
-    flex:1 1 0;
-    min-width:0;
-
-    height:21px;
-
-    border-radius:3px;
-
-    background:
-        rgba(115,105,170,.13);
-
-    border:1px solid
-        rgba(140,130,210,.1);
+.total-number.negative{
+  color:var(--red);
+  text-shadow:0 0 20px rgba(255,95,122,.25);
 }
 
-.point.active{
-    background:
-        linear-gradient(
-            180deg,
-            var(--purple),
-            var(--cyan)
-        );
-
-    border-color:
-        rgba(255,255,255,.15);
-
-    box-shadow:
-        0 0 7px
-        rgba(122,101,255,.45);
-}
-
-.point.negative{
-    background:
-        linear-gradient(
-            180deg,
-            #ff6682,
-            #b52d54
-        );
-
-    border-color:
-        rgba(255,120,145,.2);
-}
-
-.meter-scale{
-    display:flex;
-    justify-content:space-between;
-
-    color:#535975;
-
-    font-size:8px;
-}
-
-
-/* =========================================================
-   QUICK ACTIONS
-========================================================= */
-
-.quick{
-    margin-top:7px;
-
-    display:flex;
-    gap:5px;
-}
-
-.quick button{
-    height:27px;
-
-    min-width:40px;
-
-    padding:0 9px;
-
-    border:1px solid
-        rgba(145,130,255,.17);
-
-    border-radius:7px;
-
-    background:
-        rgba(255,255,255,.035);
-
-    color:#cdd1e9;
-
-    cursor:pointer;
-
-    font-size:10px;
-    font-weight:800;
-}
-
-.quick button:hover{
-    border-color:
-        rgba(155,108,255,.55);
-
-    background:
-        rgba(155,108,255,.12);
-}
-
-.quick button:active{
-    transform:translateY(1px);
-}
-
-.quick button:nth-child(4),
-.quick button:nth-child(5),
-.quick button:nth-child(6){
-    color:#9df4ff;
-}
-
-
-/* =========================================================
-   STATS
-========================================================= */
-
-.stats-panel{
-    min-height:0;
-
-    padding:11px;
-
-    display:grid;
-
-    grid-template-columns:
-        1fr 1fr 1fr;
-
-    grid-template-rows:
-        1fr
-        1fr;
-
-    gap:7px;
-
-    overflow:hidden;
-}
-
-.stat{
-    min-width:0;
-
-    padding:9px;
-
-    border-radius:11px;
-
-    background:
-        rgba(255,255,255,.025);
-
-    border:
-        1px solid
-        rgba(145,130,255,.08);
-}
-
-.stat-label{
-    color:var(--muted);
-
-    font-size:8px;
-    font-weight:700;
-
-    letter-spacing:.5px;
-}
-
-.stat-value{
-    margin-top:5px;
-
-    font-size:20px;
-    font-weight:950;
-
-    white-space:nowrap;
-
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.green{
-    color:var(--green);
-}
-
-.red{
-    color:var(--red);
-}
-
-.best{
-    color:var(--yellow);
-}
-
-.progress-box{
-    grid-column:1 / -1;
-
-    padding:8px 10px;
-}
-
-.progress-top{
-    display:flex;
-    justify-content:space-between;
-
-    color:var(--muted);
-
-    font-size:8px;
+.total-sub{
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--muted);
+  margin-top:7px;
 }
 
 .progress{
-    height:5px;
-
-    margin-top:6px;
-
-    border-radius:99px;
-
-    background:
-        rgba(255,255,255,.06);
-
-    overflow:hidden;
+  height:7px;
+  border-radius:999px;
+  background:#10142d;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.05);
 }
 
-.progress-bar{
-    width:0;
-    height:100%;
-
-    border-radius:inherit;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--purple),
-            var(--cyan)
-        );
+.progress-fill{
+  height:100%;
+  width:0%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan));
+  box-shadow:0 0 13px rgba(75,150,255,.5);
 }
 
+/* quick */
 
-/* =========================================================
-   CONTENT
-========================================================= */
+.quick-card{
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+}
+
+.quick-title{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  flex:1;
+}
+
+.quick-btn{
+  border:1px solid rgba(130,145,255,.22);
+  background:rgba(255,255,255,.035);
+  color:#eaf0ff;
+  border-radius:9px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.12s;
+}
+
+.quick-btn:hover{
+  border-color:var(--cyan);
+  background:rgba(70,130,255,.13);
+  transform:translateY(-1px);
+}
+
+.quick-btn.plus{
+  color:var(--green);
+}
+
+.quick-btn.minus{
+  color:var(--red);
+}
+
+/* ---------- MAIN ---------- */
 
 .content{
-    min-height:0;
-
-    display:grid;
-
-    grid-template-columns:
-        minmax(0,1fr)
-        250px;
-
-    gap:9px;
-
-    overflow:hidden;
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1.65fr) minmax(280px,.65fr);
+  gap:10px;
 }
 
-
-/* =========================================================
-   CALENDAR
-========================================================= */
+/* ---------- CALENDAR ---------- */
 
 .calendar-card{
-    min-width:0;
-    min-height:0;
-
-    padding:11px;
-
-    display:grid;
-
-    grid-template-rows:
-        40px
-        minmax(0,1fr);
-
-    overflow:hidden;
+  min-height:0;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
 }
 
 .calendar-head{
-    display:flex;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
 
-    align-items:center;
-    justify-content:space-between;
+.month-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .month-title{
-    font-size:17px;
-    font-weight:950;
-
-    letter-spacing:-.6px;
-}
-
-.month-desc{
-    margin-top:2px;
-
-    color:var(--muted);
-
-    font-size:8px;
+  font-size:21px;
+  font-weight:950;
 }
 
 .month-total{
-    margin-left:7px;
-
-    color:var(--cyan);
-
-    font-size:9px;
-    font-weight:800;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:800;
+  background:rgba(82,106,255,.11);
+  border:1px solid rgba(100,120,255,.22);
+  color:#aab8ff;
 }
 
 .month-nav{
-    display:flex;
-    gap:4px;
+  display:flex;
+  gap:5px;
 }
 
-.month-nav button{
-    width:28px;
-    height:27px;
-
-    border:1px solid
-        rgba(145,130,255,.16);
-
-    border-radius:7px;
-
-    color:#dce0ff;
-
-    background:
-        rgba(255,255,255,.035);
-
-    cursor:pointer;
-
-    font-size:16px;
+.nav-btn{
+  width:31px;
+  height:29px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:rgba(255,255,255,.035);
+  color:white;
+  cursor:pointer;
 }
 
-.month-nav button:hover{
-    background:
-        rgba(155,108,255,.13);
+.nav-btn:hover{
+  background:rgba(80,110,255,.16);
 }
 
-
-/* =========================================================
-   CALENDAR GRID
-========================================================= */
-
-.calendar{
-    min-height:0;
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(7,minmax(0,1fr));
-
-    grid-template-rows:
-        17px
-        repeat(6,minmax(0,1fr));
-
-    gap:4px;
-
-    overflow:hidden;
+.weekdays{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+  margin-bottom:5px;
 }
 
 .weekday{
-    display:grid;
-    place-items:center;
+  text-align:center;
+  font-size:10px;
+  font-weight:800;
+  color:#717d9f;
+  padding:2px;
+}
 
-    color:#606684;
-
-    font-size:8px;
-    font-weight:800;
+.calendar{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  grid-template-rows:repeat(6,minmax(0,1fr));
+  gap:5px;
 }
 
 .day{
-    position:relative;
-
-    min-width:0;
-    min-height:0;
-
-    border:1px solid
-        rgba(135,125,205,.09);
-
-    border-radius:9px;
-
-    background:
-        rgba(255,255,255,.025);
-
-    cursor:pointer;
-
-    overflow:hidden;
-
-    transition:
-        border-color .1s,
-        background .1s;
+  position:relative;
+  min-width:0;
+  min-height:0;
+  padding:7px;
+  border:1px solid rgba(120,135,230,.13);
+  border-radius:9px;
+  background:rgba(255,255,255,.025);
+  cursor:pointer;
+  transition:.1s;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
 }
 
 .day:hover{
-    border-color:
-        rgba(155,108,255,.42);
+  border-color:rgba(88,160,255,.6);
+  background:rgba(72,105,255,.09);
+}
 
-    background:
-        rgba(155,108,255,.08);
+.day.empty{
+  border-color:transparent;
+  background:rgba(255,255,255,.008);
+  cursor:default;
 }
 
 .day.selected{
-    border-color:
-        var(--cyan);
-
-    box-shadow:
-        0 0 0 1px
-        rgba(66,232,255,.14),
-        0 0 15px
-        rgba(66,232,255,.08);
+  border-color:var(--cyan);
+  box-shadow:
+    0 0 0 1px rgba(34,211,238,.2),
+    0 0 15px rgba(34,211,238,.12);
 }
 
 .day.today{
-    background:
-        linear-gradient(
-            145deg,
-            rgba(155,108,255,.14),
-            rgba(66,232,255,.055)
-        );
+  border-color:rgba(255,209,102,.65);
+}
+
+.day-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
 .day-number{
-    position:absolute;
-
-    left:6px;
-    top:5px;
-
-    color:#9da4c4;
-
-    font-size:9px;
-    font-weight:800;
+  font-size:12px;
+  font-weight:900;
 }
 
-.day.today .day-number{
-    color:var(--cyan);
+.today-mark{
+  font-size:8px;
+  color:var(--yellow);
 }
 
 .day-score{
-    position:absolute;
-
-    left:6px;
-    bottom:5px;
-
-    color:#646b89;
-
-    font-size:11px;
-    font-weight:950;
+  font-size:18px;
+  font-weight:950;
+  letter-spacing:-.5px;
 }
 
-.day-score.positive{
-    color:var(--green);
+.day-score.pos{
+  color:var(--green);
 }
 
-.day-score.negative{
-    color:var(--red);
+.day-score.neg{
+  color:var(--red);
 }
 
 .day-score.zero{
-    color:#545b77;
+  color:#59627e;
 }
 
-.day-empty{
-    border:none;
-    background:transparent;
-
-    cursor:default;
+.day-meter{
+  height:3px;
+  border-radius:99px;
+  background:#121630;
+  overflow:hidden;
 }
 
+.day-meter-fill{
+  height:100%;
+  border-radius:inherit;
+  width:0%;
+}
 
-/* =========================================================
-   EDITOR
-========================================================= */
+.day-meter-fill.pos{
+  background:var(--green);
+}
+
+.day-meter-fill.neg{
+  background:var(--red);
+}
+
+/* ---------- SIDE ---------- */
+
+.side{
+  min-height:0;
+  display:grid;
+  grid-template-rows:1.25fr 1fr;
+  gap:10px;
+}
 
 .editor-card{
-    min-height:0;
-
-    padding:14px;
-
-    display:flex;
-    flex-direction:column;
-
-    overflow:hidden;
+  padding:15px;
+  min-height:0;
 }
 
-.editor-top{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-
-    gap:8px;
+.editor-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .editor-title{
-    font-size:13px;
-    font-weight:950;
+  font-size:15px;
+  font-weight:900;
 }
 
-.editor-badge{
-    padding:4px 6px;
-
-    border-radius:5px;
-
-    color:#9cefff;
-
-    background:
-        rgba(66,232,255,.07);
-
-    border:
-        1px solid
-        rgba(66,232,255,.14);
-
-    font-size:7px;
-    font-weight:900;
+.badge{
+  font-size:9px;
+  padding:4px 7px;
+  border-radius:999px;
+  background:rgba(139,92,246,.14);
+  border:1px solid rgba(139,92,246,.3);
+  color:#bda7ff;
 }
 
-.editor-date{
-    margin-top:3px;
-
-    color:var(--muted);
-
-    font-size:9px;
+.selected-date{
+  margin-top:4px;
+  font-size:11px;
+  color:var(--muted);
 }
 
-.editor-label{
-    margin-top:13px;
-
-    color:#6f7696;
-
-    font-size:8px;
-    font-weight:800;
-
-    letter-spacing:.7px;
+.input-wrap{
+  margin-top:12px;
 }
 
-.editor-input{
-    width:100%;
-    height:39px;
-
-    margin-top:5px;
-
-    padding:0 10px;
-
-    border:1px solid
-        rgba(145,130,255,.2);
-
-    border-radius:8px;
-
-    outline:none;
-
-    color:white;
-
-    background:
-        rgba(0,0,0,.25);
-
-    font-size:16px;
-    font-weight:900;
+.input-label{
+  font-size:10px;
+  color:#7f8aac;
+  margin-bottom:5px;
 }
 
-.editor-input:focus{
-    border-color:
-        var(--purple);
-
-    box-shadow:
-        0 0 0 2px
-        rgba(155,108,255,.09);
+.score-input{
+  width:100%;
+  height:43px;
+  border-radius:10px;
+  border:1px solid rgba(115,135,255,.24);
+  background:#080b20;
+  color:white;
+  padding:0 12px;
+  outline:none;
+  font-size:20px;
+  font-weight:900;
 }
 
-.editor-buttons{
-    display:grid;
-
-    grid-template-columns:
-        1fr 1fr;
-
-    gap:5px;
-
-    margin-top:6px;
+.score-input:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 15px rgba(34,211,238,.1);
 }
 
-.editor-buttons button{
-    height:31px;
-
-    border-radius:7px;
-
-    border:1px solid
-        rgba(145,130,255,.17);
-
-    color:#d6daf2;
-
-    background:
-        rgba(255,255,255,.035);
-
-    cursor:pointer;
-
-    font-size:9px;
-    font-weight:850;
+.editor-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:8px;
 }
 
-.editor-buttons button:hover{
-    background:
-        rgba(155,108,255,.12);
+.action-btn{
+  height:34px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  color:white;
+  font-weight:800;
+  cursor:pointer;
 }
 
-.editor-buttons .save{
-    color:#9ef5ff;
-
-    border-color:
-        rgba(66,232,255,.24);
-
-    background:
-        rgba(66,232,255,.055);
+.action-btn.save{
+  background:linear-gradient(135deg,#6651dc,#337eea);
+  border-color:transparent;
 }
 
-.editor-hint{
-    margin-top:9px;
-
-    padding:8px;
-
-    border-radius:8px;
-
-    background:
-        rgba(155,108,255,.045);
-
-    border:
-        1px solid
-        rgba(155,108,255,.08);
-
-    color:#707797;
-
-    font-size:8px;
-
-    line-height:1.45;
+.action-btn:hover{
+  filter:brightness(1.15);
 }
 
 .db-info{
-    margin-top:auto;
-
-    padding-top:9px;
-
-    border-top:
-        1px solid
-        rgba(145,130,255,.09);
+  margin-top:9px;
+  padding:8px;
+  border-radius:8px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(130,145,255,.10);
+  font-size:9px;
+  color:#727e9f;
+  word-break:break-all;
 }
 
-.db-row{
-    display:flex;
+/* stats */
 
-    justify-content:space-between;
-
-    gap:8px;
-
-    margin-top:4px;
-
-    color:#555c78;
-
-    font-size:7px;
+.stats-card{
+  padding:13px;
+  min-height:0;
 }
 
-.db-row strong{
-    max-width:150px;
-
-    overflow:hidden;
-
-    white-space:nowrap;
-
-    text-overflow:ellipsis;
-
-    color:#969dbb;
-
-    font-weight:600;
+.stats-title{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:800;
+  margin-bottom:8px;
 }
 
+.stats-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  height:calc(100% - 23px);
+}
 
-/* =========================================================
-   FOOTER
-========================================================= */
+.stat{
+  padding:9px;
+  border-radius:9px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(120,140,255,.10);
+  min-width:0;
+}
+
+.stat-name{
+  color:#7782a2;
+  font-size:9px;
+}
+
+.stat-value{
+  margin-top:3px;
+  font-size:17px;
+  font-weight:950;
+}
+
+.stat-value.green{
+  color:var(--green);
+}
+
+.stat-value.red{
+  color:var(--red);
+}
+
+.stat-value.blue{
+  color:#77aaff;
+}
+
+.stat-value.yellow{
+  color:var(--yellow);
+}
+
+/* ---------- FOOTER ---------- */
 
 .footer{
-    display:flex;
-
-    align-items:center;
-    justify-content:space-between;
-
-    color:#4f5571;
-
-    font-size:8px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color:#59637f;
+  font-size:9px;
+  padding:0 4px;
 }
 
 .footer strong{
-    color:#777e9d;
+  color:#8995bb;
 }
 
+/* ---------- RESPONSIVE ---------- */
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+@media(max-width:950px){
+  .app{
+    padding:8px;
+    grid-template-rows:45px 155px minmax(0,1fr) 20px;
+    gap:7px;
+  }
 
-@media(max-width:1000px){
+  .content{
+    grid-template-columns:1fr;
+  }
 
-    .hero{
-        grid-template-columns:
-            minmax(0,1fr)
-            285px;
-    }
+  .side{
+    display:none;
+  }
 
-    .content{
-        grid-template-columns:
-            minmax(0,1fr)
-            220px;
-    }
+  .hero{
+    grid-template-columns:1.2fr 1fr 1fr;
+  }
 }
 
+@media(max-width:650px){
+  .app{
+    grid-template-rows:42px 145px minmax(0,1fr) 18px;
+  }
 
-@media(max-width:820px){
+  .period{
+    display:none;
+  }
 
-    .app{
-        padding:8px 10px;
+  .hero{
+    grid-template-columns:1fr 1fr;
+  }
 
-        grid-template-rows:
-            32px
-            180px
-            minmax(0,1fr)
-            20px;
+  .quick-card{
+    display:none;
+  }
 
-        gap:6px;
-    }
+  .today-score strong{
+    font-size:39px;
+  }
 
-    .hero{
-        grid-template-columns:1fr;
-    }
+  .total-number{
+    font-size:30px;
+  }
 
-    .stats-panel{
-        display:none;
-    }
+  .calendar-card{
+    padding:9px;
+  }
 
-    .content{
-        grid-template-columns:1fr;
-    }
+  .day{
+    padding:4px;
+  }
 
-    .editor-card{
-        display:none;
-    }
+  .day-score{
+    font-size:13px;
+  }
 
-    .calendar-card{
-        padding:8px;
-    }
-}
-
-
-@media(max-height:700px){
-
-    .app{
-        padding:7px 11px;
-
-        grid-template-rows:
-            30px
-            165px
-            minmax(0,1fr)
-            19px;
-
-        gap:5px;
-    }
-
-    .hero-main{
-        padding:12px 17px;
-    }
-
-    .today-number{
-        font-size:42px;
-    }
-
-    .meter-header{
-        margin-top:6px;
-    }
-
-    .point-line{
-        height:25px;
-    }
-
-    .point{
-        height:18px;
-    }
-
-    .quick{
-        margin-top:5px;
-    }
-
-    .quick button{
-        height:23px;
-        min-width:35px;
-    }
-
-    .calendar-card{
-        padding:8px;
-    }
-
-    .calendar-card{
-        grid-template-rows:
-            34px
-            minmax(0,1fr);
-    }
-
-    .calendar{
-        gap:3px;
-    }
-
-    .day-number{
-        top:3px;
-        left:4px;
-    }
-
-    .day-score{
-        left:4px;
-        bottom:3px;
-    }
-}
-
-
-@media(max-width:550px){
-
-    .period{
-        display:none;
-    }
-
-    .brand{
-        font-size:14px;
-    }
-
-    .today-number{
-        font-size:38px;
-    }
-
-    .quick{
-        gap:3px;
-    }
-
-    .quick button{
-        flex:1;
-        min-width:0;
-        padding:0 3px;
-    }
-
-    .calendar{
-        gap:2px;
-    }
-
-    .day{
-        border-radius:6px;
-    }
+  .month-title{
+    font-size:17px;
+  }
 }
 </style>
 </head>
-
 
 <body>
 
 <div class="app">
 
-    <!-- TOPBAR -->
-    <header class="topbar">
+  <!-- TOP -->
+  <header class="topbar">
+    <div class="logo">
+      <div class="logo-icon">D</div>
+      <div>Duo<span>Marst</span> Points</div>
+    </div>
 
-        <div class="brand">
-            <div class="brand-icon">D</div>
-            <span>DuoMarst</span>
+    <div class="period">
+      2026.10.01 — 2027.03.31
+    </div>
+
+    <div class="sync">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncText">READY</span>
+    </div>
+  </header>
+
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="card today-card">
+      <div class="kicker">Today's Score</div>
+      <div class="today-date" id="todayDate">2026.10.05</div>
+
+      <div class="today-score">
+        <strong id="todayScore">0</strong>
+        <span>POINTS</span>
+      </div>
+
+      <div class="today-label">
+        오늘 모은 포인트를 바로 기록해봐.
+      </div>
+    </div>
+
+
+    <div class="card total-card">
+      <div>
+        <div class="card-title">Total Score</div>
+        <div class="total-number" id="totalScore">0</div>
+      </div>
+
+      <div>
+        <div class="total-sub">
+          <span id="progressText">0% of goal</span>
+          <span>Goal 150</span>
         </div>
 
-        <div class="period">
-            2026.10.01 — 2027.03.31
+        <div class="progress">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="card quick-card">
+      <div class="quick-title">QUICK POINTS</div>
+
+      <div class="quick-grid">
+        <button class="quick-btn minus" data-delta="-10">−10</button>
+        <button class="quick-btn minus" data-delta="-5">−5</button>
+        <button class="quick-btn minus" data-delta="-1">−1</button>
+
+        <button class="quick-btn plus" data-delta="1">+1</button>
+        <button class="quick-btn plus" data-delta="5">+5</button>
+        <button class="quick-btn plus" data-delta="10">+10</button>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- MAIN -->
+  <main class="content">
+
+    <!-- CALENDAR -->
+    <section class="card calendar-card">
+
+      <div class="calendar-head">
+        <div class="month-info">
+          <div class="month-title" id="monthTitle">October 2026</div>
+          <div class="month-total" id="monthTotal">0 PTS</div>
         </div>
 
-        <div class="sync">
-            <div
-                class="sync-dot"
-                id="syncDot"
-            ></div>
-
-            <span id="syncText">
-                준비 중
-            </span>
+        <div class="month-nav">
+          <button class="nav-btn" id="prevMonth">‹</button>
+          <button class="nav-btn" id="nextMonth">›</button>
         </div>
-
-    </header>
-
-
-    <!-- HERO -->
-    <section class="hero">
-
-        <!-- TODAY -->
-        <div class="hero-main">
-
-            <div class="today-label">
-                TODAY'S SCORE
-            </div>
-
-            <div
-                class="today-date"
-                id="selectedDate"
-            >
-                2026년 10월 4일
-            </div>
-
-            <div class="today-score">
-
-                <div
-                    class="today-number"
-                    id="editorScore"
-                >
-                    +0
-                </div>
-
-                <div class="today-unit">
-                    POINTS
-                </div>
-
-            </div>
-
-
-            <!-- METER -->
-            <div class="meter-header">
-
-                <div class="meter-title">
-                    POINT ACCUMULATION
-                </div>
-
-                <div
-                    class="meter-value"
-                    id="pointMax"
-                >
-                    0 / 50
-                </div>
-
-            </div>
-
-            <div
-                class="point-line"
-                id="pointLine"
-            ></div>
-
-            <div class="meter-scale">
-                <span>0</span>
-                <span>10</span>
-                <span>20</span>
-                <span>30</span>
-                <span>40</span>
-                <span>50+</span>
-            </div>
-
-
-            <!-- QUICK -->
-            <div class="quick">
-
-                <button data-delta="-10">
-                    −10
-                </button>
-
-                <button data-delta="-5">
-                    −5
-                </button>
-
-                <button data-delta="-1">
-                    −1
-                </button>
-
-                <button data-delta="1">
-                    +1
-                </button>
-
-                <button data-delta="5">
-                    +5
-                </button>
-
-                <button data-delta="10">
-                    +10
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- STATS -->
-        <div class="stats-panel">
-
-            <div class="stat">
-
-                <div class="stat-label">
-                    TOTAL SCORE
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="totalScore"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-label">
-                    ACTIVE DAYS
-                </div>
-
-                <div
-                    class="stat-value"
-                    id="activeDays"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-label">
-                    POSITIVE
-                </div>
-
-                <div
-                    class="stat-value green"
-                    id="positiveScore"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-label">
-                    NEGATIVE
-                </div>
-
-                <div
-                    class="stat-value red"
-                    id="negativeScore"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat">
-
-                <div class="stat-label">
-                    BEST DAY
-                </div>
-
-                <div
-                    class="stat-value best"
-                    id="bestDay"
-                >
-                    0
-                </div>
-
-            </div>
-
-
-            <div class="stat progress-box">
-
-                <div class="progress-top">
-
-                    <span>
-                        GOAL · 150 POINTS
-                    </span>
-
-                    <span id="progressText">
-                        0%
-                    </span>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        id="progressBar"
-                    ></div>
-
-                </div>
-
-            </div>
-
-        </div>
+      </div>
+
+      <div class="weekdays">
+        <div class="weekday">SUN</div>
+        <div class="weekday">MON</div>
+        <div class="weekday">TUE</div>
+        <div class="weekday">WED</div>
+        <div class="weekday">THU</div>
+        <div class="weekday">FRI</div>
+        <div class="weekday">SAT</div>
+      </div>
+
+      <div class="calendar" id="calendar"></div>
 
     </section>
 
 
-    <!-- CONTENT -->
-    <main class="content">
+    <!-- SIDE -->
+    <aside class="side">
 
-        <!-- CALENDAR -->
-        <section class="calendar-card">
+      <section class="card editor-card">
 
-            <div class="calendar-head">
+        <div class="editor-head">
+          <div class="editor-title">Point Editor</div>
+          <div class="badge">LOCAL DAY</div>
+        </div>
 
-                <div>
+        <div class="selected-date" id="selectedDate">
+          2026.10.05
+        </div>
 
-                    <span
-                        class="month-title"
-                        id="monthTitle"
-                    >
-                        2026년 10월
-                    </span>
+        <div class="input-wrap">
+          <div class="input-label">POINT VALUE</div>
 
-                    <span
-                        class="month-total"
-                        id="monthTotal"
-                    >
-                        +0
-                    </span>
+          <input
+            class="score-input"
+            id="scoreInput"
+            type="number"
+            value="0"
+            step="1"
+          >
+        </div>
 
-                    <div
-                        class="month-desc"
-                        id="monthDesc"
-                    >
-                        Daily Point History
-                    </div>
+        <div class="editor-actions">
+          <button class="action-btn" id="resetButton">
+            RESET
+          </button>
 
-                </div>
+          <button class="action-btn save" id="saveButton">
+            SAVE
+          </button>
+        </div>
 
+        <div class="db-info">
+          Cloud storage: KeyVal<br>
+          Status: <span id="dbStatus">Ready</span>
+        </div>
 
-                <div class="month-nav">
-
-                    <button id="prevMonth">
-                        ‹
-                    </button>
-
-                    <button id="nextMonth">
-                        ›
-                    </button>
-
-                </div>
-
-            </div>
+      </section>
 
 
-            <div
-                class="calendar"
-                id="calendar"
-            ></div>
+      <section class="card stats-card">
 
-        </section>
+        <div class="stats-title">STATISTICS</div>
 
+        <div class="stats-grid">
 
-        <!-- EDITOR -->
-        <aside class="editor-card">
+          <div class="stat">
+            <div class="stat-name">ACTIVE DAYS</div>
+            <div class="stat-value blue" id="activeDays">0</div>
+          </div>
 
-            <div class="editor-top">
+          <div class="stat">
+            <div class="stat-name">BEST DAY</div>
+            <div class="stat-value yellow" id="bestDay">0</div>
+          </div>
 
-                <div class="editor-title">
-                    DAY EDITOR
-                </div>
+          <div class="stat">
+            <div class="stat-name">POSITIVE</div>
+            <div class="stat-value green" id="positiveScore">0</div>
+          </div>
 
-                <div class="editor-badge">
-                    CLOUD
-                </div>
+          <div class="stat">
+            <div class="stat-name">NEGATIVE</div>
+            <div class="stat-value red" id="negativeScore">0</div>
+          </div>
 
-            </div>
+        </div>
 
+      </section>
 
-            <div
-                class="editor-date"
-                id="selectedWeekday"
-            >
-                2026년 10월 4일 일요일
-            </div>
+    </aside>
 
-
-            <div class="editor-label">
-                POINT VALUE
-            </div>
+  </main>
 
 
-            <input
-                class="editor-input"
-                id="scoreInput"
-                type="number"
-                value="0"
-            >
-
-
-            <div class="editor-buttons">
-
-                <button id="resetButton">
-                    RESET
-                </button>
-
-                <button
-                    class="save"
-                    id="saveButton"
-                >
-                    SAVE
-                </button>
-
-            </div>
-
-
-            <div class="editor-hint">
-                선택한 날짜의 포인트를 직접 입력하거나
-                위의 빠른 증가 버튼을 사용할 수 있어.
-            </div>
-
-
-            <div class="db-info">
-
-                <div class="db-row">
-
-                    <span>
-                        DATABASE
-                    </span>
-
-                    <strong>
-                        KeyVal
-                    </strong>
-
-                </div>
-
-
-                <div class="db-row">
-
-                    <span>
-                        KEY
-                    </span>
-
-                    <strong id="selectedKey">
-                        -
-                    </strong>
-
-                </div>
-
-
-                <div class="db-row">
-
-                    <span>
-                        VALUE
-                    </span>
-
-                    <strong id="selectedValue">
-                        0
-                    </strong>
-
-                </div>
-
-            </div>
-
-        </aside>
-
-    </main>
-
-
-    <!-- FOOTER -->
-    <footer class="footer">
-
-        <span>
-            DuoMarst Point Calendar
-        </span>
-
-        <strong>
-            LOCAL UI · CLOUD SYNC
-        </strong>
-
-    </footer>
+  <footer class="footer">
+    <span>DuoMarst Point System</span>
+    <strong>FAST • LIGHT • SYNCED</strong>
+  </footer>
 
 </div>
 
@@ -1666,419 +944,251 @@ button{
 ========================================================= */
 
 const BASE_KEY =
-    "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
+  "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
 const API =
-    "https://api.keyval.org";
+  "https://api.keyval.org";
 
 const START =
-    "2026-10-01";
+  new Date("2026-10-01T00:00:00");
 
 const END =
-    "2027-03-31";
+  new Date("2027-03-31T23:59:59");
+
+const GOAL = 150;
 
 
 /* =========================================================
    STATE
 ========================================================= */
 
-const data = {};
+let data = {};
+let currentMonth = new Date("2026-10-01T00:00:00");
 
 let selectedDate =
-    "2026-10-04";
-
-let currentMonth =
-    new Date(2026,9,1);
+  new Date("2026-10-05T00:00:00");
 
 let saving = false;
 
 
 /* =========================================================
-   ELEMENTS
-========================================================= */
-
-const $ =
-    id => document.getElementById(id);
-
-const calendar =
-    $("calendar");
-
-const monthTitle =
-    $("monthTitle");
-
-const monthDesc =
-    $("monthDesc");
-
-const monthTotal =
-    $("monthTotal");
-
-const selectedDateEl =
-    $("selectedDate");
-
-const selectedWeekday =
-    $("selectedWeekday");
-
-const scoreInput =
-    $("scoreInput");
-
-const editorScore =
-    $("editorScore");
-
-const totalScore =
-    $("totalScore");
-
-const positiveScore =
-    $("positiveScore");
-
-const negativeScore =
-    $("negativeScore");
-
-const activeDays =
-    $("activeDays");
-
-const bestDay =
-    $("bestDay");
-
-const progressText =
-    $("progressText");
-
-const progressBar =
-    $("progressBar");
-
-const pointLine =
-    $("pointLine");
-
-const pointMax =
-    $("pointMax");
-
-const selectedKey =
-    $("selectedKey");
-
-const selectedValue =
-    $("selectedValue");
-
-const syncText =
-    $("syncText");
-
-const syncDot =
-    $("syncDot");
-
-
-/* =========================================================
-   DATE
+   HELPERS
 ========================================================= */
 
 function pad(n){
-    return String(n).padStart(2,"0");
+  return String(n).padStart(2,"0");
 }
 
-function dateKey(year,month,day){
-    return (
-        year +
-        "-" +
-        pad(month + 1) +
-        "-" +
-        pad(day)
-    );
-}
-
-function parseDate(key){
-
-    const [
-        y,
-        m,
-        d
-    ] =
-        key.split("-")
-        .map(Number);
-
-    return new Date(
-        y,
-        m - 1,
-        d
-    );
-}
-
-function formatDate(key){
-
-    const date =
-        parseDate(key);
-
-    return (
-        date.getFullYear() +
-        "년 " +
-        (date.getMonth()+1) +
-        "월 " +
-        date.getDate() +
-        "일"
-    );
-}
-
-function weekday(key){
-
-    const names = [
-        "일요일",
-        "월요일",
-        "화요일",
-        "수요일",
-        "목요일",
-        "금요일",
-        "토요일"
-    ];
-
-    return names[
-        parseDate(key).getDay()
-    ];
+function keyOf(date){
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}`;
 }
 
 function monthKey(date){
-
-    return (
-        date.getFullYear() +
-        "-" +
-        pad(date.getMonth()+1)
-    );
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}`;
 }
 
-function apiKey(date){
-
-    return (
-        BASE_KEY +
-        "-" +
-        monthKey(date)
-    );
+function storageKey(date){
+  return `${BASE_KEY}-${monthKey(date)}`;
 }
 
-function daysInMonth(year,month){
+function clampDate(date){
+  if(date < START) return new Date(START);
+  if(date > END) return new Date(END);
+  return date;
+}
 
-    return new Date(
-        year,
-        month + 1,
-        0
-    ).getDate();
+function dateText(date){
+  return `${date.getFullYear()}.${pad(date.getMonth()+1)}.${pad(date.getDate())}`;
+}
+
+function weekdayText(date){
+  return [
+    "일요일",
+    "월요일",
+    "화요일",
+    "수요일",
+    "목요일",
+    "금요일",
+    "토요일"
+  ][date.getDay()];
+}
+
+function monthName(date){
+  return date.toLocaleDateString(
+    "en-US",
+    {
+      month:"long",
+      year:"numeric"
+    }
+  );
+}
+
+function getScore(date){
+  return Number(data[keyOf(date)] || 0);
+}
+
+function setScore(date,value){
+  data[keyOf(date)] = Math.trunc(Number(value) || 0);
 }
 
 
 /* =========================================================
-   INITIAL DATA
+   RANGE
 ========================================================= */
 
-function initializeData(){
+function isAllowed(date){
+  return date >= START && date <= END;
+}
 
-    const start =
-        parseDate(START);
+function getMonthDays(date){
+  const year = date.getFullYear();
+  const month = date.getMonth();
 
-    const end =
-        parseDate(END);
+  const last =
+    new Date(year,month + 1,0).getDate();
 
-    const cursor =
-        new Date(start);
+  const result = [];
 
-    while(cursor <= end){
+  for(let d=1; d<=last; d++){
+    const day =
+      new Date(year,month,d);
 
-        const key =
-            dateKey(
-                cursor.getFullYear(),
-                cursor.getMonth(),
-                cursor.getDate()
-            );
-
-        data[key] = 0;
-
-        cursor.setDate(
-            cursor.getDate()+1
-        );
+    if(isAllowed(day)){
+      result.push(day);
     }
+  }
+
+  return result;
 }
 
 
 /* =========================================================
-   KEYVAL PARSER
-========================================================= */
-
-function parseKeyVal(raw){
-
-    if(
-        raw === null ||
-        raw === undefined
-    ){
-        return null;
-    }
-
-    if(
-        typeof raw === "object"
-    ){
-
-        if(
-            Object.prototype.hasOwnProperty.call(
-                raw,
-                "value"
-            )
-        ){
-            return parseKeyVal(
-                raw.value
-            );
-        }
-
-        return raw;
-    }
-
-    const text =
-        String(raw).trim();
-
-    if(!text){
-        return null;
-    }
-
-    try{
-
-        const parsed =
-            JSON.parse(text);
-
-        if(
-            parsed !== null &&
-            parsed !== text
-        ){
-            return parseKeyVal(parsed);
-        }
-
-    }catch(_){}
-
-    return text;
-}
-
-
-/* =========================================================
-   LOAD MONTH
+   KEYVAL LOAD
 ========================================================= */
 
 async function loadMonth(date){
 
-    const key =
-        apiKey(date);
+  const url =
+    `${API}/get/${storageKey(date)}`;
+
+  try{
+
+    const response =
+      await fetch(
+        url,
+        {
+          cache:"no-store"
+        }
+      );
+
+    if(!response.ok){
+      throw new Error("HTTP "+response.status);
+    }
+
+    const raw =
+      await response.text();
+
+    if(!raw || raw === "null"){
+      return;
+    }
+
+    let value = raw;
 
     try{
+      const parsed = JSON.parse(raw);
 
-        const response =
-            await fetch(
-                API +
-                "/get/" +
-                encodeURIComponent(key),
-                {
-                    cache:"no-store"
-                }
-            );
-
-        if(!response.ok){
-            throw new Error(
-                "HTTP " +
-                response.status
-            );
-        }
-
-        const raw =
-            await response.text();
-
-        const parsed =
-            parseKeyVal(raw);
-
-        if(parsed === null){
-            return;
-        }
-
-        let values = null;
-
-        if(
-            Array.isArray(parsed)
-        ){
-            values = parsed;
-        }
-
-        else if(
-            typeof parsed === "string"
-        ){
-
-            values =
-                parsed
-                .split(",")
-                .map(v => {
-
-                    const n =
-                        Number(
-                            String(v).trim()
-                        );
-
-                    return Number.isFinite(n)
-                        ? Math.trunc(n)
-                        : 0;
-                });
-        }
-
-        else if(
-            parsed &&
-            Array.isArray(parsed.values)
-        ){
-            values =
-                parsed.values;
-        }
-
-        if(!values){
-            return;
-        }
-
-        const year =
-            date.getFullYear();
-
-        const month =
-            date.getMonth();
-
-        const count =
-            daysInMonth(
-                year,
-                month
-            );
-
-        for(
-            let day=1;
-            day<=count;
-            day++
-        ){
-
-            const index =
-                day-1;
-
-            if(
-                index >= values.length
-            ){
-                break;
-            }
-
-            const value =
-                Number(values[index]);
-
-            if(
-                Number.isFinite(value)
-            ){
-
-                data[
-                    dateKey(
-                        year,
-                        month,
-                        day
-                    )
-                ] =
-                    Math.trunc(value);
-            }
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Load failed:",
-            key,
-            error
-        );
+      if(typeof parsed === "string"){
+        value = parsed;
+      }
+      else if(
+        parsed &&
+        typeof parsed.value !== "undefined"
+      ){
+        value = parsed.value;
+      }
+      else if(
+        parsed &&
+        typeof parsed.data !== "undefined"
+      ){
+        value = parsed.data;
+      }
     }
+    catch{}
+
+    if(Array.isArray(value)){
+      const days =
+        getMonthDays(date);
+
+      days.forEach((day,index)=>{
+        setScore(day,value[index] || 0);
+      });
+
+      return;
+    }
+
+    if(typeof value === "string"){
+
+      const parts =
+        value.split(",");
+
+      const days =
+        getMonthDays(date);
+
+      days.forEach((day,index)=>{
+        const v =
+          Number(parts[index]);
+
+        if(Number.isFinite(v)){
+          setScore(day,v);
+        }
+      });
+    }
+
+  }
+  catch(error){
+
+    console.warn(
+      "Month load failed:",
+      monthKey(date),
+      error
+    );
+
+  }
+}
+
+
+/* =========================================================
+   KEYVAL SAVE
+========================================================= */
+
+async function saveMonth(date){
+
+  const days =
+    getMonthDays(date);
+
+  const values =
+    days.map(day=>getScore(day));
+
+  const value =
+    values.join(",");
+
+  const url =
+    `${API}/set/${storageKey(date)}/${encodeURIComponent(value)}`;
+
+  const response =
+    await fetch(
+      url,
+      {
+        method:"GET",
+        cache:"no-store"
+      }
+    );
+
+  if(!response.ok){
+    throw new Error(
+      "SAVE HTTP "+response.status
+    );
+  }
 }
 
 
@@ -2088,211 +1198,174 @@ async function loadMonth(date){
 
 async function loadAll(){
 
-    setSync(
-        "불러오는 중...",
-        false
+  setSync("LOADING");
+
+  const months = [];
+
+  const cursor =
+    new Date(START);
+
+  while(cursor <= END){
+
+    months.push(
+      new Date(cursor)
     );
 
-    const months = [
-        new Date(2026,9,1),
-        new Date(2026,10,1),
-        new Date(2026,11,1),
-        new Date(2027,0,1),
-        new Date(2027,1,1),
-        new Date(2027,2,1)
-    ];
+    cursor.setMonth(
+      cursor.getMonth()+1
+    );
+  }
 
-    await Promise.all(
-        months.map(loadMonth)
+  await Promise.all(
+    months.map(loadMonth)
+  );
+
+  renderAll();
+
+  setSync("SYNCED");
+}
+
+
+/* =========================================================
+   UI STATUS
+========================================================= */
+
+function setSync(text){
+
+  document.getElementById(
+    "syncText"
+  ).textContent = text;
+
+  const dot =
+    document.getElementById("syncDot");
+
+  if(text === "ERROR"){
+    dot.style.background =
+      "var(--red)";
+    dot.style.boxShadow =
+      "0 0 10px var(--red)";
+  }
+  else if(text === "SYNCED"){
+    dot.style.background =
+      "var(--green)";
+    dot.style.boxShadow =
+      "0 0 10px var(--green)";
+  }
+  else{
+    dot.style.background =
+      "var(--yellow)";
+    dot.style.boxShadow =
+      "0 0 10px var(--yellow)";
+  }
+}
+
+
+/* =========================================================
+   RENDER HERO
+========================================================= */
+
+function renderHero(){
+
+  const today =
+    new Date();
+
+  const todayScore =
+    getScore(today);
+
+  document.getElementById(
+    "todayDate"
+  ).textContent =
+    dateText(today);
+
+  document.getElementById(
+    "todayScore"
+  ).textContent =
+    todayScore > 0
+      ? "+"+todayScore
+      : todayScore;
+
+  let total = 0;
+  let positive = 0;
+  let negative = 0;
+  let active = 0;
+  let best = 0;
+
+  Object.values(data).forEach(v=>{
+
+    const n =
+      Number(v)||0;
+
+    total += n;
+
+    if(n > 0){
+      positive += n;
+      active++;
+    }
+
+    if(n < 0){
+      negative += n;
+      active++;
+    }
+
+    if(n > best){
+      best = n;
+    }
+  });
+
+  const totalEl =
+    document.getElementById("totalScore");
+
+  totalEl.textContent =
+    total > 0 ? "+"+total : total;
+
+  totalEl.className =
+    "total-number "+
+    (
+      total > 0
+        ? "positive"
+        : total < 0
+          ? "negative"
+          : ""
     );
 
-    renderAll();
+  document.getElementById(
+    "positiveScore"
+  ).textContent =
+    "+"+positive;
 
-    setSync(
-        "동기화 완료",
-        true
-    );
-}
+  document.getElementById(
+    "negativeScore"
+  ).textContent =
+    negative;
 
+  document.getElementById(
+    "activeDays"
+  ).textContent =
+    active;
 
-/* =========================================================
-   SAVE MONTH
-========================================================= */
+  document.getElementById(
+    "bestDay"
+  ).textContent =
+    best > 0 ? "+"+best : best;
 
-async function saveMonth(date){
-
-    const year =
-        date.getFullYear();
-
-    const month =
-        date.getMonth();
-
-    const count =
-        daysInMonth(
-            year,
-            month
-        );
-
-    const values = [];
-
-    for(
-        let day=1;
-        day<=count;
-        day++
-    ){
-
-        const key =
-            dateKey(
-                year,
-                month,
-                day
-            );
-
-        values.push(
-            Number(data[key] || 0)
-        );
-    }
-
-    const value =
-        values.join(",");
-
-    const response =
-        await fetch(
-            API +
-            "/set/" +
-            encodeURIComponent(
-                apiKey(date)
-            ) +
-            "/" +
-            encodeURIComponent(value),
-            {
-                method:"GET",
-                cache:"no-store"
-            }
-        );
-
-    if(!response.ok){
-
-        throw new Error(
-            "Save failed: " +
-            response.status
-        );
-    }
-}
-
-
-/* =========================================================
-   SAVE SELECTED
-========================================================= */
-
-async function saveSelected(){
-
-    if(saving){
-        return;
-    }
-
-    const value =
-        Math.trunc(
-            Number(
-                scoreInput.value
-            )
-        );
-
-    if(!Number.isFinite(value)){
-        return;
-    }
-
-    data[selectedDate] =
-        value;
-
-    renderAll();
-
-    saving = true;
-
-    setSync(
-        "저장 중...",
-        false
+  const percent =
+    Math.max(
+      0,
+      Math.min(
+        100,
+        (total / GOAL) * 100
+      )
     );
 
-    try{
+  document.getElementById(
+    "progressBar"
+  ).style.width =
+    percent+"%";
 
-        await saveMonth(
-            parseDate(selectedDate)
-        );
-
-        setSync(
-            "저장 완료",
-            true
-        );
-
-    }catch(error){
-
-        console.error(error);
-
-        setSync(
-            "저장 실패",
-            false
-        );
-
-    }finally{
-
-        saving = false;
-    }
-}
-
-
-/* =========================================================
-   CHANGE SCORE
-========================================================= */
-
-async function changeScore(delta){
-
-    if(saving){
-        return;
-    }
-
-    data[selectedDate] =
-        Number(
-            data[selectedDate] || 0
-        ) + delta;
-
-    renderAll();
-
-    await saveSelected();
-}
-
-
-/* =========================================================
-   SYNC
-========================================================= */
-
-function setSync(textValue,ok){
-
-    syncText.textContent =
-        textValue;
-
-    syncDot.style.background =
-        ok
-        ? "var(--green)"
-        : "var(--cyan)";
-
-    syncDot.style.boxShadow =
-        ok
-        ? "0 0 10px var(--green)"
-        : "0 0 10px var(--cyan)";
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function renderAll(){
-
-    renderCalendar();
-    renderSelected();
-    renderStats();
-    renderPointLine();
+  document.getElementById(
+    "progressText"
+  ).textContent =
+    Math.round(percent)+"% of goal";
 }
 
 
@@ -2302,489 +1375,358 @@ function renderAll(){
 
 function renderCalendar(){
 
-    const year =
-        currentMonth.getFullYear();
+  const calendar =
+    document.getElementById("calendar");
 
-    const month =
-        currentMonth.getMonth();
+  calendar.innerHTML = "";
 
-    monthTitle.textContent =
-        year +
-        "년 " +
-        (month+1) +
-        "월";
+  document.getElementById(
+    "monthTitle"
+  ).textContent =
+    monthName(currentMonth);
 
-    monthDesc.textContent =
-        "DAILY POINT HISTORY · " +
-        daysInMonth(year,month) +
-        " DAYS";
+  const daysInMonth =
+    new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth()+1,
+      0
+    ).getDate();
 
-    let monthlyTotal = 0;
+  const firstDay =
+    new Date(
+      currentMonth.getFullYear(),
+      currentMonth.getMonth(),
+      1
+    ).getDay();
 
-    for(
-        let day=1;
-        day<=daysInMonth(year,month);
-        day++
+  let monthTotal = 0;
+
+  for(let d=1; d<=daysInMonth; d++){
+
+    const date =
+      new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        d
+      );
+
+    monthTotal += getScore(date);
+  }
+
+  document.getElementById(
+    "monthTotal"
+  ).textContent =
+    `${monthTotal > 0 ? "+" : ""}${monthTotal} PTS`;
+
+
+  /* 앞쪽 빈칸 */
+  for(let i=0;i<firstDay;i++){
+
+    const empty =
+      document.createElement("div");
+
+    empty.className = "day empty";
+
+    calendar.appendChild(empty);
+  }
+
+
+  /* 날짜 */
+  for(let d=1; d<=daysInMonth; d++){
+
+    const date =
+      new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
+        d
+      );
+
+    const day =
+      document.createElement("div");
+
+    day.className = "day";
+
+    if(
+      keyOf(date) ===
+      keyOf(selectedDate)
     ){
-
-        monthlyTotal +=
-            Number(
-                data[
-                    dateKey(
-                        year,
-                        month,
-                        day
-                    )
-                ] || 0
-            );
+      day.classList.add("selected");
     }
 
-    monthTotal.textContent =
-        monthlyTotal >= 0
-        ? "+" + monthlyTotal
-        : monthlyTotal;
+    const today =
+      new Date();
 
-    calendar.innerHTML = "";
-
-    const weekdays = [
-        "일",
-        "월",
-        "화",
-        "수",
-        "목",
-        "금",
-        "토"
-    ];
-
-    weekdays.forEach(name => {
-
-        const el =
-            document.createElement("div");
-
-        el.className =
-            "weekday";
-
-        el.textContent =
-            name;
-
-        calendar.appendChild(el);
-    });
-
-    const first =
-        new Date(
-            year,
-            month,
-            1
-        ).getDay();
-
-    const count =
-        daysInMonth(
-            year,
-            month
-        );
-
-    for(
-        let i=0;
-        i<first;
-        i++
+    if(
+      keyOf(date) ===
+      keyOf(today)
     ){
-
-        const empty =
-            document.createElement("div");
-
-        empty.className =
-            "day day-empty";
-
-        calendar.appendChild(empty);
+      day.classList.add("today");
     }
 
-    for(
-        let day=1;
-        day<=count;
-        day++
-    ){
+    const score =
+      getScore(date);
 
-        const key =
-            dateKey(
-                year,
-                month,
-                day
-            );
+    const top =
+      document.createElement("div");
 
-        const value =
-            Number(
-                data[key] || 0
-            );
+    top.className = "day-top";
 
-        const cell =
-            document.createElement("button");
+    const number =
+      document.createElement("div");
 
-        cell.type =
-            "button";
+    number.className =
+      "day-number";
 
-        cell.className =
-            "day";
+    number.textContent = d;
 
-        if(
-            key === selectedDate
-        ){
-            cell.classList.add(
-                "selected"
-            );
-        }
+    top.appendChild(number);
 
-        const now =
-            new Date();
+    if(keyOf(date) === keyOf(today)){
 
-        const today =
-            dateKey(
-                now.getFullYear(),
-                now.getMonth(),
-                now.getDate()
-            );
+      const mark =
+        document.createElement("div");
 
-        if(key === today){
-            cell.classList.add(
-                "today"
-            );
-        }
+      mark.className =
+        "today-mark";
 
-        const number =
-            document.createElement("span");
+      mark.textContent =
+        "TODAY";
 
-        number.className =
-            "day-number";
-
-        number.textContent =
-            day;
-
-        const score =
-            document.createElement("span");
-
-        score.className =
-            "day-score";
-
-        if(value > 0){
-
-            score.classList.add(
-                "positive"
-            );
-
-            score.textContent =
-                "+" + value;
-
-        }else if(value < 0){
-
-            score.classList.add(
-                "negative"
-            );
-
-            score.textContent =
-                value;
-
-        }else{
-
-            score.classList.add(
-                "zero"
-            );
-
-            score.textContent =
-                "0";
-        }
-
-        cell.appendChild(number);
-        cell.appendChild(score);
-
-        cell.addEventListener(
-            "click",
-            () => {
-
-                selectedDate =
-                    key;
-
-                renderAll();
-            }
-        );
-
-        calendar.appendChild(cell);
+      top.appendChild(mark);
     }
 
-    const total =
-        first + count;
+    const scoreEl =
+      document.createElement("div");
 
-    const remaining =
-        42 - total;
+    scoreEl.className =
+      "day-score "+
+      (
+        score > 0
+          ? "pos"
+          : score < 0
+            ? "neg"
+            : "zero"
+      );
 
-    for(
-        let i=0;
-        i<remaining;
-        i++
-    ){
+    scoreEl.textContent =
+      score > 0
+        ? "+"+score
+        : score;
 
-        const empty =
-            document.createElement("div");
 
-        empty.className =
-            "day day-empty";
+    const meter =
+      document.createElement("div");
 
-        calendar.appendChild(empty);
-    }
+    meter.className =
+      "day-meter";
+
+    const fill =
+      document.createElement("div");
+
+    fill.className =
+      "day-meter-fill "+
+      (
+        score >= 0
+          ? "pos"
+          : "neg"
+      );
+
+    const width =
+      Math.min(
+        100,
+        Math.abs(score) * 10
+      );
+
+    fill.style.width =
+      width+"%";
+
+    meter.appendChild(fill);
+
+    day.appendChild(top);
+    day.appendChild(scoreEl);
+    day.appendChild(meter);
+
+    day.onclick = ()=>{
+      selectedDate =
+        new Date(date);
+
+      renderEditor();
+      renderCalendar();
+    };
+
+    calendar.appendChild(day);
+  }
+
+
+  /* 뒤쪽 빈칸 */
+  const totalCells =
+    firstDay + daysInMonth;
+
+  for(
+    let i=totalCells;
+    i<42;
+    i++
+  ){
+
+    const empty =
+      document.createElement("div");
+
+    empty.className = "day empty";
+
+    calendar.appendChild(empty);
+  }
 }
 
 
 /* =========================================================
-   SELECTED
+   EDITOR
 ========================================================= */
 
-function renderSelected(){
+function renderEditor(){
 
-    const value =
-        Number(
-            data[selectedDate] || 0
-        );
+  document.getElementById(
+    "selectedDate"
+  ).textContent =
+    `${dateText(selectedDate)} · ${weekdayText(selectedDate)}`;
 
-    selectedDateEl.textContent =
-        formatDate(selectedDate);
+  document.getElementById(
+    "scoreInput"
+  ).value =
+    getScore(selectedDate);
 
-    selectedWeekday.textContent =
-        formatDate(selectedDate) +
-        " " +
-        weekday(selectedDate);
-
-    editorScore.textContent =
-        value >= 0
-        ? "+" + value
-        : value;
-
-    scoreInput.value =
-        value;
-
-    selectedValue.textContent =
-        value;
-
-    selectedKey.textContent =
-        apiKey(
-            parseDate(selectedDate)
-        );
+  document.getElementById(
+    "dbStatus"
+  ).textContent =
+    `Key: ${monthKey(selectedDate)}`;
 }
 
 
 /* =========================================================
-   POINT METER
+   ALL
 ========================================================= */
 
-function renderPointLine(){
+function renderAll(){
 
-    const value =
-        Number(
-            data[selectedDate] || 0
-        );
-
-    pointLine.innerHTML = "";
-
-    const amount =
-        Math.min(
-            Math.abs(value),
-            50
-        );
-
-    pointMax.textContent =
-        value +
-        " / 50";
-
-    for(
-        let i=0;
-        i<50;
-        i++
-    ){
-
-        const point =
-            document.createElement("div");
-
-        point.className =
-            "point";
-
-        if(i < amount){
-
-            point.classList.add(
-                value < 0
-                ? "negative"
-                : "active"
-            );
-        }
-
-        pointLine.appendChild(point);
-    }
+  renderHero();
+  renderCalendar();
+  renderEditor();
 }
 
 
 /* =========================================================
-   STATS
+   QUICK BUTTONS
 ========================================================= */
 
-function renderStats(){
+document.querySelectorAll(
+  ".quick-btn"
+).forEach(button=>{
 
-    let total = 0;
-    let positive = 0;
-    let negative = 0;
-    let active = 0;
-    let best = 0;
-
-    Object.values(data)
-        .forEach(value => {
-
-            const n =
-                Number(value || 0);
-
-            total += n;
-
-            if(n > 0){
-                positive += n;
-
-                if(n > best){
-                    best = n;
-                }
-            }
-
-            if(n < 0){
-                negative += n;
-            }
-
-            if(n !== 0){
-                active++;
-            }
-        });
-
-    totalScore.textContent =
-        total >= 0
-        ? "+" + total
-        : total;
-
-    positiveScore.textContent =
-        "+" + positive;
-
-    negativeScore.textContent =
-        negative;
-
-    activeDays.textContent =
-        active;
-
-    bestDay.textContent =
-        best > 0
-        ? "+" + best
-        : "0";
-
-    const target = 150;
-
-    const progress =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                total / target * 100
-            )
-        );
-
-    progressText.textContent =
-        Math.round(progress) +
-        "%";
-
-    progressBar.style.width =
-        progress +
-        "%";
-}
-
-
-/* =========================================================
-   MONTH NAV
-========================================================= */
-
-$("prevMonth")
-.addEventListener(
+  button.addEventListener(
     "click",
-    () => {
+    async ()=>{
 
-        const next =
-            new Date(currentMonth);
-
-        next.setMonth(
-            next.getMonth()-1
+      const delta =
+        Number(
+          button.dataset.delta
         );
 
-        if(
-            next <
-            new Date(2026,9,1)
-        ){
-            return;
-        }
+      const current =
+        getScore(selectedDate);
 
-        currentMonth =
-            next;
+      const next =
+        current + delta;
 
-        renderCalendar();
+      setScore(
+        selectedDate,
+        next
+      );
+
+      renderAll();
+
+      await saveSelected();
     }
-);
-
-
-$("nextMonth")
-.addEventListener(
-    "click",
-    () => {
-
-        const next =
-            new Date(currentMonth);
-
-        next.setMonth(
-            next.getMonth()+1
-        );
-
-        if(
-            next >
-            new Date(2027,2,1)
-        ){
-            return;
-        }
-
-        currentMonth =
-            next;
-
-        renderCalendar();
-    }
-);
-
-
-/* =========================================================
-   QUICK
-========================================================= */
-
-document
-.querySelectorAll(
-    ".quick button"
-)
-.forEach(button => {
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            changeScore(
-                Number(
-                    button.dataset.delta
-                )
-            );
-        }
-    );
+  );
 });
 
 
 /* =========================================================
-   SAVE
+   SAVE SELECTED
 ========================================================= */
 
-$("saveButton")
-.addEventListener(
-    "click",
-    saveSelected
+async function saveSelected(){
+
+  if(saving) return;
+
+  saving = true;
+
+  setSync("SAVING");
+
+  document.getElementById(
+    "dbStatus"
+  ).textContent =
+    "Saving...";
+
+  try{
+
+    await saveMonth(
+      selectedDate
+    );
+
+    setSync("SYNCED");
+
+    document.getElementById(
+      "dbStatus"
+    ).textContent =
+      "Saved";
+
+  }
+  catch(error){
+
+    console.error(error);
+
+    setSync("ERROR");
+
+    document.getElementById(
+      "dbStatus"
+    ).textContent =
+      "Save failed";
+
+  }
+  finally{
+
+    saving = false;
+  }
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+document.getElementById(
+  "saveButton"
+).addEventListener(
+  "click",
+  async ()=>{
+
+    const value =
+      Math.trunc(
+        Number(
+          document.getElementById(
+            "scoreInput"
+          ).value
+        ) || 0
+      );
+
+    setScore(
+      selectedDate,
+      value
+    );
+
+    renderAll();
+
+    await saveSelected();
+  }
 );
 
 
@@ -2792,31 +1734,80 @@ $("saveButton")
    RESET
 ========================================================= */
 
-$("resetButton")
-.addEventListener(
-    "click",
-    () => {
+document.getElementById(
+  "resetButton"
+).addEventListener(
+  "click",
+  ()=>{
 
-        scoreInput.value = 0;
-    }
+    setScore(
+      selectedDate,
+      0
+    );
+
+    renderAll();
+
+  }
 );
 
 
 /* =========================================================
-   ENTER
+   MONTH NAV
 ========================================================= */
 
-scoreInput
-.addEventListener(
-    "keydown",
-    event => {
+document.getElementById(
+  "prevMonth"
+).addEventListener(
+  "click",
+  ()=>{
 
-        if(
-            event.key === "Enter"
-        ){
-            saveSelected();
-        }
+    const next =
+      new Date(currentMonth);
+
+    next.setMonth(
+      next.getMonth()-1
+    );
+
+    if(
+      next.getFullYear() < 2026 ||
+      (
+        next.getFullYear() === 2026 &&
+        next.getMonth() < 9
+      )
+    ){
+      return;
     }
+
+    currentMonth = next;
+
+    renderCalendar();
+  }
+);
+
+
+document.getElementById(
+  "nextMonth"
+).addEventListener(
+  "click",
+  ()=>{
+
+    const next =
+      new Date(currentMonth);
+
+    next.setMonth(
+      next.getMonth()+1
+    );
+
+    if(
+      next > new Date("2027-03-01")
+    ){
+      return;
+    }
+
+    currentMonth = next;
+
+    renderCalendar();
+  }
 );
 
 
@@ -2824,7 +1815,17 @@ scoreInput
    START
 ========================================================= */
 
-initializeData();
+selectedDate =
+  clampDate(
+    new Date("2026-10-05T00:00:00")
+  );
+
+currentMonth =
+  new Date(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    1
+  );
 
 renderAll();
 
