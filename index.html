@@ -27,7 +27,8 @@
   --yellow:#ffd866;
 }
 
-html,body{
+html,
+body{
   width:100%;
   height:100%;
   overflow:hidden;
@@ -43,9 +44,21 @@ html,body{
 
 body{
   background:
-    radial-gradient(circle at 15% 10%,rgba(155,108,255,.20),transparent 27%),
-    radial-gradient(circle at 85% 15%,rgba(53,231,255,.13),transparent 25%),
-    radial-gradient(circle at 60% 100%,rgba(77,163,255,.10),transparent 35%),
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(155,108,255,.20),
+      transparent 27%
+    ),
+    radial-gradient(
+      circle at 85% 15%,
+      rgba(53,231,255,.13),
+      transparent 25%
+    ),
+    radial-gradient(
+      circle at 60% 100%,
+      rgba(77,163,255,.10),
+      transparent 35%
+    ),
     #070914;
 }
 
@@ -55,13 +68,23 @@ body::before{
   inset:0;
   pointer-events:none;
   opacity:.22;
+
   background-image:
-    linear-gradient(rgba(100,130,255,.08) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(100,130,255,.08) 1px,transparent 1px);
+    linear-gradient(
+      rgba(100,130,255,.08) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(100,130,255,.08) 1px,
+      transparent 1px
+    );
+
   background-size:32px 32px;
 }
 
-button,input{
+button,
+input{
   font:inherit;
 }
 
@@ -72,27 +95,45 @@ button{
 .app{
   position:relative;
   z-index:1;
-  width:100%;
-  height:100vh;
+
+  width:min(100%,1680px);
+  height:min(100vh,950px);
+
+  margin:0 auto;
+
   padding:10px 12px 8px;
+
   display:grid;
-  grid-template-rows:42px 94px 108px minmax(0,1fr) 18px;
+
+  grid-template-rows:
+    42px
+    94px
+    108px
+    minmax(0,1fr)
+    18px;
+
   gap:7px;
 }
 
-/* ================= TOP ================= */
+/* =========================================================
+   TOPBAR
+========================================================= */
 
 .topbar{
   display:flex;
   align-items:center;
   justify-content:space-between;
+
   padding:0 13px;
+
   border:1px solid var(--line);
+  border-radius:11px;
+
   background:rgba(10,14,29,.94);
+
   box-shadow:
     0 0 20px rgba(90,80,255,.08),
     inset 0 0 18px rgba(80,100,255,.03);
-  border-radius:11px;
 }
 
 .brand{
@@ -104,14 +145,26 @@ button{
 .logo{
   width:26px;
   height:26px;
-  border-radius:8px;
+
   display:grid;
   place-items:center;
-  font-weight:900;
+
+  border-radius:8px;
+
   font-size:13px;
+  font-weight:900;
+
   color:white;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
-  box-shadow:0 0 16px rgba(155,108,255,.45);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--purple),
+      var(--blue)
+    );
+
+  box-shadow:
+    0 0 16px rgba(155,108,255,.45);
 }
 
 .brand-name{
@@ -122,7 +175,6 @@ button{
 .brand-sub{
   color:var(--muted);
   font-size:10px;
-  margin-left:3px;
 }
 
 .top-right{
@@ -133,10 +185,14 @@ button{
 
 .period{
   padding:5px 9px;
+
   border:1px solid #263153;
-  background:#0c1123;
   border-radius:7px;
+
+  background:#0c1123;
+
   color:#aeb8d9;
+
   font-size:10px;
   font-weight:700;
 }
@@ -145,61 +201,99 @@ button{
   display:flex;
   align-items:center;
   gap:6px;
-  font-size:10px;
+
   color:var(--muted);
+  font-size:10px;
 }
 
 .sync-dot{
   width:7px;
   height:7px;
+
   border-radius:50%;
+
   background:var(--green);
-  box-shadow:0 0 8px var(--green);
+
+  box-shadow:
+    0 0 8px var(--green);
 }
 
-/* ================= KPI ================= */
+/* =========================================================
+   KPI
+========================================================= */
 
 .kpis{
   display:grid;
-  grid-template-columns:1.15fr 1.15fr 1fr 1fr 1fr 1fr;
+
+  grid-template-columns:
+    1.15fr
+    1.15fr
+    1fr
+    1fr
+    1fr
+    1fr;
+
   gap:7px;
+
   min-width:0;
 }
 
 .kpi{
+  position:relative;
+
   min-width:0;
+
+  padding:9px 12px;
+
   border:1px solid var(--line);
   border-radius:11px;
+
   background:
-    linear-gradient(145deg,rgba(17,23,45,.98),rgba(9,13,27,.98));
-  padding:9px 12px;
-  position:relative;
+    linear-gradient(
+      145deg,
+      rgba(17,23,45,.98),
+      rgba(9,13,27,.98)
+    );
+
   overflow:hidden;
 }
 
 .kpi::after{
   content:"";
+
   position:absolute;
+
   left:0;
   right:0;
   bottom:0;
+
   height:2px;
-  background:linear-gradient(90deg,var(--purple),var(--cyan));
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--purple),
+      var(--cyan)
+    );
+
   opacity:.7;
 }
 
 .kpi-label{
   font-size:9px;
   color:var(--muted);
+
   font-weight:800;
   letter-spacing:1px;
 }
 
 .kpi-value{
   margin-top:5px;
+
   font-size:24px;
-  font-weight:950;
   line-height:1;
+
+  font-weight:950;
   letter-spacing:-1px;
 }
 
@@ -207,100 +301,144 @@ button{
   font-size:20px;
 }
 
-.kpi-unit{
-  font-size:10px;
-  color:var(--muted);
-  margin-left:3px;
-  letter-spacing:0;
-}
-
 .kpi-sub{
   margin-top:5px;
+
   font-size:9px;
   color:#7f8bab;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-.good{color:var(--green)!important}
-.bad{color:var(--red)!important}
-.blue{color:var(--cyan)!important}
-.purple{color:#b493ff!important}
+.blue{
+  color:var(--cyan);
+}
 
-/* ================= FLOW ================= */
+.purple{
+  color:#b493ff;
+}
+
+.good{
+  color:var(--green);
+}
+
+/* =========================================================
+   FLOW
+========================================================= */
 
 .flow{
+  display:grid;
+
+  grid-template-columns:
+    175px
+    minmax(0,1fr)
+    150px;
+
+  gap:12px;
+
+  align-items:center;
+
+  padding:9px 13px;
+
   border:1px solid var(--line);
   border-radius:11px;
+
   background:rgba(10,15,31,.96);
-  padding:9px 13px;
-  display:grid;
-  grid-template-columns:175px minmax(0,1fr) 150px;
-  gap:12px;
-  align-items:center;
+
   overflow:hidden;
 }
 
 .flow-title{
   font-size:9px;
   color:var(--muted);
+
   font-weight:900;
   letter-spacing:1.2px;
 }
 
 .flow-big{
   margin-top:3px;
+
   font-size:26px;
+  line-height:1;
+
   font-weight:950;
 }
 
 .flow-big span{
-  font-size:11px;
-  color:var(--muted);
   margin-left:3px;
+
+  color:var(--muted);
+
+  font-size:11px;
 }
 
 .flow-track{
   position:relative;
+
   height:48px;
+
   display:flex;
   align-items:center;
+
   gap:3px;
+
   overflow:hidden;
 }
 
 .flow-track::before{
   content:"";
+
   position:absolute;
+
   left:0;
   right:0;
   top:50%;
+
   height:1px;
+
   background:#283352;
 }
 
 .flow-point{
-  flex:1 1 0;
-  min-width:4px;
-  height:8px;
-  border-radius:3px;
-  background:#1b223b;
   position:relative;
   z-index:1;
-  transition:.15s;
+
+  flex:1 1 0;
+  min-width:4px;
+
+  height:8px;
+
+  border-radius:3px;
+
+  background:#1b223b;
 }
 
 .flow-point.active{
-  background:linear-gradient(180deg,var(--purple),var(--cyan));
-  box-shadow:0 0 8px rgba(53,231,255,.35);
-}
+  background:
+    linear-gradient(
+      180deg,
+      var(--purple),
+      var(--cyan)
+    );
 
-.flow-point.today{
-  height:16px;
-  border:1px solid #fff;
-  box-shadow:0 0 12px rgba(255,255,255,.45);
+  box-shadow:
+    0 0 8px rgba(53,231,255,.35);
 }
 
 .flow-point.negative{
   background:var(--red);
+}
+
+.flow-point.today{
+  height:16px;
+
+  border:1px solid white;
+
+  box-shadow:
+    0 0 12px rgba(255,255,255,.45);
 }
 
 .flow-info{
@@ -313,42 +451,63 @@ button{
 }
 
 .flow-info-value{
+  margin-top:3px;
+
   font-size:19px;
   font-weight:900;
-  margin-top:3px;
 }
 
 .flow-info-sub{
+  margin-top:3px;
+
   font-size:9px;
   color:#7380a3;
-  margin-top:3px;
 }
 
-/* ================= MAIN ================= */
+/* =========================================================
+   MAIN
+========================================================= */
 
 .main{
+  position:relative;
+
   min-height:0;
+
   display:grid;
-  grid-template-columns:minmax(0,1fr) 315px;
+
+  grid-template-columns:
+    minmax(0,1fr)
+    315px;
+
   gap:7px;
 }
 
-/* ================= CALENDAR ================= */
-
-.calendar-card,
-.side-card{
-  min-height:0;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:rgba(10,14,29,.96);
-  overflow:hidden;
-}
+/* =========================================================
+   CALENDAR
+========================================================= */
 
 .calendar-card{
+  min-width:0;
+  min-height:0;
+
   padding:10px;
+
   display:grid;
-  grid-template-rows:36px 28px 20px minmax(0,1fr);
+
+  grid-template-rows:
+    36px
+    28px
+    20px
+    minmax(0,1fr);
+
   gap:5px;
+
+  border:1px solid var(--line);
+  border-radius:11px;
+
+  background:rgba(10,14,29,.96);
+
+  overflow:hidden;
 }
 
 .calendar-head{
@@ -370,11 +529,15 @@ button{
 
 .month-total{
   padding:4px 7px;
+
   border:1px solid #303a61;
   border-radius:6px;
-  font-size:9px;
-  color:#aeb8d9;
+
   background:#0d1328;
+
+  color:#aeb8d9;
+
+  font-size:9px;
 }
 
 .nav{
@@ -385,10 +548,13 @@ button{
 .nav button{
   width:28px;
   height:25px;
+
   border:1px solid #2b365b;
   border-radius:6px;
-  color:#cbd4f1;
+
   background:#11172c;
+  color:#cbd4f1;
+
   font-weight:900;
 }
 
@@ -400,56 +566,84 @@ button{
 .month-stats{
   display:flex;
   gap:5px;
+
   overflow:hidden;
 }
 
 .month-chip{
   white-space:nowrap;
+
   padding:4px 7px;
-  border-radius:5px;
+
   border:1px solid #222c4c;
+  border-radius:5px;
+
   background:#0c1224;
+
   color:#7e8bad;
+
   font-size:8px;
   font-weight:800;
 }
 
 .month-chip b{
-  color:#dbe3ff;
   margin-left:3px;
+  color:#dbe3ff;
 }
 
 .weekdays{
   display:grid;
+
   grid-template-columns:repeat(7,1fr);
+
   gap:5px;
+
   color:#657394;
+
   font-size:8px;
   font-weight:900;
+
   text-align:center;
   align-items:center;
 }
 
-.weekdays div:first-child{color:#8b7fff}
-.weekdays div:last-child{color:#55b8ff}
+.weekdays div:first-child{
+  color:#8b7fff;
+}
+
+.weekdays div:last-child{
+  color:#55b8ff;
+}
 
 .calendar{
   min-height:0;
+
   display:grid;
-  grid-template-columns:repeat(7,minmax(0,1fr));
-  grid-template-rows:repeat(6,minmax(0,1fr));
+
+  grid-template-columns:
+    repeat(7,minmax(0,1fr));
+
+  grid-template-rows:
+    repeat(6,minmax(0,1fr));
+
   gap:5px;
 }
 
 .day{
+  position:relative;
+
   min-width:0;
   min-height:0;
-  position:relative;
+
+  padding:5px 6px;
+
   border:1px solid #202a49;
   border-radius:7px;
+
   background:#0d1327;
-  padding:5px 6px;
+
   cursor:pointer;
+
   overflow:hidden;
 }
 
@@ -466,6 +660,7 @@ button{
 
 .day.selected{
   border-color:var(--cyan);
+
   box-shadow:
     0 0 0 1px rgba(53,231,255,.2),
     0 0 13px rgba(53,231,255,.12);
@@ -478,7 +673,6 @@ button{
 .day-top{
   display:flex;
   justify-content:space-between;
-  align-items:center;
 }
 
 .day-num{
@@ -493,9 +687,11 @@ button{
 
 .day-score{
   margin-top:3px;
+
   font-size:17px;
-  font-weight:950;
   line-height:1;
+
+  font-weight:950;
 }
 
 .day-score.zero{
@@ -504,7 +700,9 @@ button{
 
 .day-score.pos{
   color:var(--cyan);
-  text-shadow:0 0 8px rgba(53,231,255,.25);
+
+  text-shadow:
+    0 0 8px rgba(53,231,255,.25);
 }
 
 .day-score.neg{
@@ -513,51 +711,83 @@ button{
 
 .day-meter{
   position:absolute;
+
   left:6px;
   right:6px;
   bottom:6px;
+
   height:3px;
+
   border-radius:3px;
+
   background:#1a2139;
+
   overflow:hidden;
 }
 
 .day-meter-fill{
   height:100%;
-  width:0;
+
   border-radius:3px;
-  background:linear-gradient(90deg,var(--purple),var(--cyan));
+
+  background:
+    linear-gradient(
+      90deg,
+      var(--purple),
+      var(--cyan)
+    );
 }
 
 .day-meter-fill.neg{
   background:var(--red);
 }
 
-/* ================= SIDE ================= */
+/* =========================================================
+   SIDE
+========================================================= */
 
 .side{
   min-height:0;
+
   display:grid;
-  grid-template-rows:1.05fr .9fr .9fr;
+
+  grid-template-rows:
+    1.05fr
+    .9fr
+    .9fr;
+
   gap:7px;
 }
 
 .side-card{
+  min-height:0;
+
   padding:10px;
+
   display:flex;
   flex-direction:column;
-  min-height:0;
+
+  border:1px solid var(--line);
+  border-radius:11px;
+
+  background:rgba(10,14,29,.96);
+
+  overflow:hidden;
 }
 
 .card-title{
   display:flex;
   align-items:center;
   justify-content:space-between;
+
+  margin-bottom:8px;
+
   color:#a9b3d1;
+
   font-size:9px;
   font-weight:900;
+
   letter-spacing:1px;
-  margin-bottom:8px;
 }
 
 .card-title span{
@@ -565,16 +795,10 @@ button{
   font-size:8px;
 }
 
-.selected-date{
-  font-size:10px;
-  color:#7885a9;
-}
-
 .selected-score{
   display:flex;
   align-items:end;
   gap:5px;
-  margin-top:2px;
 }
 
 .selected-score strong{
@@ -584,24 +808,32 @@ button{
 }
 
 .selected-score span{
+  margin-bottom:4px;
+
   color:#7582a4;
   font-size:10px;
-  margin-bottom:4px;
 }
 
 .quick{
   display:grid;
-  grid-template-columns:repeat(6,1fr);
+
+  grid-template-columns:
+    repeat(6,1fr);
+
   gap:4px;
+
   margin-top:10px;
 }
 
 .quick button{
   height:28px;
+
   border:1px solid #283353;
   border-radius:5px;
+
   background:#11172d;
   color:#aeb9d8;
+
   font-size:9px;
   font-weight:900;
 }
@@ -617,20 +849,30 @@ button{
 
 .edit-row{
   display:grid;
-  grid-template-columns:1fr 66px;
+
+  grid-template-columns:
+    1fr
+    66px;
+
   gap:5px;
+
   margin-top:5px;
 }
 
 .edit-row input{
   width:100%;
   height:30px;
+
   border:1px solid #293456;
   border-radius:6px;
+
+  outline:none;
+
   background:#090e1e;
   color:white;
+
   padding:0 8px;
-  outline:none;
+
   font-size:11px;
   font-weight:800;
 }
@@ -642,47 +884,59 @@ button{
 .save-btn{
   border:0;
   border-radius:6px;
-  background:linear-gradient(135deg,var(--purple),var(--blue));
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--purple),
+      var(--blue)
+    );
+
   color:white;
+
   font-size:9px;
   font-weight:900;
 }
 
-.save-btn:hover{
-  filter:brightness(1.15);
-}
-
 .reset-btn{
-  margin-top:5px;
   height:23px;
+
+  margin-top:5px;
+
   border:1px solid #242e4d;
+  border-radius:5px;
+
   background:#0b1123;
   color:#657292;
-  border-radius:5px;
+
   font-size:8px;
 }
 
-/* 7 DAY */
+/* =========================================================
+   RECENT
+========================================================= */
 
 .week-bars{
   flex:1;
   min-height:0;
+
   display:flex;
   align-items:end;
   justify-content:space-between;
+
   gap:6px;
-  padding:2px 2px 0;
 }
 
 .bar-item{
   height:100%;
   flex:1;
+
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:end;
+
   gap:4px;
-  min-width:0;
 }
 
 .bar-value{
@@ -694,9 +948,11 @@ button{
 .bar-wrap{
   width:100%;
   height:52px;
+
   display:flex;
   align-items:end;
   justify-content:center;
+
   border-bottom:1px solid #273151;
 }
 
@@ -704,9 +960,15 @@ button{
   width:65%;
   max-width:22px;
   min-height:2px;
+
   border-radius:4px 4px 0 0;
-  background:linear-gradient(180deg,var(--cyan),var(--purple));
-  box-shadow:0 0 8px rgba(53,231,255,.15);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--cyan),
+      var(--purple)
+    );
 }
 
 .bar.neg{
@@ -718,24 +980,34 @@ button{
   color:#667393;
 }
 
-/* ACHIEVEMENTS */
+/* =========================================================
+   ACHIEVEMENTS
+========================================================= */
 
 .achievements{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:5px;
   min-height:0;
+
+  display:grid;
+
+  grid-template-columns:
+    repeat(3,1fr);
+
+  gap:5px;
 }
 
 .achievement{
   min-width:0;
-  border:1px solid #232d4d;
-  background:#0b1122;
-  border-radius:6px;
+
   padding:6px;
+
   display:flex;
   flex-direction:column;
   justify-content:center;
+
+  border:1px solid #232d4d;
+  border-radius:6px;
+
+  background:#0b1122;
 }
 
 .achievement.locked{
@@ -749,9 +1021,12 @@ button{
 
 .achievement-name{
   margin-top:4px;
-  font-size:7px;
+
   color:#a9b5d5;
+
+  font-size:7px;
   font-weight:900;
+
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -759,18 +1034,203 @@ button{
 
 .achievement-desc{
   margin-top:2px;
-  font-size:6px;
+
   color:#596683;
+
+  font-size:6px;
 }
 
-/* ================= FOOTER ================= */
+/* =========================================================
+   LARGE SCREEN EXTRA PANEL
+========================================================= */
+
+.wide-extra{
+  display:none;
+}
+
+/*
+  화면이 충분히 큰 경우:
+  기존 요소를 확대하지 않고
+  추가 정보 영역을 만든다.
+*/
+
+@media(min-width:1800px){
+
+  .app{
+    width:min(100%,1780px);
+  }
+
+  .wide-extra{
+    display:grid;
+
+    grid-template-columns:
+      1fr
+      1fr
+      1fr;
+
+    gap:7px;
+
+    margin-top:7px;
+
+    height:92px;
+  }
+
+  .extra-box{
+    min-width:0;
+
+    padding:10px;
+
+    border:1px solid var(--line);
+    border-radius:11px;
+
+    background:rgba(10,14,29,.96);
+  }
+
+  .extra-title{
+    color:#687596;
+
+    font-size:8px;
+    font-weight:900;
+
+    letter-spacing:1px;
+  }
+
+  .distribution{
+    display:grid;
+
+    grid-template-columns:
+      repeat(3,1fr);
+
+    gap:5px;
+
+    margin-top:8px;
+  }
+
+  .distribution div{
+    padding:6px 4px;
+
+    border:1px solid #202a48;
+    border-radius:5px;
+
+    background:#0c1224;
+
+    text-align:center;
+  }
+
+  .distribution span{
+    display:block;
+
+    color:#596783;
+
+    font-size:6px;
+    font-weight:800;
+  }
+
+  .distribution strong{
+    display:block;
+
+    margin-top:3px;
+
+    color:#dce5ff;
+
+    font-size:15px;
+  }
+
+  .rank-display{
+    margin-top:8px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .rank-display strong{
+    color:#b697ff;
+
+    font-size:20px;
+    font-weight:950;
+  }
+
+  .rank-display span{
+    color:#596783;
+    font-size:8px;
+  }
+
+  .goal-big{
+    margin-top:6px;
+  }
+
+  .goal-big strong{
+    color:var(--cyan);
+    font-size:22px;
+  }
+
+  .goal-line{
+    height:5px;
+
+    margin-top:7px;
+
+    border-radius:5px;
+
+    background:#1a2138;
+
+    overflow:hidden;
+  }
+
+  .goal-line div{
+    width:0%;
+    height:100%;
+
+    border-radius:5px;
+
+    background:
+      linear-gradient(
+        90deg,
+        var(--purple),
+        var(--cyan)
+      );
+  }
+}
+
+/* =========================================================
+   EXTRA WIDE
+========================================================= */
+
+@media(min-width:2200px){
+
+  .app{
+    width:min(100%,1920px);
+  }
+
+  .wide-extra{
+    height:110px;
+
+    grid-template-columns:
+      1.2fr
+      1fr
+      1fr
+      1fr;
+  }
+
+  .extra-records{
+    display:block;
+  }
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
 
 .footer{
   display:flex;
+
   align-items:center;
   justify-content:space-between;
+
   padding:0 8px;
+
   color:#4d5978;
+
   font-size:8px;
 }
 
@@ -778,15 +1238,15 @@ button{
   color:#687698;
 }
 
-/* ================= RESPONSIVE ================= */
+/* =========================================================
+   SMALL
+========================================================= */
 
-@media(max-width:1000px){
-  .app{
-    grid-template-rows:42px 94px 95px minmax(0,1fr) 18px;
-  }
+@media(max-width:1100px){
 
   .kpis{
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:
+      repeat(3,1fr);
   }
 
   .kpi:nth-child(n+4){
@@ -794,35 +1254,73 @@ button{
   }
 
   .main{
-    grid-template-columns:minmax(0,1fr) 275px;
+    grid-template-columns:
+      minmax(0,1fr)
+      280px;
   }
 
   .flow{
-    grid-template-columns:145px minmax(0,1fr) 120px;
+    grid-template-columns:
+      145px
+      minmax(0,1fr)
+      120px;
   }
 }
 
+/* =========================================================
+   MOBILE / SMALL WINDOW
+========================================================= */
+
 @media(max-width:760px){
+
+  html,
   body{
     overflow:auto;
   }
 
   .app{
+    width:100%;
     height:auto;
     min-height:100vh;
-    grid-template-rows:auto auto auto auto auto;
+
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto;
+  }
+
+  .topbar{
+    min-height:42px;
+  }
+
+  .period{
+    display:none;
+  }
+
+  .kpis{
+    grid-template-columns:
+      repeat(2,1fr);
+  }
+
+  .kpi:nth-child(n){
+    display:block;
   }
 
   .main{
     grid-template-columns:1fr;
   }
 
-  .side{
-    grid-template-rows:auto auto auto;
-  }
-
   .calendar-card{
     min-height:520px;
+  }
+
+  .side{
+    grid-template-rows:
+      auto
+      180px
+      auto;
   }
 
   .flow{
@@ -834,8 +1332,8 @@ button{
     display:none;
   }
 
-  .flow-track{
-    height:35px;
+  .wide-extra{
+    display:none!important;
   }
 }
 </style>
@@ -845,206 +1343,634 @@ button{
 
 <div class="app">
 
-  <!-- TOP -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="logo">D</div>
-      <div class="brand-name">DuoMarst</div>
-      <div class="brand-sub">POINT HUD</div>
+<header class="topbar">
+
+  <div class="brand">
+
+    <div class="logo">D</div>
+
+    <div class="brand-name">
+      DuoMarst
     </div>
 
-    <div class="top-right">
-      <div class="period">2026.10.01 — 2027.03.31</div>
-      <div class="sync">
-        <i class="sync-dot" id="syncDot"></i>
-        <span id="syncText">LOCAL READY</span>
+    <div class="brand-sub">
+      POINT HUD
+    </div>
+
+  </div>
+
+  <div class="top-right">
+
+    <div class="period">
+      2026.10.01 — 2027.03.31
+    </div>
+
+    <div class="sync">
+      <i class="sync-dot" id="syncDot"></i>
+      <span id="syncText">
+        LOCAL READY
+      </span>
+    </div>
+
+  </div>
+
+</header>
+
+
+<!-- =====================================================
+     KPI
+====================================================== -->
+
+<section class="kpis">
+
+  <div class="kpi">
+
+    <div class="kpi-label">
+      TODAY
+    </div>
+
+    <div
+      class="kpi-value blue"
+      id="kpiToday"
+    >
+      0
+    </div>
+
+    <div
+      class="kpi-sub"
+      id="kpiTodaySub"
+    >
+      2026-10-05
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="kpi-label">
+      TOTAL SCORE
+    </div>
+
+    <div
+      class="kpi-value purple"
+      id="kpiTotal"
+    >
+      0
+    </div>
+
+    <div class="kpi-sub">
+      전체 기간 누적
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="kpi-label">
+      GOAL
+    </div>
+
+    <div
+      class="kpi-value"
+      id="kpiGoal"
+    >
+      0%
+    </div>
+
+    <div
+      class="kpi-sub"
+      id="kpiGoalSub"
+    >
+      150 목표
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="kpi-label">
+      AVERAGE
+    </div>
+
+    <div
+      class="kpi-value small"
+      id="kpiAverage"
+    >
+      0.0
+    </div>
+
+    <div class="kpi-sub">
+      활동일 평균
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="kpi-label">
+      BEST DAY
+    </div>
+
+    <div
+      class="kpi-value small good"
+      id="kpiBest"
+    >
+      +0
+    </div>
+
+    <div
+      class="kpi-sub"
+      id="kpiBestDate"
+    >
+      기록 없음
+    </div>
+
+  </div>
+
+
+  <div class="kpi">
+
+    <div class="kpi-label">
+      STREAK
+    </div>
+
+    <div
+      class="kpi-value small"
+      id="kpiStreak"
+    >
+      0
+    </div>
+
+    <div class="kpi-sub">
+      연속 활동일
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     FLOW
+====================================================== -->
+
+<section class="flow">
+
+  <div>
+
+    <div class="flow-title">
+      TODAY POINT FLOW
+    </div>
+
+    <div
+      class="flow-big"
+      id="flowScore"
+    >
+      0
+      <span>POINTS</span>
+    </div>
+
+  </div>
+
+
+  <div
+    class="flow-track"
+    id="flowTrack"
+  ></div>
+
+
+  <div class="flow-info">
+
+    <div class="flow-info-title">
+      최근 7일
+    </div>
+
+    <div
+      class="flow-info-value"
+      id="flow7"
+    >
+      0
+    </div>
+
+    <div
+      class="flow-info-sub"
+      id="flow7Sub"
+    >
+      활동 0일
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =====================================================
+     MAIN
+====================================================== -->
+
+<main class="main">
+
+<section class="calendar-card">
+
+  <div class="calendar-head">
+
+    <div class="month-title">
+
+      <strong id="monthTitle">
+        October 2026
+      </strong>
+
+      <div
+        class="month-total"
+        id="monthTotal"
+      >
+        +0 PT
       </div>
-    </div>
-  </header>
 
-  <!-- KPI -->
-  <section class="kpis">
-
-    <div class="kpi">
-      <div class="kpi-label">TODAY</div>
-      <div class="kpi-value blue" id="kpiToday">0</div>
-      <div class="kpi-sub" id="kpiTodaySub">2026-10-05</div>
     </div>
 
-    <div class="kpi">
-      <div class="kpi-label">TOTAL SCORE</div>
-      <div class="kpi-value purple" id="kpiTotal">0</div>
-      <div class="kpi-sub">전체 기간 누적</div>
+
+    <div class="nav">
+
+      <button id="prevMonth">
+        ‹
+      </button>
+
+      <button id="nextMonth">
+        ›
+      </button>
+
     </div>
 
-    <div class="kpi">
-      <div class="kpi-label">GOAL</div>
-      <div class="kpi-value" id="kpiGoal">0%</div>
-      <div class="kpi-sub" id="kpiGoalSub">150 목표</div>
+  </div>
+
+
+  <div class="month-stats">
+
+    <div class="month-chip">
+      TOTAL <b id="mTotal">0</b>
     </div>
 
-    <div class="kpi">
-      <div class="kpi-label">AVERAGE</div>
-      <div class="kpi-value small" id="kpiAverage">0.0</div>
-      <div class="kpi-sub">활동일 평균</div>
+    <div class="month-chip">
+      BEST <b id="mBest">0</b>
     </div>
 
-    <div class="kpi">
-      <div class="kpi-label">BEST DAY</div>
-      <div class="kpi-value small good" id="kpiBest">+0</div>
-      <div class="kpi-sub" id="kpiBestDate">기록 없음</div>
+    <div class="month-chip">
+      AVG <b id="mAvg">0.0</b>
     </div>
 
-    <div class="kpi">
-      <div class="kpi-label">STREAK</div>
-      <div class="kpi-value small" id="kpiStreak">0</div>
-      <div class="kpi-sub">연속 활동일</div>
+    <div class="month-chip">
+      ACTIVE <b id="mActive">0</b>
     </div>
 
-  </section>
-
-  <!-- FLOW -->
-  <section class="flow">
-
-    <div>
-      <div class="flow-title">TODAY POINT FLOW</div>
-      <div class="flow-big" id="flowScore">0 <span>POINTS</span></div>
+    <div class="month-chip">
+      POSITIVE <b id="mPositive">0</b>
     </div>
 
-    <div class="flow-track" id="flowTrack"></div>
-
-    <div class="flow-info">
-      <div class="flow-info-title">최근 7일</div>
-      <div class="flow-info-value" id="flow7">0</div>
-      <div class="flow-info-sub" id="flow7Sub">활동 0일</div>
+    <div class="month-chip">
+      NEGATIVE <b id="mNegative">0</b>
     </div>
 
-  </section>
+  </div>
 
-  <!-- MAIN -->
-  <main class="main">
 
-    <!-- CALENDAR -->
-    <section class="calendar-card">
+  <div class="weekdays">
 
-      <div class="calendar-head">
-        <div class="month-title">
-          <strong id="monthTitle">October 2026</strong>
-          <div class="month-total" id="monthTotal">+0 PT</div>
-        </div>
+    <div>SUN</div>
+    <div>MON</div>
+    <div>TUE</div>
+    <div>WED</div>
+    <div>THU</div>
+    <div>FRI</div>
+    <div>SAT</div>
 
-        <div class="nav">
-          <button id="prevMonth">‹</button>
-          <button id="nextMonth">›</button>
-        </div>
+  </div>
+
+
+  <div
+    class="calendar"
+    id="calendar"
+  ></div>
+
+</section>
+
+
+<aside class="side">
+
+<!-- SELECTED DAY -->
+
+<section class="side-card">
+
+  <div class="card-title">
+
+    SELECTED DAY
+
+    <span id="selectedDate">
+      2026-10-05
+    </span>
+
+  </div>
+
+
+  <div class="selected-score">
+
+    <strong id="selectedScore">
+      0
+    </strong>
+
+    <span>
+      POINTS
+    </span>
+
+  </div>
+
+
+  <div class="quick">
+
+    <button
+      class="minus"
+      data-delta="-10"
+    >
+      −10
+    </button>
+
+    <button
+      class="minus"
+      data-delta="-5"
+    >
+      −5
+    </button>
+
+    <button
+      class="minus"
+      data-delta="-1"
+    >
+      −1
+    </button>
+
+    <button data-delta="1">
+      +1
+    </button>
+
+    <button data-delta="5">
+      +5
+    </button>
+
+    <button data-delta="10">
+      +10
+    </button>
+
+  </div>
+
+
+  <div class="edit-row">
+
+    <input
+      id="exactInput"
+      type="number"
+      value="0"
+    >
+
+    <button
+      class="save-btn"
+      id="saveBtn"
+    >
+      SAVE
+    </button>
+
+  </div>
+
+
+  <button
+    class="reset-btn"
+    id="resetBtn"
+  >
+    RESET THIS DAY → 0
+  </button>
+
+</section>
+
+
+<!-- RECENT -->
+
+<section class="side-card">
+
+  <div class="card-title">
+
+    RECENT 7 DAYS
+
+    <span id="recentRange">
+      —
+    </span>
+
+  </div>
+
+
+  <div
+    class="week-bars"
+    id="weekBars"
+  ></div>
+
+</section>
+
+
+<!-- ACHIEVEMENTS -->
+
+<section class="side-card">
+
+  <div class="card-title">
+
+    ACHIEVEMENTS
+
+    <span id="achievementCount">
+      0 / 9
+    </span>
+
+  </div>
+
+
+  <div
+    class="achievements"
+    id="achievements"
+  ></div>
+
+</section>
+
+</aside>
+
+
+<!-- =====================================================
+     LARGE SCREEN EXTRA INFORMATION
+====================================================== -->
+
+<section class="wide-extra">
+
+  <div class="extra-box">
+
+    <div class="extra-title">
+      POINT DISTRIBUTION
+    </div>
+
+    <div class="distribution">
+
+      <div>
+
+        <span>
+          POSITIVE
+        </span>
+
+        <strong id="extraPositive">
+          0
+        </strong>
+
       </div>
 
-      <div class="month-stats">
-        <div class="month-chip">TOTAL <b id="mTotal">0</b></div>
-        <div class="month-chip">BEST <b id="mBest">0</b></div>
-        <div class="month-chip">AVG <b id="mAvg">0.0</b></div>
-        <div class="month-chip">ACTIVE <b id="mActive">0</b></div>
-        <div class="month-chip">POSITIVE <b id="mPositive">0</b></div>
-        <div class="month-chip">NEGATIVE <b id="mNegative">0</b></div>
+
+      <div>
+
+        <span>
+          NEGATIVE
+        </span>
+
+        <strong id="extraNegative">
+          0
+        </strong>
+
       </div>
 
-      <div class="weekdays">
-        <div>SUN</div>
-        <div>MON</div>
-        <div>TUE</div>
-        <div>WED</div>
-        <div>THU</div>
-        <div>FRI</div>
-        <div>SAT</div>
+
+      <div>
+
+        <span>
+          ACTIVE
+        </span>
+
+        <strong id="extraActive">
+          0
+        </strong>
+
       </div>
 
-      <div class="calendar" id="calendar"></div>
+    </div>
 
-    </section>
+  </div>
 
-    <!-- RIGHT -->
-    <aside class="side">
 
-      <!-- SELECTED -->
-      <section class="side-card">
+  <div class="extra-box">
 
-        <div class="card-title">
-          SELECTED DAY
-          <span id="selectedDate">2026-10-05</span>
-        </div>
+    <div class="extra-title">
+      CURRENT RANK
+    </div>
 
-        <div class="selected-score">
-          <strong id="selectedScore">0</strong>
-          <span>POINTS</span>
-        </div>
+    <div class="rank-display">
 
-        <div class="quick">
-          <button class="minus" data-delta="-10">−10</button>
-          <button class="minus" data-delta="-5">−5</button>
-          <button class="minus" data-delta="-1">−1</button>
-          <button data-delta="1">+1</button>
-          <button data-delta="5">+5</button>
-          <button data-delta="10">+10</button>
-        </div>
+      <strong id="extraRank">
+        BRONZE
+      </strong>
 
-        <div class="edit-row">
-          <input id="exactInput" type="number" value="0">
-          <button class="save-btn" id="saveBtn">SAVE</button>
-        </div>
+      <span id="extraRankSub">
+        START
+      </span>
 
-        <button class="reset-btn" id="resetBtn">RESET THIS DAY → 0</button>
+    </div>
 
-      </section>
+  </div>
 
-      <!-- RECENT 7 -->
-      <section class="side-card">
 
-        <div class="card-title">
-          RECENT 7 DAYS
-          <span id="recentRange">—</span>
-        </div>
+  <div class="extra-box">
 
-        <div class="week-bars" id="weekBars"></div>
+    <div class="extra-title">
+      GOAL PROGRESS
+    </div>
 
-      </section>
+    <div class="goal-big">
 
-      <!-- ACHIEVEMENTS -->
-      <section class="side-card">
+      <strong id="extraGoal">
+        0%
+      </strong>
 
-        <div class="card-title">
-          ACHIEVEMENTS
-          <span id="achievementCount">0 / 9</span>
-        </div>
+    </div>
 
-        <div class="achievements" id="achievements"></div>
+    <div class="goal-line">
 
-      </section>
+      <div
+        id="extraGoalFill"
+      ></div>
 
-    </aside>
+    </div>
 
-  </main>
+  </div>
 
-  <footer class="footer">
-    <span>DUOMARST POINT SYSTEM</span>
-    <strong>KEYVAL SYNC • LOCAL-FIRST</strong>
-  </footer>
+
+  <div
+    class="extra-box extra-records"
+    style="display:none"
+  >
+
+    <div class="extra-title">
+      SYSTEM
+    </div>
+
+    <div class="rank-display">
+
+      <strong>
+        ONLINE
+      </strong>
+
+      <span>
+        KEYVAL
+      </span>
+
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+
+<footer class="footer">
+
+  <span>
+    DUOMARST POINT SYSTEM
+  </span>
+
+  <strong>
+    KEYVAL SYNC • LOCAL-FIRST
+  </strong>
+
+</footer>
 
 </div>
 
+
 <script>
+
 /* =========================================================
    CONFIG
 ========================================================= */
 
-const BASE_KEY = "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
-const API = "https://api.keyval.org";
+const BASE_KEY =
+  "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
-const START = "2026-10-01";
-const END = "2027-03-31";
+const API =
+  "https://api.keyval.org";
 
-const GOAL = 150;
+const START =
+  "2026-10-01";
 
-const MONTHS = [
+const END =
+  "2027-03-31";
+
+const GOAL =
+  150;
+
+const MONTHS=[
   "2026-10",
   "2026-11",
   "2026-12",
@@ -1053,16 +1979,21 @@ const MONTHS = [
   "2027-03"
 ];
 
+
 /* =========================================================
    STATE
 ========================================================= */
 
-const data = {};
+const data={};
 
-let selectedDate = "2026-10-05";
-let currentMonth = "2026-10";
+let selectedDate =
+  "2026-10-05";
 
-let syncing = false;
+let currentMonth =
+  "2026-10";
+
+let syncing=false;
+
 
 /* =========================================================
    HELPERS
@@ -1072,42 +2003,65 @@ function pad(n){
   return String(n).padStart(2,"0");
 }
 
+
 function dateKey(y,m,d){
   return `${y}-${pad(m)}-${pad(d)}`;
 }
 
+
 function parseDate(key){
-  const [y,m,d] = key.split("-").map(Number);
+  const [
+    y,
+    m,
+    d
+  ]=key.split("-").map(Number);
+
   return new Date(y,m-1,d);
 }
 
+
 function isValidDateKey(key){
-  return key >= START && key <= END;
+  return key>=START &&
+         key<=END;
 }
 
+
 function daysInMonth(year,month){
-  return new Date(year,month,0).getDate();
+  return new Date(
+    year,
+    month,
+    0
+  ).getDate();
 }
+
 
 function monthKeyFromDate(key){
   return key.slice(0,7);
 }
 
+
 function monthApiKey(month){
   return `${BASE_KEY}-${month}`;
 }
 
+
 function score(key){
-  return Number.isFinite(data[key]) ? data[key] : 0;
+  return Number.isFinite(data[key])
+    ? data[key]
+    : 0;
 }
 
+
 function allDates(){
-  const out = [];
 
-  let d = parseDate(START);
-  const end = parseDate(END);
+  const out=[];
 
-  while(d <= end){
+  let d=parseDate(START);
+
+  const end=parseDate(END);
+
+  while(d<=end){
+
     out.push(
       dateKey(
         d.getFullYear(),
@@ -1116,16 +2070,58 @@ function allDates(){
       )
     );
 
-    d.setDate(d.getDate()+1);
+    d.setDate(
+      d.getDate()+1
+    );
   }
 
   return out;
 }
 
-function formatMonth(month){
-  const [y,m] = month.split("-").map(Number);
 
-  return new Date(y,m-1,1).toLocaleDateString(
+function monthDates(month){
+
+  const [
+    y,
+    m
+  ]=month.split("-").map(Number);
+
+  const max=
+    daysInMonth(y,m);
+
+  const out=[];
+
+  for(
+    let d=1;
+    d<=max;
+    d++
+  ){
+
+    const key=
+      dateKey(y,m,d);
+
+    if(isValidDateKey(key)){
+      out.push(key);
+    }
+
+  }
+
+  return out;
+}
+
+
+function formatMonth(month){
+
+  const [
+    y,
+    m
+  ]=month.split("-").map(Number);
+
+  return new Date(
+    y,
+    m-1,
+    1
+  ).toLocaleDateString(
     "en-US",
     {
       month:"long",
@@ -1134,54 +2130,74 @@ function formatMonth(month){
   );
 }
 
-function monthDates(month){
-  const [y,m] = month.split("-").map(Number);
-  const max = daysInMonth(y,m);
 
-  const out = [];
-
-  for(let d=1;d<=max;d++){
-    const key = dateKey(y,m,d);
-
-    if(isValidDateKey(key)){
-      out.push(key);
-    }
-  }
-
-  return out;
-}
+/* =========================================================
+   STATS
+========================================================= */
 
 function totalScore(){
-  return allDates().reduce((sum,key)=>sum+score(key),0);
+
+  return allDates()
+    .reduce(
+      (sum,key)=>
+        sum+score(key),
+      0
+    );
 }
+
 
 function positiveTotal(){
+
   return allDates()
-    .filter(k=>score(k)>0)
-    .reduce((s,k)=>s+score(k),0);
+    .filter(
+      k=>score(k)>0
+    )
+    .reduce(
+      (s,k)=>s+score(k),
+      0
+    );
 }
+
 
 function negativeTotal(){
+
   return allDates()
-    .filter(k=>score(k)<0)
-    .reduce((s,k)=>s+score(k),0);
+    .filter(
+      k=>score(k)<0
+    )
+    .reduce(
+      (s,k)=>s+score(k),
+      0
+    );
 }
+
 
 function activeDates(){
-  return allDates().filter(k=>score(k)!==0);
+
+  return allDates()
+    .filter(
+      k=>score(k)!==0
+    );
 }
 
+
 function bestDay(){
-  const dates = allDates();
 
-  let bestKey = null;
-  let best = 0;
+  let bestKey=null;
+  let best=0;
 
-  for(const key of dates){
+  for(
+    const key of allDates()
+  ){
+
     if(score(key)>best){
-      best=score(key);
+
+      best=
+        score(key);
+
       bestKey=key;
     }
+
   }
 
   return {
@@ -1190,209 +2206,362 @@ function bestDay(){
   };
 }
 
+
 function average(){
-  const active = activeDates();
 
-  if(!active.length) return 0;
+  const active=
+    activeDates();
 
-  return totalScore()/active.length;
+  if(!active.length){
+    return 0;
+  }
+
+  return totalScore()/
+         active.length;
 }
 
+
 function streak(){
-  const dates = allDates();
+
+  const dates=
+    allDates();
 
   let count=0;
 
-  for(let i=dates.length-1;i>=0;i--){
+  for(
+    let i=dates.length-1;
+    i>=0;
+    i--
+  ){
+
     if(score(dates[i])>0){
+
       count++;
-    }else if(dates[i] <= "2026-10-05"){
-      break;
+
+    }else{
+
+      if(
+        dates[i]<="2026-10-05"
+      ){
+        break;
+      }
+
     }
+
   }
 
   return count;
 }
 
-function recentDates(count=7){
-  const dates = allDates();
-  const todayIndex = dates.indexOf("2026-10-05");
 
-  if(todayIndex < 0){
+function recentDates(count=7){
+
+  const dates=
+    allDates();
+
+  const todayIndex=
+    dates.indexOf(
+      "2026-10-05"
+    );
+
+  if(todayIndex<0){
     return dates.slice(-count);
   }
 
   return dates.slice(
-    Math.max(0,todayIndex-count+1),
+    Math.max(
+      0,
+      todayIndex-count+1
+    ),
     todayIndex+1
   );
 }
 
-function setSyncState(textValue,ok=true){
-  document.getElementById("syncText").textContent = textValue;
-
-  const dot = document.getElementById("syncDot");
-
-  dot.style.background = ok
-    ? "var(--green)"
-    : "var(--red)";
-
-  dot.style.boxShadow = ok
-    ? "0 0 8px var(--green)"
-    : "0 0 8px var(--red)";
-}
 
 /* =========================================================
-   KEYVAL
+   SYNC STATE
+========================================================= */
+
+function setSyncState(
+  textValue,
+  ok=true
+){
+
+  document
+    .getElementById("syncText")
+    .textContent=textValue;
+
+  const dot=
+    document.getElementById(
+      "syncDot"
+    );
+
+  dot.style.background=
+    ok
+      ? "var(--green)"
+      : "var(--red)";
+
+  dot.style.boxShadow=
+    ok
+      ? "0 0 8px var(--green)"
+      : "0 0 8px var(--red)";
+}
+
+
+/* =========================================================
+   KEYVAL PARSER
 ========================================================= */
 
 function parseStored(raw){
 
-  if(raw === null || raw === undefined){
+  if(
+    raw===null ||
+    raw===undefined
+  ){
     return null;
   }
 
-  if(typeof raw === "string"){
-    const trimmed = raw.trim();
+
+  if(
+    typeof raw==="string"
+  ){
+
+    const trimmed=
+      raw.trim();
 
     if(!trimmed){
       return null;
     }
 
-    try{
-      const parsed = JSON.parse(trimmed);
 
-      if(parsed !== trimmed){
-        return parseStored(parsed);
+    try{
+
+      const parsed=
+        JSON.parse(trimmed);
+
+      if(parsed!==trimmed){
+        return parseStored(
+          parsed
+        );
       }
+
     }catch{}
 
+
     if(trimmed.includes(",")){
+
       return trimmed
         .split(",")
         .map(v=>{
-          const n=Number(v.trim());
-          return Number.isFinite(n) ? n : 0;
+
+          const n=
+            Number(v.trim());
+
+          return Number.isFinite(n)
+            ? n
+            : 0;
+
         });
+
     }
 
-    const single=Number(trimmed);
 
-    if(Number.isFinite(single)){
+    const single=
+      Number(trimmed);
+
+    if(
+      Number.isFinite(single)
+    ){
       return [single];
     }
 
     return null;
   }
 
+
   if(Array.isArray(raw)){
+
     return raw.map(v=>{
+
       const n=Number(v);
-      return Number.isFinite(n) ? n : 0;
+
+      return Number.isFinite(n)
+        ? n
+        : 0;
+
     });
+
   }
 
-  if(typeof raw==="object"){
 
-    if("value" in raw){
-      return parseStored(raw.value);
+  if(
+    typeof raw==="object"
+  ){
+
+    if(
+      "value" in raw
+    ){
+      return parseStored(
+        raw.value
+      );
     }
 
-    if("data" in raw){
-      return parseStored(raw.data);
+    if(
+      "data" in raw
+    ){
+      return parseStored(
+        raw.data
+      );
     }
 
-    if("result" in raw){
-      return parseStored(raw.result);
+    if(
+      "result" in raw
+    ){
+      return parseStored(
+        raw.result
+      );
     }
+
   }
 
   return null;
 }
 
+
+/* =========================================================
+   GET MONTH
+========================================================= */
+
 async function getMonth(month){
 
-  const response = await fetch(
-    `${API}/get/${encodeURIComponent(monthApiKey(month))}`,
-    {
-      method:"GET",
-      cache:"no-store"
-    }
-  );
+  const response=
+    await fetch(
+      `${API}/get/${encodeURIComponent(
+        monthApiKey(month)
+      )}`,
+      {
+        method:"GET",
+        cache:"no-store"
+      }
+    );
 
   if(!response.ok){
-    throw new Error("GET "+response.status);
+
+    throw new Error(
+      "GET "+response.status
+    );
+
   }
 
-  const raw = await response.text();
+
+  const raw=
+    await response.text();
 
   let parsed=raw;
 
   try{
-    parsed=JSON.parse(raw);
+    parsed=
+      JSON.parse(raw);
   }catch{}
 
-  const arr=parseStored(parsed);
 
-  if(!arr){
-    return null;
-  }
-
-  return arr;
+  return parseStored(
+    parsed
+  );
 }
+
+
+/* =========================================================
+   SAVE MONTH
+========================================================= */
 
 async function saveMonth(month){
 
-  const dates=monthDates(month);
+  const dates=
+    monthDates(month);
 
-  const values=dates.map(k=>score(k));
+  const values=
+    dates.map(
+      k=>score(k)
+    );
 
-  const csv=values.join(",");
+  const csv=
+    values.join(",");
 
-  const response=await fetch(
-    `${API}/set/${encodeURIComponent(monthApiKey(month))}/${encodeURIComponent(csv)}`,
-    {
-      method:"GET",
-      cache:"no-store"
-    }
-  );
+
+  const response=
+    await fetch(
+      `${API}/set/${encodeURIComponent(
+        monthApiKey(month)
+      )}/${encodeURIComponent(
+        csv
+      )}`,
+      {
+        method:"GET",
+        cache:"no-store"
+      }
+    );
+
 
   if(!response.ok){
-    throw new Error("SET "+response.status);
+
+    throw new Error(
+      "SET "+response.status
+    );
+
   }
 
   return true;
 }
 
+
 /* =========================================================
-   LOAD
+   LOAD ALL
 ========================================================= */
 
 async function loadAll(){
 
-  setSyncState("SYNCING…");
+  setSyncState(
+    "SYNCING…"
+  );
 
   try{
 
-    const results=await Promise.all(
-      MONTHS.map(async month=>{
-        try{
-          return {
-            month,
-            values:await getMonth(month)
-          };
-        }catch{
-          return {
-            month,
-            values:null
-          };
-        }
-      })
-    );
+    const results=
+      await Promise.all(
+        MONTHS.map(
+          async month=>{
+
+            try{
+
+              return {
+                month,
+                values:
+                  await getMonth(
+                    month
+                  )
+              };
+
+            }catch{
+
+              return {
+                month,
+                values:null
+              };
+
+            }
+
+          }
+        )
+      );
+
 
     let success=0;
 
-    for(const result of results){
+
+    for(
+      const result of results
+    ){
 
       if(!result.values){
         continue;
@@ -1400,156 +2569,411 @@ async function loadAll(){
 
       success++;
 
-      const dates=monthDates(result.month);
 
-      dates.forEach((key,i)=>{
-        data[key]=Number(result.values[i] ?? 0);
-      });
+      const dates=
+        monthDates(
+          result.month
+        );
+
+
+      dates.forEach(
+        (key,i)=>{
+
+          data[key]=
+            Number(
+              result.values[i] ??
+              0
+            );
+
+        }
+      );
+
     }
+
 
     renderAll();
 
+
     if(success>0){
-      setSyncState("SYNCED",true);
+
+      setSyncState(
+        "SYNCED",
+        true
+      );
+
     }else{
-      setSyncState("LOCAL / SERVER OFF",false);
+
+      setSyncState(
+        "LOCAL / SERVER OFF",
+        false
+      );
+
     }
 
   }catch(error){
 
     console.error(error);
 
-    setSyncState("OFFLINE",false);
+    setSyncState(
+      "OFFLINE",
+      false
+    );
+
   }
+
 }
 
+
 /* =========================================================
-   SAVE
+   SAVE CURRENT
 ========================================================= */
 
 async function saveCurrent(){
 
-  if(syncing) return;
+  if(syncing){
+    return;
+  }
 
   syncing=true;
 
-  setSyncState("SAVING…");
+  setSyncState(
+    "SAVING…"
+  );
+
 
   try{
 
     await saveMonth(
-      monthKeyFromDate(selectedDate)
+      monthKeyFromDate(
+        selectedDate
+      )
     );
 
-    setSyncState("SAVED",true);
+    setSyncState(
+      "SAVED",
+      true
+    );
 
   }catch(error){
 
     console.error(error);
 
-    setSyncState("SAVE FAILED",false);
+    setSyncState(
+      "SAVE FAILED",
+      false
+    );
 
   }finally{
 
     syncing=false;
+
   }
+
 }
 
+
 /* =========================================================
-   HERO / KPI
+   KPI RENDER
 ========================================================= */
 
 function renderKPIs(){
 
-  const total=totalScore();
-  const today=score("2026-10-05");
-  const best=bestDay();
-  const active=activeDates();
+  const total=
+    totalScore();
 
-  const percent=Math.round(
-    Math.max(0,total/GOAL*100)
-  );
+  const today=
+    score("2026-10-05");
 
-  document.getElementById("kpiToday").textContent =
-    today>0 ? "+"+today : today;
+  const best=
+    bestDay();
 
-  document.getElementById("kpiTotal").textContent =
-    total;
+  const percent=
+    Math.round(
+      Math.max(
+        0,
+        total/GOAL*100
+      )
+    );
 
-  document.getElementById("kpiGoal").textContent =
-    Math.min(100,percent)+"%";
 
-  document.getElementById("kpiGoalSub").textContent =
-    total>=GOAL
-      ? "GOAL CLEARED"
-      : `${GOAL-total} PT 남음`;
+  document
+    .getElementById(
+      "kpiToday"
+    )
+    .textContent=
+      today>0
+        ? "+"+today
+        : today;
 
-  document.getElementById("kpiAverage").textContent =
-    average().toFixed(1);
 
-  document.getElementById("kpiBest").textContent =
-    best.score>0 ? "+"+best.score : "0";
+  document
+    .getElementById(
+      "kpiTotal"
+    )
+    .textContent=
+      total;
 
-  document.getElementById("kpiBestDate").textContent =
-    best.key || "기록 없음";
 
-  document.getElementById("kpiStreak").textContent =
-    streak();
+  document
+    .getElementById(
+      "kpiGoal"
+    )
+    .textContent=
+      Math.min(
+        100,
+        percent
+      )+"%";
 
-  document.getElementById("flowScore").innerHTML =
-    `${today>0?"+":""}${today} <span>POINTS</span>`;
 
-  document.getElementById("flow7").textContent =
-    recentDates().reduce((s,k)=>s+score(k),0);
+  document
+    .getElementById(
+      "kpiGoalSub"
+    )
+    .textContent=
+      total>=GOAL
+        ? "GOAL CLEARED"
+        : `${GOAL-total} PT 남음`;
 
-  document.getElementById("flow7Sub").textContent =
-    `활동 ${recentDates().filter(k=>score(k)!==0).length}일`;
+
+  document
+    .getElementById(
+      "kpiAverage"
+    )
+    .textContent=
+      average().toFixed(1);
+
+
+  document
+    .getElementById(
+      "kpiBest"
+    )
+    .textContent=
+      best.score>0
+        ? "+"+best.score
+        : "0";
+
+
+  document
+    .getElementById(
+      "kpiBestDate"
+    )
+    .textContent=
+      best.key ||
+      "기록 없음";
+
+
+  document
+    .getElementById(
+      "kpiStreak"
+    )
+    .textContent=
+      streak();
+
+
+  document
+    .getElementById(
+      "flowScore"
+    )
+    .innerHTML=
+      `${today>0?"+":""}${today}
+       <span>POINTS</span>`;
+
+
+  const recent=
+    recentDates();
+
+  document
+    .getElementById(
+      "flow7"
+    )
+    .textContent=
+      recent.reduce(
+        (s,k)=>s+score(k),
+        0
+      );
+
+
+  document
+    .getElementById(
+      "flow7Sub"
+    )
+    .textContent=
+      `활동 ${
+        recent.filter(
+          k=>score(k)!==0
+        ).length
+      }일`;
+
+
+  /* LARGE SCREEN DATA */
+
+  document
+    .getElementById(
+      "extraPositive"
+    )
+    .textContent=
+      positiveTotal();
+
+
+  document
+    .getElementById(
+      "extraNegative"
+    )
+    .textContent=
+      negativeTotal();
+
+
+  document
+    .getElementById(
+      "extraActive"
+    )
+    .textContent=
+      activeDates().length;
+
+
+  const rank=
+    total>=150
+      ? ["DIAMOND","MAX"]
+      : total>=100
+      ? ["GOLD","100+ PT"]
+      : total>=50
+      ? ["SILVER","50+ PT"]
+      : ["BRONZE","START"];
+
+
+  document
+    .getElementById(
+      "extraRank"
+    )
+    .textContent=
+      rank[0];
+
+
+  document
+    .getElementById(
+      "extraRankSub"
+    )
+    .textContent=
+      rank[1];
+
+
+  document
+    .getElementById(
+      "extraGoal"
+    )
+    .textContent=
+      Math.min(
+        100,
+        percent
+      )+"%";
+
+
+  document
+    .getElementById(
+      "extraGoalFill"
+    )
+    .style.width=
+      Math.min(
+        100,
+        percent
+      )+"%";
+
 }
 
+
 /* =========================================================
-   FLOW
+   FLOW RENDER
 ========================================================= */
 
 function renderFlow(){
 
-  const track=document.getElementById("flowTrack");
+  const track=
+    document.getElementById(
+      "flowTrack"
+    );
 
   track.innerHTML="";
 
-  const dates=allDates();
 
-  const max=Math.max(
-    1,
-    ...dates.map(k=>Math.abs(score(k)))
+  const dates=
+    allDates();
+
+  const max=
+    Math.max(
+      1,
+      ...dates.map(
+        k=>Math.abs(
+          score(k)
+        )
+      )
+    );
+
+
+  dates.forEach(
+    key=>{
+
+      const el=
+        document.createElement(
+          "div"
+        );
+
+      el.className=
+        "flow-point";
+
+
+      const value=
+        score(key);
+
+
+      if(value>0){
+
+        el.classList.add(
+          "active"
+        );
+
+        el.style.opacity=
+          String(
+            .25+
+            Math.min(
+              1,
+              value/max
+            )*.75
+          );
+
+      }
+
+
+      if(value<0){
+
+        el.classList.add(
+          "negative"
+        );
+
+      }
+
+
+      if(
+        key==="2026-10-05"
+      ){
+
+        el.classList.add(
+          "today"
+        );
+
+      }
+
+
+      el.title=
+        `${key}: ${value}`;
+
+
+      track.appendChild(el);
+
+    }
   );
 
-  dates.forEach(key=>{
-
-    const el=document.createElement("div");
-
-    el.className="flow-point";
-
-    const value=score(key);
-
-    if(value>0){
-      el.classList.add("active");
-      el.style.opacity=
-        String(.25 + Math.min(1,value/max)*.75);
-    }
-
-    if(value<0){
-      el.classList.add("negative");
-    }
-
-    if(key==="2026-10-05"){
-      el.classList.add("today");
-    }
-
-    el.title=`${key}: ${value}`;
-
-    track.appendChild(el);
-  });
 }
+
 
 /* =========================================================
    CALENDAR
@@ -1557,113 +2981,297 @@ function renderFlow(){
 
 function renderCalendar(){
 
-  const calendar=document.getElementById("calendar");
+  const calendar=
+    document.getElementById(
+      "calendar"
+    );
 
   calendar.innerHTML="";
 
-  const [year,month]=currentMonth.split("-").map(Number);
 
-  document.getElementById("monthTitle").textContent =
-    formatMonth(currentMonth);
+  const [
+    year,
+    month
+  ]=
+    currentMonth
+      .split("-")
+      .map(Number);
 
-  const dates=monthDates(currentMonth);
 
-  const monthTotal=dates.reduce((s,k)=>s+score(k),0);
-  const monthActive=dates.filter(k=>score(k)!==0);
-  const monthPositive=dates
-    .filter(k=>score(k)>0)
-    .reduce((s,k)=>s+score(k),0);
+  document
+    .getElementById(
+      "monthTitle"
+    )
+    .textContent=
+      formatMonth(
+        currentMonth
+      );
 
-  const monthNegative=dates
-    .filter(k=>score(k)<0)
-    .reduce((s,k)=>s+score(k),0);
 
-  const monthBest=Math.max(
-    0,
-    ...dates.map(k=>score(k))
-  );
+  const dates=
+    monthDates(
+      currentMonth
+    );
 
-  const monthAvg=monthActive.length
-    ? monthTotal/monthActive.length
-    : 0;
 
-  document.getElementById("monthTotal").textContent =
-    `${monthTotal>=0?"+":""}${monthTotal} PT`;
+  const monthTotal=
+    dates.reduce(
+      (s,k)=>s+score(k),
+      0
+    );
 
-  document.getElementById("mTotal").textContent=monthTotal;
-  document.getElementById("mBest").textContent=monthBest;
-  document.getElementById("mAvg").textContent=monthAvg.toFixed(1);
-  document.getElementById("mActive").textContent=monthActive.length;
-  document.getElementById("mPositive").textContent=monthPositive;
-  document.getElementById("mNegative").textContent=monthNegative;
 
-  /*
-    JS Date:
-    0 = Sunday
-  */
-  const firstDay=new Date(year,month-1,1).getDay();
-  const totalDays=daysInMonth(year,month);
+  const monthActive=
+    dates.filter(
+      k=>score(k)!==0
+    );
 
-  for(let i=0;i<42;i++){
 
-    const cell=document.createElement("div");
+  const monthPositive=
+    dates
+      .filter(
+        k=>score(k)>0
+      )
+      .reduce(
+        (s,k)=>s+score(k),
+        0
+      );
 
-    if(i<firstDay || i>=firstDay+totalDays){
 
-      cell.className="day empty";
-      calendar.appendChild(cell);
+  const monthNegative=
+    dates
+      .filter(
+        k=>score(k)<0
+      )
+      .reduce(
+        (s,k)=>s+score(k),
+        0
+      );
+
+
+  const monthBest=
+    Math.max(
+      0,
+      ...dates.map(
+        k=>score(k)
+      )
+    );
+
+
+  const monthAvg=
+    monthActive.length
+      ? monthTotal/monthActive.length
+      : 0;
+
+
+  document
+    .getElementById(
+      "monthTotal"
+    )
+    .textContent=
+      `${monthTotal>=0?"+":""}${monthTotal} PT`;
+
+
+  document
+    .getElementById(
+      "mTotal"
+    )
+    .textContent=
+      monthTotal;
+
+
+  document
+    .getElementById(
+      "mBest"
+    )
+    .textContent=
+      monthBest;
+
+
+  document
+    .getElementById(
+      "mAvg"
+    )
+    .textContent=
+      monthAvg.toFixed(1);
+
+
+  document
+    .getElementById(
+      "mActive"
+    )
+    .textContent=
+      monthActive.length;
+
+
+  document
+    .getElementById(
+      "mPositive"
+    )
+    .textContent=
+      monthPositive;
+
+
+  document
+    .getElementById(
+      "mNegative"
+    )
+    .textContent=
+      monthNegative;
+
+
+  const firstDay=
+    new Date(
+      year,
+      month-1,
+      1
+    ).getDay();
+
+
+  const totalDays=
+    daysInMonth(
+      year,
+      month
+    );
+
+
+  for(
+    let i=0;
+    i<42;
+    i++
+  ){
+
+    const cell=
+      document.createElement(
+        "div"
+      );
+
+
+    if(
+      i<firstDay ||
+      i>=firstDay+totalDays
+    ){
+
+      cell.className=
+        "day empty";
+
+      calendar.appendChild(
+        cell
+      );
+
       continue;
     }
 
-    const day=i-firstDay+1;
-    const key=dateKey(year,month,day);
-    const value=score(key);
 
-    cell.className="day";
+    const day=
+      i-firstDay+1;
 
-    if(key===selectedDate){
-      cell.classList.add("selected");
+
+    const key=
+      dateKey(
+        year,
+        month,
+        day
+      );
+
+
+    const value=
+      score(key);
+
+
+    cell.className=
+      "day";
+
+
+    if(
+      key===selectedDate
+    ){
+      cell.classList.add(
+        "selected"
+      );
     }
 
-    if(key==="2026-10-05"){
-      cell.classList.add("today");
+
+    if(
+      key==="2026-10-05"
+    ){
+      cell.classList.add(
+        "today"
+      );
     }
 
-    let scoreClass="zero";
 
-    if(value>0) scoreClass="pos";
-    if(value<0) scoreClass="neg";
+    let scoreClass=
+      "zero";
 
-    const meter=Math.min(
-      100,
-      Math.abs(value)/10*100
-    );
+
+    if(value>0){
+      scoreClass="pos";
+    }
+
+
+    if(value<0){
+      scoreClass="neg";
+    }
+
+
+    const meter=
+      Math.min(
+        100,
+        Math.abs(value)/10*100
+      );
+
 
     cell.innerHTML=`
+
       <div class="day-top">
-        <span class="day-num">${day}</span>
+
+        <span class="day-num">
+          ${day}
+        </span>
+
       </div>
 
-      <div class="day-score ${scoreClass}">
+      <div
+        class="day-score ${scoreClass}"
+      >
         ${value>0?"+":""}${value}
       </div>
 
       <div class="day-meter">
+
         <div
-          class="day-meter-fill ${value<0?"neg":""}"
+          class="day-meter-fill ${
+            value<0?"neg":""
+          }"
           style="width:${meter}%"
         ></div>
+
       </div>
+
     `;
 
-    cell.addEventListener("click",()=>{
-      selectedDate=key;
-      renderAll();
-    });
 
-    calendar.appendChild(cell);
+    cell.addEventListener(
+      "click",
+      ()=>{
+
+        selectedDate=key;
+
+        renderAll();
+
+      }
+    );
+
+
+    calendar.appendChild(
+      cell
+    );
+
   }
+
 }
+
 
 /* =========================================================
    SELECTED
@@ -1671,77 +3279,152 @@ function renderCalendar(){
 
 function renderSelected(){
 
-  const value=score(selectedDate);
+  const value=
+    score(
+      selectedDate
+    );
 
-  document.getElementById("selectedDate").textContent =
-    selectedDate;
 
-  document.getElementById("selectedScore").textContent =
-    value;
+  document
+    .getElementById(
+      "selectedDate"
+    )
+    .textContent=
+      selectedDate;
 
-  document.getElementById("exactInput").value=value;
+
+  document
+    .getElementById(
+      "selectedScore"
+    )
+    .textContent=
+      value;
+
+
+  document
+    .getElementById(
+      "exactInput"
+    )
+    .value=
+      value;
+
 }
 
+
 /* =========================================================
-   RECENT 7 DAYS
+   RECENT 7
 ========================================================= */
 
 function renderRecent(){
 
-  const container=document.getElementById("weekBars");
+  const container=
+    document.getElementById(
+      "weekBars"
+    );
 
   container.innerHTML="";
 
-  const dates=recentDates(7);
 
-  document.getElementById("recentRange").textContent =
-    dates.length
-      ? `${dates[0].slice(5)} → ${dates[dates.length-1].slice(5)}`
-      : "—";
+  const dates=
+    recentDates(7);
 
-  const max=Math.max(
-    1,
-    ...dates.map(k=>Math.abs(score(k)))
-  );
 
-  for(const key of dates){
+  document
+    .getElementById(
+      "recentRange"
+    )
+    .textContent=
+      dates.length
+        ? `${dates[0].slice(5)}
+           →
+           ${dates[dates.length-1].slice(5)}`
+        : "—";
 
-    const value=score(key);
 
-    const item=document.createElement("div");
-    item.className="bar-item";
-
-    const height=Math.max(
-      4,
-      Math.abs(value)/max*46
+  const max=
+    Math.max(
+      1,
+      ...dates.map(
+        k=>Math.abs(
+          score(k)
+        )
+      )
     );
 
+
+  for(
+    const key of dates
+  ){
+
+    const value=
+      score(key);
+
+
+    const item=
+      document.createElement(
+        "div"
+      );
+
+    item.className=
+      "bar-item";
+
+
+    const height=
+      Math.max(
+        4,
+        Math.abs(value)/max*46
+      );
+
+
     item.innerHTML=`
+
       <div class="bar-value">
         ${value>0?"+":""}${value}
       </div>
 
       <div class="bar-wrap">
+
         <div
-          class="bar ${value<0?"neg":""}"
+          class="bar ${
+            value<0?"neg":""
+          }"
           style="height:${height}px"
         ></div>
+
       </div>
 
       <div class="bar-day">
         ${Number(key.slice(8))}
       </div>
+
     `;
 
-    item.addEventListener("click",()=>{
-      selectedDate=key;
-      currentMonth=monthKeyFromDate(key);
-      renderAll();
-    });
 
-    container.appendChild(item);
+    item.addEventListener(
+      "click",
+      ()=>{
+
+        selectedDate=key;
+
+        currentMonth=
+          monthKeyFromDate(
+            key
+          );
+
+        renderAll();
+
+      }
+    );
+
+
+    container.appendChild(
+      item
+    );
+
   }
+
 }
+
 
 /* =========================================================
    ACHIEVEMENTS
@@ -1749,169 +3432,271 @@ function renderRecent(){
 
 function renderAchievements(){
 
-  const total=totalScore();
-  const active=activeDates().length;
-  const best=bestDay().score;
-  const s=streak();
+  const total=
+    totalScore();
+
+  const active=
+    activeDates().length;
+
+  const best=
+    bestDay().score;
+
+  const s=
+    streak();
+
 
   const achievements=[
+
     {
       icon:"⚡",
       name:"FIRST POINT",
       desc:"1 PT 이상",
       unlocked:total>0
     },
+
     {
       icon:"🔥",
       name:"7 DAY",
       desc:"7일 연속",
       unlocked:s>=7
     },
+
     {
       icon:"💠",
       name:"50 POINT",
       desc:"50 PT 달성",
       unlocked:total>=50
     },
+
     {
       icon:"🏆",
       name:"100 POINT",
       desc:"100 PT 달성",
       unlocked:total>=100
     },
+
     {
       icon:"👑",
       name:"GOAL",
       desc:"150 PT 달성",
       unlocked:total>=150
     },
+
     {
       icon:"🚀",
       name:"BEST +10",
       desc:"+10 기록",
       unlocked:best>=10
     },
+
     {
       icon:"📅",
       name:"10 ACTIVE",
       desc:"10일 활동",
       unlocked:active>=10
     },
+
     {
       icon:"💎",
       name:"25 ACTIVE",
       desc:"25일 활동",
       unlocked:active>=25
     },
+
     {
       icon:"🌌",
       name:"50 ACTIVE",
       desc:"50일 활동",
       unlocked:active>=50
     }
+
   ];
 
-  const box=document.getElementById("achievements");
+
+  const box=
+    document.getElementById(
+      "achievements"
+    );
 
   box.innerHTML="";
 
+
   let unlocked=0;
 
-  achievements.forEach(a=>{
 
-    if(a.unlocked) unlocked++;
+  achievements.forEach(
+    a=>{
 
-    const el=document.createElement("div");
+      if(a.unlocked){
+        unlocked++;
+      }
 
-    el.className=
-      "achievement"+(a.unlocked?"":" locked");
 
-    el.innerHTML=`
-      <div class="achievement-icon">${a.icon}</div>
-      <div class="achievement-name">${a.name}</div>
-      <div class="achievement-desc">${a.desc}</div>
-    `;
+      const el=
+        document.createElement(
+          "div"
+        );
 
-    box.appendChild(el);
-  });
 
-  document.getElementById("achievementCount").textContent =
-    `${unlocked} / ${achievements.length}`;
+      el.className=
+        "achievement"+
+        (
+          a.unlocked
+            ? ""
+            : " locked"
+        );
+
+
+      el.innerHTML=`
+
+        <div class="achievement-icon">
+          ${a.icon}
+        </div>
+
+        <div class="achievement-name">
+          ${a.name}
+        </div>
+
+        <div class="achievement-desc">
+          ${a.desc}
+        </div>
+
+      `;
+
+
+      box.appendChild(
+        el
+      );
+
+    }
+  );
+
+
+  document
+    .getElementById(
+      "achievementCount"
+    )
+    .textContent=
+      `${unlocked} / ${achievements.length}`;
+
 }
 
+
 /* =========================================================
-   RENDER ALL
+   RENDER
 ========================================================= */
 
 function renderAll(){
 
   renderKPIs();
+
   renderFlow();
+
   renderCalendar();
+
   renderSelected();
+
   renderRecent();
+
   renderAchievements();
+
 }
+
 
 /* =========================================================
    QUICK BUTTONS
 ========================================================= */
 
-document.querySelectorAll("[data-delta]").forEach(button=>{
+document
+  .querySelectorAll(
+    "[data-delta]"
+  )
+  .forEach(
+    button=>{
 
-  button.addEventListener("click",async()=>{
+      button.addEventListener(
+        "click",
+        async()=>{
 
-    const delta=Number(
-      button.dataset.delta
-    );
+          const delta=
+            Number(
+              button.dataset.delta
+            );
 
-    data[selectedDate]=score(selectedDate)+delta;
 
-    renderAll();
+          data[selectedDate]=
+            score(selectedDate)+
+            delta;
 
-    await saveCurrent();
-  });
 
-});
+          renderAll();
+
+          await saveCurrent();
+
+        }
+      );
+
+    }
+  );
+
 
 /* =========================================================
-   SAVE BUTTON
+   SAVE
 ========================================================= */
 
-document.getElementById("saveBtn").addEventListener(
-  "click",
-  async()=>{
+document
+  .getElementById(
+    "saveBtn"
+  )
+  .addEventListener(
+    "click",
+    async()=>{
 
-    const value=Number(
-      document.getElementById("exactInput").value
-    );
+      const value=
+        Number(
+          document
+            .getElementById(
+              "exactInput"
+            )
+            .value
+        );
 
-    data[selectedDate]=
-      Number.isFinite(value)
-        ? Math.trunc(value)
-        : 0;
 
-    renderAll();
+      data[selectedDate]=
+        Number.isFinite(value)
+          ? Math.trunc(value)
+          : 0;
 
-    await saveCurrent();
-  }
-);
+
+      renderAll();
+
+      await saveCurrent();
+
+    }
+  );
+
 
 /* =========================================================
    RESET
 ========================================================= */
 
-document.getElementById("resetBtn").addEventListener(
-  "click",
-  async()=>{
+document
+  .getElementById(
+    "resetBtn"
+  )
+  .addEventListener(
+    "click",
+    async()=>{
 
-    data[selectedDate]=0;
+      data[selectedDate]=0;
 
-    renderAll();
+      renderAll();
 
-    await saveCurrent();
-  }
-);
+      await saveCurrent();
+
+    }
+  );
+
 
 /* =========================================================
    MONTH NAV
@@ -1919,77 +3704,133 @@ document.getElementById("resetBtn").addEventListener(
 
 function moveMonth(amount){
 
-  let [year,month]=currentMonth
-    .split("-")
-    .map(Number);
+  let [
+    year,
+    month
+  ]=
+    currentMonth
+      .split("-")
+      .map(Number);
+
 
   month+=amount;
 
+
   if(month<1){
+
     month=12;
     year--;
+
   }
 
+
   if(month>12){
+
     month=1;
     year++;
+
   }
+
 
   const next=
     `${year}-${pad(month)}`;
 
-  if(!MONTHS.includes(next)){
+
+  if(
+    !MONTHS.includes(next)
+  ){
     return;
   }
 
-  currentMonth=next;
+
+  currentMonth=
+    next;
+
 
   renderAll();
+
 }
 
-document.getElementById("prevMonth")
-  .addEventListener("click",()=>{
-    moveMonth(-1);
-  });
 
-document.getElementById("nextMonth")
-  .addEventListener("click",()=>{
-    moveMonth(1);
-  });
+document
+  .getElementById(
+    "prevMonth"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+      moveMonth(-1);
+    }
+  );
+
+
+document
+  .getElementById(
+    "nextMonth"
+  )
+  .addEventListener(
+    "click",
+    ()=>{
+      moveMonth(1);
+    }
+  );
+
 
 /* =========================================================
    KEYBOARD
 ========================================================= */
 
-document.addEventListener("keydown",e=>{
+document.addEventListener(
+  "keydown",
+  e=>{
 
-  if(
-    e.target.tagName==="INPUT" ||
-    e.target.tagName==="TEXTAREA"
-  ){
-    return;
-  }
+    if(
+      e.target.tagName==="INPUT" ||
+      e.target.tagName==="TEXTAREA"
+    ){
+      return;
+    }
 
-  if(e.key==="+"){
-    data[selectedDate]=score(selectedDate)+1;
-    renderAll();
-    saveCurrent();
-  }
 
-  if(e.key==="-"){
-    data[selectedDate]=score(selectedDate)-1;
-    renderAll();
-    saveCurrent();
+    if(e.key==="+"){
+
+      data[selectedDate]=
+        score(selectedDate)+1;
+
+      renderAll();
+
+      saveCurrent();
+
+    }
+
+
+    if(e.key==="-"){
+
+      data[selectedDate]=
+        score(selectedDate)-1;
+
+      renderAll();
+
+      saveCurrent();
+
+    }
+
   }
-});
+);
+
 
 /* =========================================================
-   INITIALIZE
+   INIT
 ========================================================= */
 
-for(const key of allDates()){
+for(
+  const key of allDates()
+){
+
   data[key]=0;
+
 }
+
 
 renderAll();
 
