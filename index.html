@@ -2,803 +2,771 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>DuoMarst Daily Score</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{
+    background:#050713;
+    color:#edf3ff;
+    font-family:Inter,"Segoe UI",Arial,sans-serif;
 }
+button,input{font:inherit}
+button{cursor:pointer}
 
 :root{
-    --bg:#050711;
-    --panel:#0b1020;
-    --panel2:#0e1529;
-    --line:#25345d;
-    --blue:#4da3ff;
-    --cyan:#43e6ff;
-    --purple:#9b6cff;
-    --pink:#d66bff;
-    --green:#46e6a1;
-    --red:#ff557d;
-    --text:#eef4ff;
-    --muted:#8190b4;
+    --bg:#050713;
+    --panel:#0a1020;
+    --panel2:#0d1529;
+    --line:#1b2a4b;
+    --line2:#273961;
+    --text:#edf3ff;
+    --muted:#6e7fa5;
+    --blue:#5b8cff;
+    --cyan:#49e6ff;
+    --purple:#a16cff;
+    --green:#4ce0a3;
+    --red:#ff587f;
 }
 
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:
-        radial-gradient(circle at 15% 20%,rgba(88,70,255,.20),transparent 25%),
-        radial-gradient(circle at 85% 15%,rgba(0,214,255,.15),transparent 24%),
-        radial-gradient(circle at 70% 85%,rgba(155,80,255,.16),transparent 28%),
-        #050711;
-    color:var(--text);
-    font-family:
-        Inter,
-        Pretendard,
-        "Segoe UI",
-        Arial,
-        sans-serif;
-}
+/* BACKGROUND */
 
-body::before{
+body:before{
     content:"";
     position:fixed;
     inset:0;
     pointer-events:none;
-    opacity:.18;
+    background:
+        radial-gradient(circle at 12% 10%,rgba(103,82,255,.19),transparent 27%),
+        radial-gradient(circle at 88% 16%,rgba(39,204,255,.13),transparent 24%),
+        radial-gradient(circle at 60% 100%,rgba(133,64,255,.13),transparent 30%);
+}
+
+body:after{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    opacity:.14;
     background-image:
-        linear-gradient(rgba(80,120,255,.08) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(80,120,255,.08) 1px,transparent 1px);
-    background-size:32px 32px;
+        linear-gradient(rgba(85,120,255,.1) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(85,120,255,.1) 1px,transparent 1px);
+    background-size:34px 34px;
 }
 
-button,
-input{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
+/* APP */
 
 .app{
     position:relative;
     z-index:1;
-    width:min(100%,1680px);
-    height:min(100vh,950px);
+    width:min(100%,1720px);
+    height:100vh;
     margin:auto;
-    padding:14px;
+    padding:15px;
     display:grid;
-    grid-template-rows:58px 92px 82px minmax(0,1fr);
+    grid-template-rows:54px 86px minmax(0,1fr) 72px;
     gap:10px;
 }
 
 /* TOP */
 
-.topbar{
-    border:1px solid rgba(120,150,255,.22);
-    background:linear-gradient(
-        135deg,
-        rgba(17,25,48,.95),
-        rgba(8,13,28,.96)
-    );
-    box-shadow:
-        0 0 25px rgba(74,91,255,.10),
-        inset 0 0 30px rgba(74,91,255,.04);
-    border-radius:15px;
+.top{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:0 18px;
-}
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:12px;
+    padding:0 16px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:rgba(8,14,29,.92);
+    box-shadow:
+        inset 0 0 30px rgba(70,90,255,.035),
+        0 8px 30px rgba(0,0,0,.2);
 }
 
 .logo{
-    width:35px;
-    height:35px;
-    border-radius:10px;
-    display:grid;
-    place-items:center;
-    font-weight:900;
-    color:white;
-    background:linear-gradient(135deg,var(--purple),var(--cyan));
-    box-shadow:0 0 18px rgba(100,120,255,.45);
-}
-
-.brand-title{
-    font-size:18px;
-    font-weight:900;
-    letter-spacing:.5px;
-}
-
-.brand-sub{
-    color:var(--muted);
-    font-size:11px;
-    margin-top:2px;
-}
-
-.top-status{
     display:flex;
     align-items:center;
-    gap:16px;
-    color:var(--muted);
-    font-size:12px;
+    gap:11px;
 }
 
-.connection{
+.logo-mark{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:9px;
+    font-weight:1000;
+    background:linear-gradient(135deg,var(--purple),var(--cyan));
+    box-shadow:0 0 20px rgba(91,120,255,.35);
+}
+
+.logo-main{
+    font-size:15px;
+    font-weight:950;
+    letter-spacing:.4px;
+}
+
+.logo-sub{
+    color:#66779e;
+    font-size:9px;
+    margin-top:2px;
+    letter-spacing:1.3px;
+}
+
+.top-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.mode{
+    color:#8b9cc1;
+    font-size:10px;
+    letter-spacing:1px;
+}
+
+.sync{
     display:flex;
     align-items:center;
     gap:7px;
+    color:#91a2c8;
+    font-size:10px;
 }
 
-.dot{
-    width:8px;
-    height:8px;
+.sync-dot{
+    width:7px;
+    height:7px;
     border-radius:50%;
     background:var(--green);
     box-shadow:0 0 12px var(--green);
 }
 
-.dot.off{
+.sync-dot.off{
     background:var(--red);
     box-shadow:0 0 12px var(--red);
 }
 
-.period{
-    color:#b9c7eb;
-}
+/* HERO */
 
-/* KPI */
-
-.kpis{
+.hero{
     display:grid;
-    grid-template-columns:repeat(5,1fr);
+    grid-template-columns:1.35fr 1fr 1fr 1fr;
     gap:10px;
 }
 
-.kpi{
-    min-width:0;
-    border:1px solid rgba(100,130,220,.20);
-    background:linear-gradient(145deg,#0d1428,#090e1d);
-    border-radius:14px;
-    padding:13px 15px;
+.hero-card{
     position:relative;
     overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:
+        linear-gradient(145deg,rgba(14,22,43,.97),rgba(7,12,25,.97));
+    padding:13px 17px;
 }
 
-.kpi::after{
+.hero-card.primary{
+    border-color:#30499a;
+    background:
+        radial-gradient(circle at 90% 10%,rgba(87,90,255,.2),transparent 40%),
+        linear-gradient(145deg,#101a38,#090e1e);
+}
+
+.hero-card:after{
     content:"";
     position:absolute;
-    right:-30px;
-    top:-30px;
-    width:90px;
-    height:90px;
+    width:100px;
+    height:100px;
+    right:-50px;
+    bottom:-60px;
     border-radius:50%;
-    background:rgba(75,100,255,.10);
-    filter:blur(10px);
+    background:rgba(91,120,255,.1);
+    filter:blur(15px);
 }
 
-.kpi-label{
-    color:var(--muted);
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:1px;
+.hero-label{
+    color:#6d7fa6;
+    font-size:9px;
+    font-weight:900;
+    letter-spacing:1.5px;
 }
 
-.kpi-value{
+.hero-value{
     margin-top:7px;
-    font-size:27px;
-    font-weight:950;
+    font-size:30px;
+    line-height:1;
+    font-weight:1000;
     letter-spacing:-1px;
 }
 
-.kpi-value.pos{
-    color:var(--green);
+.hero-value.green{color:var(--green)}
+.hero-value.red{color:var(--red)}
+.hero-value.gradient{
+    color:#aebaff;
 }
 
-.kpi-value.neg{
-    color:var(--red);
+.hero-foot{
+    margin-top:6px;
+    color:#526486;
+    font-size:9px;
 }
 
-.kpi-small{
-    margin-top:3px;
-    color:#68799f;
-    font-size:10px;
+.progress{
+    position:absolute;
+    left:17px;
+    right:17px;
+    bottom:10px;
+    height:3px;
+    border-radius:3px;
+    background:#17223c;
+    overflow:hidden;
 }
 
-/* FLOW */
-
-.flow{
-    border:1px solid rgba(100,130,220,.20);
-    background:#090f20;
-    border-radius:14px;
-    padding:10px 14px;
-    display:grid;
-    grid-template-columns:150px 1fr 180px;
-    gap:15px;
-    align-items:center;
-}
-
-.flow-title{
-    font-size:11px;
-    font-weight:900;
-    letter-spacing:1px;
-}
-
-.flow-sub{
-    font-size:10px;
-    color:var(--muted);
-    margin-top:3px;
-}
-
-.flow-chart{
-    height:55px;
-    display:flex;
-    align-items:flex-end;
-    gap:4px;
-    min-width:0;
-}
-
-.bar{
-    flex:1;
-    min-width:4px;
-    max-width:30px;
-    height:var(--h);
-    background:linear-gradient(
-        180deg,
-        var(--cyan),
-        var(--purple)
-    );
-    border-radius:4px 4px 1px 1px;
-    opacity:.85;
-}
-
-.flow-side{
-    text-align:right;
-}
-
-.flow-number{
-    font-size:20px;
-    font-weight:900;
-}
-
-.flow-side span{
+.progress i{
     display:block;
-    font-size:10px;
-    color:var(--muted);
+    height:100%;
+    width:0;
+    background:linear-gradient(90deg,var(--purple),var(--cyan));
 }
 
-/* MAIN */
+/* CONTENT */
 
-.main{
+.content{
     min-height:0;
     display:grid;
-    grid-template-columns:minmax(0,1fr) 315px;
+    grid-template-columns:minmax(0,1fr) 330px;
     gap:10px;
 }
+
+/* CALENDAR */
 
 .calendar-panel{
     min-width:0;
     min-height:0;
-    border:1px solid rgba(100,130,220,.20);
-    background:linear-gradient(145deg,#0a1020,#080d19);
+    border:1px solid var(--line);
     border-radius:16px;
-    padding:13px;
+    background:
+        linear-gradient(145deg,#090f1f,#070c18);
+    padding:14px;
     display:grid;
-    grid-template-rows:45px 42px minmax(0,1fr);
+    grid-template-rows:47px 30px minmax(0,1fr);
 }
 
-.calendar-head{
+.calendar-top{
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
 }
 
-.month-title{
+.month{
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:9px;
 }
 
-.month-title strong{
-    font-size:20px;
+.month h1{
+    margin:0;
+    font-size:22px;
+    letter-spacing:-.7px;
 }
 
-.month-badge{
-    padding:4px 8px;
-    border-radius:7px;
-    background:rgba(82,107,255,.12);
-    border:1px solid rgba(82,107,255,.22);
-    color:#9cb0ff;
-    font-size:9px;
+.month-tag{
+    padding:4px 7px;
+    border-radius:6px;
+    border:1px solid #293a68;
+    background:#0e1830;
+    color:#879cff;
+    font-size:8px;
     font-weight:900;
+    letter-spacing:1px;
 }
 
-.month-buttons{
+.nav{
     display:flex;
-    gap:6px;
-}
-
-.icon-btn{
-    width:32px;
-    height:32px;
-    border:1px solid #293961;
-    border-radius:8px;
-    color:#b7c8ef;
-    background:#0c1428;
-}
-
-.icon-btn:hover{
-    border-color:#647cff;
-    color:white;
-    box-shadow:0 0 12px rgba(92,105,255,.20);
-}
-
-.month-stats{
-    display:flex;
-    align-items:center;
-    gap:7px;
-    overflow:hidden;
-}
-
-.month-stat{
-    white-space:nowrap;
-    padding:6px 9px;
-    border-radius:7px;
-    background:#0c1428;
-    border:1px solid #1c2a4b;
-    color:#8fa1c8;
-    font-size:10px;
-}
-
-.month-stat b{
-    color:white;
-    margin-left:4px;
-}
-
-.weekdays,
-.calendar{
-    display:grid;
-    grid-template-columns:repeat(7,minmax(0,1fr));
     gap:5px;
 }
 
-.weekdays{
-    align-items:center;
+.nav button{
+    width:31px;
+    height:31px;
+    border:1px solid var(--line2);
+    border-radius:7px;
+    background:#0b1429;
+    color:#9fb0d2;
 }
 
-.weekday{
-    text-align:center;
-    color:#7183aa;
-    font-size:10px;
-    font-weight:900;
+.nav button:hover{
+    border-color:#647dff;
+    color:#fff;
 }
+
+.month-info{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    overflow:hidden;
+}
+
+.info-chip{
+    padding:5px 8px;
+    white-space:nowrap;
+    border-radius:6px;
+    border:1px solid #182846;
+    background:#091224;
+    color:#62759d;
+    font-size:9px;
+}
+
+.info-chip b{
+    color:#b9c7e6;
+    margin-left:3px;
+}
+
+.week{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:5px;
+    margin-bottom:5px;
+}
+
+.week div{
+    text-align:center;
+    color:#536588;
+    font-size:8px;
+    font-weight:950;
+    letter-spacing:1px;
+    padding:4px;
+}
+
+/* DAYS */
 
 .calendar{
     min-height:0;
-    grid-template-rows:repeat(5,minmax(0,1fr));
-}
-
-.calendar.six{
-    grid-template-rows:repeat(6,minmax(0,1fr));
+    display:grid;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    grid-auto-rows:minmax(0,1fr);
+    gap:5px;
 }
 
 .day{
     position:relative;
     min-width:0;
     min-height:0;
+    border:1px solid #172542;
+    border-radius:9px;
+    background:#0a1327;
+    padding:8px;
     overflow:hidden;
-    border:1px solid #1b2948;
-    background:#0b1326;
-    border-radius:8px;
-    padding:7px;
-    transition:border-color .12s,background .12s;
+    transition:
+        background .12s,
+        border-color .12s,
+        transform .12s;
 }
 
 .day:hover{
-    border-color:#4965b5;
-    background:#101a32;
+    background:#0e1a33;
+    border-color:#354f83;
+    transform:translateY(-1px);
 }
 
 .day.empty{
-    background:rgba(5,9,20,.38);
-    border-color:rgba(20,31,54,.45);
+    background:rgba(5,9,19,.35);
+    border-color:#0d172a;
 }
 
 .day.selected{
-    border-color:#8a73ff;
+    border-color:#7967ff;
     background:
-        linear-gradient(
-            145deg,
-            rgba(119,86,255,.22),
-            rgba(35,69,150,.16)
-        );
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(119,93,255,.2),
+            transparent 48%
+        ),
+        #0d1730;
     box-shadow:
-        inset 0 0 18px rgba(100,80,255,.10),
-        0 0 12px rgba(95,80,255,.12);
+        inset 0 0 25px rgba(101,78,255,.07),
+        0 0 18px rgba(95,76,255,.1);
 }
 
 .day.today{
-    outline:1px solid rgba(67,230,255,.65);
-    outline-offset:-2px;
+    box-shadow:
+        inset 0 0 0 1px rgba(73,230,255,.45);
 }
 
 .day-number{
-    font-size:11px;
-    color:#8fa0c3;
+    color:#7385a9;
+    font-size:10px;
     font-weight:900;
+}
+
+.day.today .day-number{
+    color:var(--cyan);
 }
 
 .day-score{
     position:absolute;
-    left:7px;
-    bottom:7px;
-    font-size:18px;
-    font-weight:950;
-}
-
-.day-score.pos{
-    color:var(--green);
-}
-
-.day-score.neg{
-    color:var(--red);
-}
-
-.day-score.zero{
-    color:#526384;
-}
-
-.day-gauge{
-    position:absolute;
-    right:7px;
+    left:8px;
     bottom:8px;
-    width:35%;
-    height:4px;
-    background:#18233c;
-    border-radius:4px;
-    overflow:hidden;
+    font-size:19px;
+    line-height:1;
+    font-weight:1000;
 }
 
-.day-gauge i{
+.day-score.pos{color:var(--green)}
+.day-score.neg{color:var(--red)}
+.day-score.zero{color:#445574}
+
+.day-line{
+    position:absolute;
+    left:8px;
+    right:8px;
+    bottom:5px;
+    height:2px;
+    background:#17243d;
+}
+
+.day-line i{
     display:block;
     height:100%;
     width:var(--w);
     background:linear-gradient(90deg,var(--purple),var(--cyan));
-    border-radius:4px;
 }
 
 /* RIGHT */
 
-.side{
+.right{
     min-height:0;
     display:grid;
-    grid-template-rows:1.25fr .9fr .85fr;
+    grid-template-rows:1.4fr .8fr .8fr;
     gap:10px;
 }
 
-.side-panel{
+.panel{
     min-height:0;
     overflow:hidden;
-    border:1px solid rgba(100,130,220,.20);
-    background:linear-gradient(145deg,#0c1327,#080d1b);
+    border:1px solid var(--line);
     border-radius:15px;
-    padding:13px;
+    background:
+        linear-gradient(145deg,#0b1225,#080d1b);
+    padding:14px;
 }
 
-.side-title{
+.panel-head{
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    font-size:11px;
-    font-weight:950;
-    letter-spacing:.8px;
-    color:#b7c6e8;
+    justify-content:space-between;
 }
 
-.side-title span{
-    color:#617298;
+.panel-title{
+    color:#9eafd2;
     font-size:9px;
+    font-weight:950;
+    letter-spacing:1.5px;
+}
+
+.panel-tag{
+    color:#526589;
+    font-size:8px;
 }
 
 .selected-date{
-    color:#65779d;
+    margin-top:8px;
+    color:#56698f;
     font-size:10px;
+}
+
+.selected-score{
+    margin-top:12px;
+    font-size:48px;
+    line-height:.95;
+    font-weight:1000;
+    letter-spacing:-2px;
+}
+
+.selected-score.pos{color:var(--green)}
+.selected-score.neg{color:var(--red)}
+.selected-score.zero{color:#66789e}
+
+.quick{
+    margin-top:14px;
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:4px;
+}
+
+.quick button{
+    height:28px;
+    border:1px solid #203154;
+    border-radius:6px;
+    background:#0b162c;
+    color:#9caed0;
+    font-size:9px;
+    font-weight:900;
+}
+
+.quick button:hover{
+    color:white;
+    border-color:#6077d9;
+}
+
+.editor{
+    display:grid;
+    grid-template-columns:1fr 54px;
+    gap:5px;
     margin-top:6px;
 }
 
-.big-score{
-    font-size:44px;
-    line-height:1;
-    font-weight:950;
-    margin:12px 0;
-}
-
-.big-score.pos{
-    color:var(--green);
-}
-
-.big-score.neg{
-    color:var(--red);
-}
-
-.big-score.zero{
-    color:#607094;
-}
-
-.quick-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:5px;
-}
-
-.quick{
+.editor input{
+    min-width:0;
     height:30px;
-    border:1px solid #24345a;
-    border-radius:7px;
-    background:#0d1730;
-    color:#c5d1ec;
-    font-weight:800;
+    border:1px solid #213253;
+    border-radius:6px;
+    outline:none;
+    background:#070f20;
+    color:#fff;
+    padding:0 8px;
     font-size:11px;
 }
 
-.quick:hover{
-    border-color:#647cff;
-    color:white;
+.editor input:focus{
+    border-color:#647aff;
 }
 
-.quick.plus:hover{
-    border-color:var(--green);
+.editor button{
+    border:1px solid #596dff;
+    border-radius:6px;
+    background:#172050;
+    color:#fff;
+    font-size:9px;
+    font-weight:950;
 }
 
-.quick.minus:hover{
-    border-color:var(--red);
-}
-
-.exact{
-    display:grid;
-    grid-template-columns:1fr 62px;
-    gap:5px;
-    margin-top:7px;
-}
-
-.exact input{
-    width:100%;
-    height:31px;
-    border:1px solid #26365c;
-    border-radius:7px;
-    background:#080f20;
-    color:white;
-    padding:0 9px;
-    outline:none;
-}
-
-.exact input:focus{
-    border-color:#687aff;
-}
-
-.exact button{
-    border:1px solid #5b6bff;
-    border-radius:7px;
-    background:#192153;
-    color:white;
-    font-weight:900;
-}
-
-.action-row{
+.actions{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:5px;
-    margin-top:7px;
+    margin-top:6px;
 }
 
-.save-btn,
-.reset-btn{
-    height:30px;
-    border-radius:7px;
-    font-size:10px;
-    font-weight:900;
+.actions button{
+    height:29px;
+    border-radius:6px;
+    font-size:9px;
+    font-weight:950;
 }
 
-.save-btn{
-    border:1px solid #4e71ff;
-    background:linear-gradient(135deg,#3345a4,#6540ad);
-    color:white;
+.save{
+    border:1px solid #496bff;
+    background:linear-gradient(135deg,#283c91,#6239a0);
+    color:#fff;
 }
 
-.reset-btn{
-    border:1px solid #29375b;
-    background:#0d1529;
-    color:#8799bf;
+.reset{
+    border:1px solid #1e2e4c;
+    background:#0b1427;
+    color:#7183a6;
 }
 
-.recent-list{
-    margin-top:9px;
+/* MINI STATS */
+
+.mini-grid{
+    margin-top:11px;
     display:grid;
+    grid-template-columns:1fr 1fr;
     gap:5px;
 }
 
+.mini{
+    border:1px solid #152440;
+    border-radius:7px;
+    background:#091326;
+    padding:8px;
+}
+
+.mini span{
+    display:block;
+    color:#52658b;
+    font-size:8px;
+    letter-spacing:.7px;
+}
+
+.mini b{
+    display:block;
+    margin-top:4px;
+    font-size:15px;
+}
+
+.mini b.green{color:var(--green)}
+.mini b.red{color:var(--red)}
+
+/* RECENT */
+
 .recent{
+    margin-top:10px;
+    display:grid;
+    gap:4px;
+}
+
+.recent-row{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    padding:6px 7px;
-    border-radius:6px;
-    background:#0b1428;
-    border:1px solid #172644;
+    align-items:center;
+    border-bottom:1px solid #13203a;
+    padding:5px 2px;
 }
 
 .recent-date{
-    color:#7082a8;
-    font-size:9px;
+    color:#62749a;
+    font-size:8px;
 }
 
 .recent-value{
-    font-size:11px;
-    font-weight:900;
+    font-size:10px;
+    font-weight:950;
 }
 
-.recent-value.pos{
-    color:var(--green);
-}
+.recent-value.pos{color:var(--green)}
+.recent-value.neg{color:var(--red)}
 
-.recent-value.neg{
-    color:var(--red);
-}
+/* BOTTOM */
 
-.achievements{
-    margin-top:9px;
+.bottom{
     display:grid;
-    gap:6px;
+    grid-template-columns:1.6fr 1fr 1fr;
+    gap:10px;
 }
 
-.achievement{
-    display:grid;
-    grid-template-columns:26px 1fr;
-    gap:7px;
-    align-items:center;
+.bottom-panel{
+    min-width:0;
+    border:1px solid var(--line);
+    border-radius:13px;
+    background:#090f1f;
+    padding:10px 13px;
 }
 
-.achievement-icon{
-    width:26px;
-    height:26px;
-    border-radius:7px;
-    display:grid;
-    place-items:center;
-    background:#111d3a;
-    border:1px solid #263761;
-    font-size:12px;
-}
-
-.achievement-name{
-    font-size:9px;
-    font-weight:900;
-}
-
-.achievement-desc{
+.bottom-title{
+    color:#5e7198;
     font-size:8px;
-    color:#63769d;
-    margin-top:2px;
+    font-weight:950;
+    letter-spacing:1.2px;
+}
+
+.flow{
+    height:32px;
+    display:flex;
+    align-items:flex-end;
+    gap:3px;
+    margin-top:4px;
+}
+
+.flow i{
+    flex:1;
+    min-width:3px;
+    max-width:30px;
+    height:var(--h);
+    border-radius:3px 3px 1px 1px;
+    background:linear-gradient(
+        180deg,
+        var(--cyan),
+        var(--purple)
+    );
+}
+
+.bottom-stat{
+    margin-top:5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+}
+
+.bottom-big{
+    font-size:18px;
+    font-weight:1000;
+}
+
+.bottom-small{
+    color:#52658b;
+    font-size:8px;
 }
 
 /* STATUS */
 
-.save-status{
+.toast{
     position:fixed;
+    z-index:20;
     left:50%;
     bottom:14px;
-    transform:translateX(-50%) translateY(80px);
-    z-index:10;
-    padding:9px 15px;
-    border:1px solid #2d4171;
-    border-radius:9px;
-    background:#0b1428;
-    box-shadow:0 10px 35px rgba(0,0,0,.4);
-    color:#c9d6f3;
-    font-size:11px;
+    transform:translate(-50%,80px);
     opacity:0;
+    padding:8px 13px;
+    border-radius:8px;
+    border:1px solid #2c4068;
+    background:#0b1428;
+    color:#b9c9e9;
+    font-size:9px;
     transition:.2s;
 }
 
-.save-status.show{
-    transform:translateX(-50%) translateY(0);
+.toast.show{
+    transform:translate(-50%,0);
     opacity:1;
 }
 
-.save-status.ok{
-    border-color:#3eaa84;
-    color:#7ff0c1;
+.toast.ok{
+    color:#79eabd;
+    border-color:#327e68;
 }
 
-.save-status.error{
-    border-color:#aa4661;
-    color:#ff8ca7;
+.toast.error{
+    color:#ff91a9;
+    border-color:#824158;
 }
 
 /* LARGE */
 
-.extra{
-    display:none;
-}
-
-/*
-    화면이 커져도 기본 UI 크기는 여기서 멈춤.
-    대신 정보량만 늘림.
-*/
-
-@media(min-width:1800px){
+@media(min-width:1900px){
     .app{
-        width:1680px;
+        width:1720px;
     }
 
-    .main{
-        grid-template-columns:minmax(0,1fr) 345px;
+    .content{
+        grid-template-columns:minmax(0,1fr) 350px;
     }
 
-    .extra{
-        display:block;
+    /*
+       UI 크기는 유지하고
+       오른쪽 정보량만 증가
+    */
+    .right:after{
+        content:"";
         position:absolute;
-        left:calc(50% + 850px);
-        top:14px;
-        width:260px;
-    }
-
-    .extra-box{
-        border:1px solid rgba(100,130,220,.20);
-        background:#090f20;
-        border-radius:14px;
-        padding:13px;
-        margin-bottom:10px;
-    }
-
-    .extra-title{
-        font-size:10px;
-        font-weight:950;
-        letter-spacing:1px;
-        color:#9eadd0;
-        margin-bottom:10px;
-    }
-
-    .extra-row{
-        display:flex;
-        justify-content:space-between;
-        font-size:10px;
-        padding:6px 0;
-        border-bottom:1px solid #172442;
-    }
-
-    .extra-row:last-child{
-        border-bottom:0;
-    }
-
-    .extra-row span{
-        color:#68799f;
-    }
-
-    .extra-row b{
-        color:#dbe5ff;
     }
 }
 
-@media(min-width:2200px){
-    .extra{
-        width:280px;
+/* MEDIUM */
+
+@media(max-width:1100px){
+    .app{
+        grid-template-rows:54px auto minmax(0,1fr) auto;
+    }
+
+    .hero{
+        grid-template-columns:repeat(4,1fr);
+    }
+
+    .hero-card.primary{
+        grid-column:span 1;
+    }
+
+    .content{
+        grid-template-columns:minmax(0,1fr) 285px;
     }
 }
 
-/* SMALL */
+/* MOBILE */
 
-@media(max-width:1000px){
+@media(max-width:800px){
     html,body{
         overflow:auto;
     }
@@ -807,59 +775,61 @@ button{
         height:auto;
         min-height:100vh;
         grid-template-rows:auto auto auto auto;
-    }
-
-    .main{
-        grid-template-columns:1fr;
-    }
-
-    .side{
-        grid-template-rows:auto auto auto;
-    }
-
-    .calendar-panel{
-        min-height:600px;
-    }
-}
-
-@media(max-width:650px){
-    .app{
         padding:8px;
-        gap:7px;
     }
 
-    .topbar{
-        padding:0 11px;
+    .top{
+        min-height:54px;
     }
 
-    .brand-sub,
-    .period{
+    .mode{
         display:none;
     }
 
-    .kpis{
+    .hero{
         grid-template-columns:repeat(2,1fr);
     }
 
-    .kpi:last-child{
-        grid-column:span 2;
+    .hero-card{
+        min-height:78px;
     }
 
-    .flow{
+    .content{
         grid-template-columns:1fr;
-        height:auto;
     }
 
-    .flow-side{
-        text-align:left;
+    .calendar-panel{
+        min-height:620px;
     }
 
-    .flow-chart{
+    .right{
+        grid-template-rows:auto auto auto;
+    }
+
+    .bottom{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:500px){
+    .logo-sub{
         display:none;
+    }
+
+    .top-right{
+        gap:7px;
+    }
+
+    .hero-value{
+        font-size:23px;
     }
 
     .calendar-panel{
         padding:8px;
+    }
+
+    .month h1{
+        font-size:18px;
     }
 
     .day{
@@ -867,13 +837,18 @@ button{
     }
 
     .day-score{
-        font-size:13px;
-        bottom:5px;
+        font-size:14px;
         left:5px;
+        bottom:7px;
     }
 
-    .day-gauge{
-        display:none;
+    .day-line{
+        left:5px;
+        right:5px;
+    }
+
+    .quick{
+        grid-template-columns:repeat(3,1fr);
     }
 }
 </style>
@@ -883,357 +858,387 @@ button{
 
 <div class="app">
 
-    <!-- TOP -->
+<header class="top">
 
-    <header class="topbar">
+    <div class="logo">
 
-        <div class="brand">
-            <div class="logo">D</div>
-
-            <div>
-                <div class="brand-title">DuoMarst Daily Score</div>
-                <div class="brand-sub">
-                    Cross-device point tracker
-                </div>
-            </div>
-        </div>
-
-        <div class="top-status">
-
-            <div class="period">
-                2026.10.01 — 2027.03.31
-            </div>
-
-            <div class="connection">
-                <i class="dot" id="connectionDot"></i>
-                <span id="connectionText">Connecting</span>
-            </div>
-
-        </div>
-
-    </header>
-
-
-    <!-- KPI -->
-
-    <section class="kpis">
-
-        <div class="kpi">
-            <div class="kpi-label">TODAY</div>
-            <div class="kpi-value" id="todayKpi">0</div>
-            <div class="kpi-small" id="todayText">2026-10-05</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-label">TOTAL SCORE</div>
-            <div class="kpi-value" id="totalKpi">0</div>
-            <div class="kpi-small">all days</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-label">POSITIVE</div>
-            <div class="kpi-value pos" id="positiveKpi">0</div>
-            <div class="kpi-small">earned points</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-label">NEGATIVE</div>
-            <div class="kpi-value neg" id="negativeKpi">0</div>
-            <div class="kpi-small">lost points</div>
-        </div>
-
-        <div class="kpi">
-            <div class="kpi-label">GOAL 150</div>
-            <div class="kpi-value" id="goalKpi">0%</div>
-            <div class="kpi-small" id="goalText">150 points</div>
-        </div>
-
-    </section>
-
-
-    <!-- FLOW -->
-
-    <section class="flow">
+        <div class="logo-mark">D</div>
 
         <div>
-            <div class="flow-title">POINT FLOW</div>
-            <div class="flow-sub">recent daily activity</div>
+            <div class="logo-main">
+                DUOMARST
+            </div>
+            <div class="logo-sub">
+                DAILY SCORE SYSTEM
+            </div>
         </div>
 
-        <div class="flow-chart" id="flowChart"></div>
+    </div>
 
-        <div class="flow-side">
-            <div class="flow-number" id="averageKpi">0.0</div>
-            <span>daily average</span>
+    <div class="top-right">
+
+        <div class="mode">
+            CROSS-DEVICE • 2026—2027
+        </div>
+
+        <div class="sync">
+            <i class="sync-dot" id="syncDot"></i>
+            <span id="syncText">CONNECTING</span>
+        </div>
+
+    </div>
+
+</header>
+
+
+<section class="hero">
+
+    <div class="hero-card primary">
+
+        <div class="hero-label">
+            TOTAL SCORE
+        </div>
+
+        <div class="hero-value gradient" id="total">
+            0
+        </div>
+
+        <div class="hero-foot" id="remaining">
+            150 POINTS REMAINING
+        </div>
+
+        <div class="progress">
+            <i id="progressBar"></i>
+        </div>
+
+    </div>
+
+
+    <div class="hero-card">
+
+        <div class="hero-label">
+            TODAY
+        </div>
+
+        <div class="hero-value green" id="today">
+            +0
+        </div>
+
+        <div class="hero-foot">
+            2026.10.05
+        </div>
+
+    </div>
+
+
+    <div class="hero-card">
+
+        <div class="hero-label">
+            POSITIVE
+        </div>
+
+        <div class="hero-value green" id="positive">
+            +0
+        </div>
+
+        <div class="hero-foot">
+            TOTAL EARNED
+        </div>
+
+    </div>
+
+
+    <div class="hero-card">
+
+        <div class="hero-label">
+            NEGATIVE
+        </div>
+
+        <div class="hero-value red" id="negative">
+            0
+        </div>
+
+        <div class="hero-foot">
+            TOTAL LOST
+        </div>
+
+    </div>
+
+</section>
+
+
+<main class="content">
+
+<section class="calendar-panel">
+
+    <div class="calendar-top">
+
+        <div class="month">
+
+            <h1 id="monthTitle">
+                October 2026
+            </h1>
+
+            <span class="month-tag" id="monthTag">
+                2026-10
+            </span>
+
+        </div>
+
+        <div class="nav">
+            <button id="prev">‹</button>
+            <button id="todayMonth">●</button>
+            <button id="next">›</button>
+        </div>
+
+    </div>
+
+
+    <div class="month-info">
+
+        <div class="info-chip">
+            MONTH <b id="monthTotal">0</b>
+        </div>
+
+        <div class="info-chip">
+            BEST <b id="monthBest">0</b>
+        </div>
+
+        <div class="info-chip">
+            AVG <b id="monthAvg">0.0</b>
+        </div>
+
+        <div class="info-chip">
+            ACTIVE <b id="monthActive">0</b>
+        </div>
+
+    </div>
+
+
+    <div>
+
+        <div class="week">
+            <div>SUN</div>
+            <div>MON</div>
+            <div>TUE</div>
+            <div>WED</div>
+            <div>THU</div>
+            <div>FRI</div>
+            <div>SAT</div>
+        </div>
+
+        <div class="calendar" id="calendar"></div>
+
+    </div>
+
+</section>
+
+
+<aside class="right">
+
+<section class="panel">
+
+    <div class="panel-head">
+
+        <div class="panel-title">
+            SELECTED DAY
+        </div>
+
+        <div class="panel-tag" id="selectedTag">
+            TODAY
+        </div>
+
+    </div>
+
+    <div class="selected-date" id="selectedDate">
+        2026-10-05
+    </div>
+
+    <div class="selected-score zero" id="selectedScore">
+        0
+    </div>
+
+
+    <div class="quick">
+
+        <button data-add="-10">−10</button>
+        <button data-add="-5">−5</button>
+        <button data-add="-1">−1</button>
+        <button data-add="1">+1</button>
+        <button data-add="5">+5</button>
+        <button data-add="10">+10</button>
+
+    </div>
+
+
+    <div class="editor">
+
+        <input
+            id="valueInput"
+            type="number"
+            value="0"
+        >
+
+        <button id="setValue">
+            SET
+        </button>
+
+    </div>
+
+
+    <div class="actions">
+
+        <button class="save" id="save">
+            SAVE
+        </button>
+
+        <button class="reset" id="reset">
+            RESET
+        </button>
+
+    </div>
+
+
+    <div class="mini-grid">
+
+        <div class="mini">
+            <span>ACTIVE DAYS</span>
+            <b id="activeDays">0</b>
+        </div>
+
+        <div class="mini">
+            <span>BEST DAY</span>
+            <b class="green" id="bestDay">0</b>
+        </div>
+
+        <div class="mini">
+            <span>AVERAGE</span>
+            <b id="average">0.0</b>
+        </div>
+
+        <div class="mini">
+            <span>RANK</span>
+            <b id="rank">BRONZE</b>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="panel">
+
+    <div class="panel-head">
+        <div class="panel-title">
+            RECENT ACTIVITY
+        </div>
+        <div class="panel-tag">
+            7 DAYS
+        </div>
+    </div>
+
+    <div class="recent" id="recent"></div>
+
+</section>
+
+
+<section class="panel">
+
+    <div class="panel-head">
+        <div class="panel-title">
+            SYSTEM
+        </div>
+        <div class="panel-tag">
+            DUOMARST
+        </div>
+    </div>
+
+    <div class="mini-grid">
+
+        <div class="mini">
+            <span>PERIOD</span>
+            <b>182D</b>
+        </div>
+
+        <div class="mini">
+            <span>GOAL</span>
+            <b>150</b>
+        </div>
+
+        <div class="mini">
+            <span>STORAGE</span>
+            <b>KEYVAL</b>
+        </div>
+
+        <div class="mini">
+            <span>SYNC</span>
+            <b id="systemSync">ON</b>
+        </div>
+
+    </div>
+
+</section>
+
+</aside>
+
+</main>
+
+
+<footer class="bottom">
+
+    <section class="bottom-panel">
+
+        <div class="bottom-title">
+            POINT FLOW • LAST 30 DAYS
+        </div>
+
+        <div class="flow" id="flow"></div>
+
+    </section>
+
+
+    <section class="bottom-panel">
+
+        <div class="bottom-title">
+            DAILY AVERAGE
+        </div>
+
+        <div class="bottom-stat">
+            <div class="bottom-big" id="bottomAverage">
+                0.0
+            </div>
+            <div class="bottom-small">
+                ACTIVE DAYS
+            </div>
         </div>
 
     </section>
 
 
-    <!-- MAIN -->
+    <section class="bottom-panel">
 
-    <main class="main">
+        <div class="bottom-title">
+            GOAL PROGRESS
+        </div>
 
-        <!-- CALENDAR -->
-
-        <section class="calendar-panel">
-
-            <div class="calendar-head">
-
-                <div class="month-title">
-                    <strong id="monthTitle">October 2026</strong>
-                    <span class="month-badge" id="monthBadge">
-                        2026-10
-                    </span>
-                </div>
-
-                <div class="month-buttons">
-                    <button class="icon-btn" id="prevMonth">‹</button>
-                    <button class="icon-btn" id="todayMonth">●</button>
-                    <button class="icon-btn" id="nextMonth">›</button>
-                </div>
-
+        <div class="bottom-stat">
+            <div class="bottom-big" id="bottomGoal">
+                0%
             </div>
-
-            <div class="month-stats">
-
-                <div class="month-stat">
-                    + <b id="monthPositive">0</b>
-                </div>
-
-                <div class="month-stat">
-                    BEST <b id="monthBest">0</b>
-                </div>
-
-                <div class="month-stat">
-                    AVG <b id="monthAverage">0.0</b>
-                </div>
-
-                <div class="month-stat">
-                    ACTIVE <b id="monthActive">0</b>
-                </div>
-
+            <div class="bottom-small" id="bottomRemain">
+                150 LEFT
             </div>
+        </div>
 
-            <div>
+    </section>
 
-                <div class="weekdays">
-                    <div class="weekday">SUN</div>
-                    <div class="weekday">MON</div>
-                    <div class="weekday">TUE</div>
-                    <div class="weekday">WED</div>
-                    <div class="weekday">THU</div>
-                    <div class="weekday">FRI</div>
-                    <div class="weekday">SAT</div>
-                </div>
-
-                <div class="calendar" id="calendar"></div>
-
-            </div>
-
-        </section>
-
-
-        <!-- SIDE -->
-
-        <aside class="side">
-
-            <!-- SELECTED -->
-
-            <section class="side-panel">
-
-                <div class="side-title">
-                    SELECTED DAY
-                    <span id="selectedLabel">TODAY</span>
-                </div>
-
-                <div class="selected-date" id="selectedDate">
-                    2026-10-05
-                </div>
-
-                <div class="big-score zero" id="bigScore">
-                    0
-                </div>
-
-                <div class="quick-grid">
-
-                    <button class="quick minus" data-add="-10">−10</button>
-                    <button class="quick minus" data-add="-5">−5</button>
-                    <button class="quick minus" data-add="-1">−1</button>
-
-                    <button class="quick plus" data-add="1">+1</button>
-                    <button class="quick plus" data-add="5">+5</button>
-                    <button class="quick plus" data-add="10">+10</button>
-
-                </div>
-
-                <div class="exact">
-
-                    <input
-                        type="number"
-                        id="exactInput"
-                        value="0"
-                    >
-
-                    <button id="exactApply">
-                        SET
-                    </button>
-
-                </div>
-
-                <div class="action-row">
-
-                    <button class="save-btn" id="saveBtn">
-                        SAVE
-                    </button>
-
-                    <button class="reset-btn" id="resetBtn">
-                        RESET
-                    </button>
-
-                </div>
-
-            </section>
-
-
-            <!-- RECENT -->
-
-            <section class="side-panel">
-
-                <div class="side-title">
-                    RECENT 7 DAYS
-                    <span>ACTIVITY</span>
-                </div>
-
-                <div class="recent-list" id="recentList"></div>
-
-            </section>
-
-
-            <!-- ACHIEVEMENTS -->
-
-            <section class="side-panel">
-
-                <div class="side-title">
-                    ACHIEVEMENTS
-                    <span id="rankText">BRONZE</span>
-                </div>
-
-                <div class="achievements">
-
-                    <div class="achievement">
-                        <div class="achievement-icon">⚡</div>
-                        <div>
-                            <div class="achievement-name">
-                                FIRST STEP
-                            </div>
-                            <div class="achievement-desc">
-                                earn your first positive point
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="achievement">
-                        <div class="achievement-icon">🔥</div>
-                        <div>
-                            <div class="achievement-name">
-                                ACTIVE
-                            </div>
-                            <div class="achievement-desc" id="activeAchievement">
-                                0 active days
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="achievement">
-                        <div class="achievement-icon">🏆</div>
-                        <div>
-                            <div class="achievement-name">
-                                GOAL HUNTER
-                            </div>
-                            <div class="achievement-desc">
-                                reach 150 total points
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-            </section>
-
-        </aside>
-
-    </main>
+</footer>
 
 </div>
 
 
-<!-- LARGE SCREEN EXTRA -->
-
-<div class="extra">
-
-    <div class="extra-box">
-
-        <div class="extra-title">
-            SYSTEM OVERVIEW
-        </div>
-
-        <div class="extra-row">
-            <span>Storage</span>
-            <b>KeyVal</b>
-        </div>
-
-        <div class="extra-row">
-            <span>Mode</span>
-            <b>Cross-device</b>
-        </div>
-
-        <div class="extra-row">
-            <span>Period</span>
-            <b>182 days</b>
-        </div>
-
-        <div class="extra-row">
-            <span>Goal</span>
-            <b>150 pts</b>
-        </div>
-
-    </div>
-
-
-    <div class="extra-box">
-
-        <div class="extra-title">
-            PERFORMANCE
-        </div>
-
-        <div class="extra-row">
-            <span>Active days</span>
-            <b id="extraActive">0</b>
-        </div>
-
-        <div class="extra-row">
-            <span>Best day</span>
-            <b id="extraBest">0</b>
-        </div>
-
-        <div class="extra-row">
-            <span>Average</span>
-            <b id="extraAverage">0.0</b>
-        </div>
-
-        <div class="extra-row">
-            <span>Remaining</span>
-            <b id="extraRemaining">150</b>
-        </div>
-
-    </div>
-
-</div>
-
-
-<div class="save-status" id="saveStatus">
-    Ready
+<div class="toast" id="toast">
+    READY
 </div>
 
 
@@ -1245,45 +1250,45 @@ button{
 ========================================================= */
 
 const BASE_KEY =
-    "6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
+"6b61bbfa-2a71-4b89-948f-b0d0c41a18f7";
 
 const API =
-    "https://api.keyval.org";
+"https://api.keyval.org";
 
 const START =
-    "2026-10-01";
+"2026-10-01";
 
 const END =
-    "2027-03-31";
+"2027-03-31";
 
 const TODAY =
-    "2026-10-05";
+"2026-10-05";
 
 const GOAL =
-    150;
+150;
 
-const MONTHS = [
-    "2026-10",
-    "2026-11",
-    "2026-12",
-    "2027-01",
-    "2027-02",
-    "2027-03"
+const MONTHS=[
+"2026-10",
+"2026-11",
+"2026-12",
+"2027-01",
+"2027-02",
+"2027-03"
 ];
 
-const MONTH_NAMES = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
+const MONTH_NAMES=[
+"January",
+"February",
+"March",
+"April",
+"May",
+"June",
+"July",
+"August",
+"September",
+"October",
+"November",
+"December"
 ];
 
 
@@ -1291,628 +1296,70 @@ const MONTH_NAMES = [
    STATE
 ========================================================= */
 
-const data = {};
+const data={};
 
-let selectedDate = TODAY;
-let currentMonth = "2026-10";
+let selectedDate=TODAY;
+let currentMonth="2026-10";
 
-let saveRunning = false;
-let saveQueued = false;
-
-
-/* =========================================================
-   ELEMENTS
-========================================================= */
-
-const $ = id =>
-    document.getElementById(id);
+let saving=false;
+let queued=false;
 
 
 /* =========================================================
-   DATE HELPERS
+   HELPERS
 ========================================================= */
 
-function dateToParts(date){
-    const [y,m,d] =
-        date.split("-").map(Number);
-
-    return {
-        y,
-        m,
-        d
-    };
-}
-
+const $=id=>document.getElementById(id);
 
 function makeDate(y,m,d){
-
-    const mm =
-        String(m).padStart(2,"0");
-
-    const dd =
-        String(d).padStart(2,"0");
-
-    return `${y}-${mm}-${dd}`;
+    return `${y}-${String(m).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
 }
 
+function daysInMonth(y,m){
+    return new Date(y,m,0).getDate();
+}
 
 function monthKey(date){
     return date.slice(0,7);
 }
 
-
-function isValidDate(date){
-
-    return (
-        date >= START &&
-        date <= END
-    );
+function formatScore(v){
+    v=Number(v)||0;
+    return v>0?`+${v}`:String(v);
 }
 
-
-function getDaysInMonth(year,month){
-
-    return new Date(
-        year,
-        month,
-        0
-    ).getDate();
+function storageKey(month){
+    return `${BASE_KEY}-${month}`;
 }
 
 
 /* =========================================================
-   DATA INITIALIZATION
+   INIT DATA
 ========================================================= */
 
-function initializeData(){
+function initialize(){
 
-    const start =
+    const start=
         new Date(2026,9,1);
 
-    const end =
+    const end=
         new Date(2027,2,31);
 
     for(
-        let d = new Date(start);
-        d <= end;
+        let d=new Date(start);
+        d<=end;
         d.setDate(d.getDate()+1)
     ){
 
-        const key =
+        const key=
             makeDate(
                 d.getFullYear(),
                 d.getMonth()+1,
                 d.getDate()
             );
 
-        data[key] = 0;
+        data[key]=0;
     }
-}
-
-
-/* =========================================================
-   KEYVAL
-========================================================= */
-
-function storageKey(month){
-
-    return `${BASE_KEY}-${month}`;
-}
-
-
-function encodeValue(value){
-
-    return encodeURIComponent(value);
-}
-
-
-/*
-    월별 CSV
-
-    예:
-    0,1,0,-2,5,0...
-*/
-
-
-function buildMonthCSV(month){
-
-    const [year,mon] =
-        month.split("-").map(Number);
-
-    const days =
-        getDaysInMonth(year,mon);
-
-    const values = [];
-
-    for(let d=1; d<=days; d++){
-
-        const date =
-            makeDate(year,mon,d);
-
-        values.push(
-            Number(data[date] || 0)
-        );
-    }
-
-    return values.join(",");
-}
-
-
-function parseMonthCSV(raw,month){
-
-    if(
-        raw === null ||
-        raw === undefined
-    ){
-        return null;
-    }
-
-    let value = raw;
-
-    /*
-       API가 JSON 형태로 반환하는 경우 처리
-    */
-
-    if(typeof value === "string"){
-
-        const trimmed =
-            value.trim();
-
-        if(!trimmed){
-            return null;
-        }
-
-        try{
-            const parsed =
-                JSON.parse(trimmed);
-
-            if(parsed !== trimmed){
-                value = parsed;
-            }
-        }
-        catch{
-            value = trimmed;
-        }
-    }
-
-    /*
-       {value:"..."} 형태
-    */
-
-    if(
-        value &&
-        typeof value === "object" &&
-        !Array.isArray(value)
-    ){
-
-        if(
-            Object.prototype.hasOwnProperty.call(
-                value,
-                "value"
-            )
-        ){
-            value = value.value;
-        }
-        else if(
-            Object.prototype.hasOwnProperty.call(
-                value,
-                "data"
-            )
-        ){
-            value = value.data;
-        }
-        else if(
-            Object.prototype.hasOwnProperty.call(
-                value,
-                "result"
-            )
-        ){
-            value = value.result;
-        }
-    }
-
-    /*
-       배열
-    */
-
-    if(Array.isArray(value)){
-
-        return value.map(v =>
-            Number(v) || 0
-        );
-    }
-
-    /*
-       문자열 CSV
-    */
-
-    if(typeof value === "string"){
-
-        /*
-           다시 JSON 문자열일 가능성
-        */
-
-        try{
-
-            const parsed =
-                JSON.parse(value);
-
-            if(Array.isArray(parsed)){
-
-                return parsed.map(v =>
-                    Number(v) || 0
-                );
-            }
-
-            if(
-                typeof parsed === "object" &&
-                parsed
-            ){
-
-                if(
-                    typeof parsed.value === "string"
-                ){
-                    value = parsed.value;
-                }
-            }
-
-        }
-        catch{}
-
-        const parts =
-            value.split(",");
-
-        if(parts.length > 1){
-
-            return parts.map(v => {
-
-                const n =
-                    Number(v.trim());
-
-                return Number.isFinite(n)
-                    ? Math.trunc(n)
-                    : 0;
-            });
-        }
-
-        /*
-           숫자 하나만 저장된 경우
-        */
-
-        const single =
-            Number(value);
-
-        if(Number.isFinite(single)){
-            return [Math.trunc(single)];
-        }
-    }
-
-    return null;
-}
-
-
-/* =========================================================
-   NETWORK
-========================================================= */
-
-async function getMonth(month){
-
-    const key =
-        storageKey(month);
-
-    const url =
-        `${API}/get/${encodeURIComponent(key)}?t=${Date.now()}`;
-
-    try{
-
-        const response =
-            await fetch(url,{
-                method:"GET",
-                cache:"no-store"
-            });
-
-        const text =
-            await response.text();
-
-        if(!response.ok){
-
-            throw new Error(
-                `GET ${response.status}`
-            );
-        }
-
-        return parseMonthCSV(
-            text,
-            month
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "KeyVal GET failed:",
-            month,
-            error
-        );
-
-        return null;
-    }
-}
-
-
-async function setMonth(month){
-
-    const key =
-        storageKey(month);
-
-    const csv =
-        buildMonthCSV(month);
-
-    const url =
-        `${API}/set/` +
-        `${encodeURIComponent(key)}/` +
-        `${encodeValue(csv)}` +
-        `?t=${Date.now()}`;
-
-    console.log(
-        "[SAVE]",
-        month,
-        csv,
-        url
-    );
-
-    const response =
-        await fetch(url,{
-            method:"GET",
-            cache:"no-store"
-        });
-
-    const text =
-        await response.text();
-
-    console.log(
-        "[SAVE RESPONSE]",
-        response.status,
-        text
-    );
-
-    if(!response.ok){
-
-        throw new Error(
-            `HTTP ${response.status}: ${text}`
-        );
-    }
-
-    return true;
-}
-
-
-/* =========================================================
-   LOAD
-========================================================= */
-
-async function loadAll(){
-
-    setConnection(
-        "Connecting",
-        true
-    );
-
-    let successCount = 0;
-
-    const results =
-        await Promise.all(
-            MONTHS.map(async month => {
-
-                const values =
-                    await getMonth(month);
-
-                return {
-                    month,
-                    values
-                };
-
-            })
-        );
-
-    for(const result of results){
-
-        if(!result.values){
-            continue;
-        }
-
-        const [year,mon] =
-            result.month
-                .split("-")
-                .map(Number);
-
-        const days =
-            getDaysInMonth(
-                year,
-                mon
-            );
-
-        for(
-            let d=1;
-            d<=days;
-            d++
-        ){
-
-            const date =
-                makeDate(year,mon,d);
-
-            const value =
-                result.values[d-1];
-
-            /*
-               서버에 실제 데이터가 있을 때만 반영.
-               잘못된 응답으로 기존 데이터를 0으로 덮지 않음.
-            */
-
-            if(
-                value !== undefined &&
-                Number.isFinite(Number(value))
-            ){
-
-                data[date] =
-                    Math.trunc(Number(value));
-            }
-        }
-
-        successCount++;
-    }
-
-    setConnection(
-        successCount > 0
-            ? "Synced"
-            : "Offline",
-        successCount > 0
-    );
-
-    renderAll();
-
-    showStatus(
-        successCount > 0
-            ? "데이터 동기화 완료"
-            : "서버 데이터를 불러오지 못함",
-        successCount > 0
-    );
-}
-
-
-/* =========================================================
-   SAVE
-========================================================= */
-
-async function saveCurrent(){
-
-    /*
-       저장 중에 또 클릭하면
-       마지막 요청을 큐에 넣는다.
-    */
-
-    if(saveRunning){
-
-        saveQueued = true;
-
-        showStatus(
-            "저장 대기 중...",
-            true
-        );
-
-        return;
-    }
-
-    saveRunning = true;
-
-    try{
-
-        showStatus(
-            "저장 중...",
-            true
-        );
-
-        await setMonth(
-            monthKey(selectedDate)
-        );
-
-        setConnection(
-            "Synced",
-            true
-        );
-
-        showStatus(
-            "저장 완료 ✓",
-            true
-        );
-
-    }
-    catch(error){
-
-        console.error(
-            "SAVE ERROR:",
-            error
-        );
-
-        setConnection(
-            "Save Error",
-            false
-        );
-
-        showStatus(
-            "저장 실패 — 콘솔 확인",
-            false
-        );
-
-    }
-    finally{
-
-        saveRunning = false;
-
-        if(saveQueued){
-
-            saveQueued = false;
-
-            /*
-               마지막 변경사항을 다시 저장
-            */
-
-            setTimeout(
-                saveCurrent,
-                30
-            );
-        }
-    }
-}
-
-
-/* =========================================================
-   CONNECTION UI
-========================================================= */
-
-function setConnection(text,online){
-
-    $("connectionText").textContent =
-        text;
-
-    $("connectionDot").classList.toggle(
-        "off",
-        !online
-    );
-}
-
-
-/* =========================================================
-   STATUS
-========================================================= */
-
-let statusTimer = null;
-
-function showStatus(message,ok=true){
-
-    const box =
-        $("saveStatus");
-
-    box.textContent =
-        message;
-
-    box.classList.remove(
-        "ok",
-        "error",
-        "show"
-    );
-
-    box.classList.add(
-        ok ? "ok" : "error",
-        "show"
-    );
-
-    clearTimeout(statusTimer);
-
-    statusTimer =
-        setTimeout(()=>{
-            box.classList.remove("show");
-        },1800);
 }
 
 
@@ -1920,232 +1367,470 @@ function showStatus(message,ok=true){
    STATS
 ========================================================= */
 
-function getAllDates(){
-
-    return Object.keys(data)
-        .sort();
+function dates(){
+    return Object.keys(data).sort();
 }
 
-
-function getTotal(){
-
-    return getAllDates()
-        .reduce(
-            (sum,date)=>
-                sum + Number(data[date] || 0),
-            0
-        );
+function total(){
+    return dates().reduce(
+        (a,d)=>a+(Number(data[d])||0),
+        0
+    );
 }
 
-
-function getPositive(){
-
-    return getAllDates()
-        .reduce(
-            (sum,date)=>{
-                const v =
-                    Number(data[date] || 0);
-
-                return sum +
-                    (v > 0 ? v : 0);
-            },
-            0
-        );
+function positive(){
+    return dates().reduce(
+        (a,d)=>{
+            const v=Number(data[d])||0;
+            return a+(v>0?v:0);
+        },0
+    );
 }
 
-
-function getNegative(){
-
-    return getAllDates()
-        .reduce(
-            (sum,date)=>{
-                const v =
-                    Number(data[date] || 0);
-
-                return sum +
-                    (v < 0 ? v : 0);
-            },
-            0
-        );
+function negative(){
+    return dates().reduce(
+        (a,d)=>{
+            const v=Number(data[d])||0;
+            return a+(v<0?v:0);
+        },0
+    );
 }
 
-
-function getActive(){
-
-    return getAllDates()
-        .filter(date =>
-            Number(data[date] || 0) !== 0
-        ).length;
+function active(){
+    return dates().filter(
+        d=>(Number(data[d])||0)!==0
+    ).length;
 }
 
-
-function getBest(){
-
+function best(){
     return Math.max(
         0,
-        ...getAllDates().map(
-            date =>
-                Number(data[date] || 0)
+        ...dates().map(
+            d=>Number(data[d])||0
         )
     );
 }
 
-
-function getAverage(){
-
-    const dates =
-        getAllDates()
-            .filter(date =>
-                Number(data[date] || 0) !== 0
-            );
-
-    if(!dates.length){
-        return 0;
-    }
-
-    return dates.reduce(
-        (sum,date)=>
-            sum + Number(data[date] || 0),
-        0
-    ) / dates.length;
+function average(){
+    const a=active();
+    return a?total()/a:0;
 }
 
 
 /* =========================================================
-   RENDER ALL
+   KEYVAL LOAD
 ========================================================= */
 
-function renderAll(){
+function parseStored(raw){
 
-    renderKPIs();
-    renderFlow();
+    if(raw===null||raw===undefined)
+        return null;
+
+    let value=raw;
+
+    if(typeof value==="string"){
+
+        const trimmed=value.trim();
+
+        if(!trimmed)
+            return null;
+
+        try{
+            value=JSON.parse(trimmed);
+        }catch{
+            value=trimmed;
+        }
+    }
+
+    if(
+        value &&
+        typeof value==="object" &&
+        !Array.isArray(value)
+    ){
+
+        if("value" in value)
+            value=value.value;
+        else if("data" in value)
+            value=value.data;
+        else if("result" in value)
+            value=value.result;
+    }
+
+    if(Array.isArray(value))
+        return value.map(v=>Number(v)||0);
+
+    if(typeof value==="string"){
+
+        try{
+
+            const p=JSON.parse(value);
+
+            if(Array.isArray(p))
+                return p.map(v=>Number(v)||0);
+
+        }catch{}
+
+        const parts=value.split(",");
+
+        if(parts.length>1){
+
+            return parts.map(v=>{
+                const n=Number(v.trim());
+                return Number.isFinite(n)
+                    ?Math.trunc(n)
+                    :0;
+            });
+        }
+
+        const n=Number(value);
+
+        if(Number.isFinite(n))
+            return [Math.trunc(n)];
+    }
+
+    return null;
+}
+
+
+async function loadMonth(month){
+
+    const key=storageKey(month);
+
+    const url=
+        `${API}/get/${encodeURIComponent(key)}?t=${Date.now()}`;
+
+    try{
+
+        const r=await fetch(
+            url,
+            {
+                method:"GET",
+                cache:"no-store"
+            }
+        );
+
+        const text=await r.text();
+
+        if(!r.ok)
+            throw new Error(`GET ${r.status}`);
+
+        return parseStored(text);
+
+    }catch(e){
+
+        console.error(
+            "LOAD ERROR",
+            month,
+            e
+        );
+
+        return null;
+    }
+}
+
+
+async function loadAll(){
+
+    setSync("SYNCING",true);
+
+    const results=
+        await Promise.all(
+            MONTHS.map(async month=>({
+                month,
+                values:await loadMonth(month)
+            }))
+        );
+
+    let loaded=0;
+
+    for(const r of results){
+
+        if(!r.values)
+            continue;
+
+        const [y,m]=
+            r.month.split("-").map(Number);
+
+        const days=
+            daysInMonth(y,m);
+
+        for(let d=1;d<=days;d++){
+
+            const date=
+                makeDate(y,m,d);
+
+            if(
+                r.values[d-1]!==undefined &&
+                Number.isFinite(
+                    Number(r.values[d-1])
+                )
+            ){
+                data[date]=
+                    Math.trunc(
+                        Number(r.values[d-1])
+                    );
+            }
+        }
+
+        loaded++;
+    }
+
+    render();
+
+    setSync(
+        loaded
+            ?"SYNCED"
+            :"OFFLINE",
+        !!loaded
+    );
+
+    toast(
+        loaded
+            ?"DATA SYNCED"
+            :"SERVER DATA UNAVAILABLE",
+        !!loaded
+    );
+}
+
+
+/* =========================================================
+   KEYVAL SAVE
+========================================================= */
+
+function buildCSV(month){
+
+    const [y,m]=
+        month.split("-").map(Number);
+
+    const arr=[];
+
+    for(
+        let d=1;
+        d<=daysInMonth(y,m);
+        d++
+    ){
+
+        const date=
+            makeDate(y,m,d);
+
+        arr.push(
+            Math.trunc(
+                Number(data[date])||0
+            )
+        );
+    }
+
+    return arr.join(",");
+}
+
+
+async function saveMonth(month){
+
+    const key=
+        storageKey(month);
+
+    const csv=
+        buildCSV(month);
+
+    const url=
+        `${API}/set/`+
+        `${encodeURIComponent(key)}/`+
+        `${encodeURIComponent(csv)}`+
+        `?t=${Date.now()}`;
+
+    console.log(
+        "[DUOMARST SAVE]",
+        month,
+        csv
+    );
+
+    const r=
+        await fetch(
+            url,
+            {
+                method:"GET",
+                cache:"no-store"
+            }
+        );
+
+    const text=
+        await r.text();
+
+    console.log(
+        "[KEYVAL]",
+        r.status,
+        text
+    );
+
+    if(!r.ok)
+        throw new Error(
+            `HTTP ${r.status}: ${text}`
+        );
+}
+
+
+async function saveCurrent(){
+
+    if(saving){
+
+        queued=true;
+
+        toast(
+            "SAVE QUEUED",
+            true
+        );
+
+        return;
+    }
+
+    saving=true;
+
+    try{
+
+        setSync(
+            "SAVING",
+            true
+        );
+
+        await saveMonth(
+            monthKey(selectedDate)
+        );
+
+        setSync(
+            "SYNCED",
+            true
+        );
+
+        toast(
+            "SAVED ✓",
+            true
+        );
+
+    }catch(e){
+
+        console.error(e);
+
+        setSync(
+            "SAVE ERROR",
+            false
+        );
+
+        toast(
+            "SAVE FAILED",
+            false
+        );
+
+    }finally{
+
+        saving=false;
+
+        if(queued){
+
+            queued=false;
+
+            setTimeout(
+                saveCurrent,
+                20
+            );
+        }
+    }
+}
+
+
+/* =========================================================
+   UI
+========================================================= */
+
+function setSync(text,online){
+
+    $("syncText").textContent=text;
+
+    $("syncDot")
+        .classList.toggle(
+            "off",
+            !online
+        );
+
+    $("systemSync").textContent=
+        online?"ON":"OFF";
+}
+
+
+let toastTimer;
+
+function toast(text,ok){
+
+    const el=$("toast");
+
+    el.textContent=text;
+
+    el.className=
+        "toast show "+
+        (ok?"ok":"error");
+
+    clearTimeout(toastTimer);
+
+    toastTimer=setTimeout(
+        ()=>{
+            el.classList.remove("show");
+        },
+        1600
+    );
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+    renderHero();
     renderCalendar();
     renderSelected();
+    renderStats();
     renderRecent();
-    renderAchievements();
-    renderMonthStats();
-    renderExtra();
+    renderFlow();
 }
 
 
 /* =========================================================
-   KPI
+   HERO
 ========================================================= */
 
-function renderKPIs(){
+function renderHero(){
 
-    const today =
-        Number(data[TODAY] || 0);
+    const t=total();
 
-    const total =
-        getTotal();
+    $("total").textContent=
+        formatScore(t);
 
-    const positive =
-        getPositive();
+    $("today").textContent=
+        formatScore(data[TODAY]);
 
-    const negative =
-        getNegative();
+    $("positive").textContent=
+        `+${positive()}`;
 
-    const percent =
+    $("negative").textContent=
+        negative();
+
+    const percent=
         Math.max(
             0,
-            Math.round(
-                total / GOAL * 100
+            Math.min(
+                100,
+                t/GOAL*100
             )
         );
 
-    $("todayKpi").textContent =
-        formatScore(today);
-
-    $("totalKpi").textContent =
-        formatScore(total);
-
-    $("positiveKpi").textContent =
-        `+${positive}`;
-
-    $("negativeKpi").textContent =
-        negative;
-
-    $("goalKpi").textContent =
+    $("progressBar")
+        .style.width=
         `${percent}%`;
 
-    $("goalText").textContent =
-        total >= GOAL
-            ? "GOAL REACHED"
-            : `${Math.max(0,GOAL-total)} points remaining`;
-}
-
-
-function formatScore(value){
-
-    if(value > 0){
-        return `+${value}`;
-    }
-
-    return String(value);
-}
-
-
-/* =========================================================
-   FLOW
-========================================================= */
-
-function renderFlow(){
-
-    const chart =
-        $("flowChart");
-
-    chart.innerHTML = "";
-
-    const dates =
-        getAllDates();
-
-    const recent =
-        dates.slice(-30);
-
-    const max =
-        Math.max(
-            1,
-            ...recent.map(
-                d =>
-                    Math.abs(
-                        Number(data[d] || 0)
-                    )
-            )
-        );
-
-    recent.forEach(date => {
-
-        const value =
-            Number(data[date] || 0);
-
-        const bar =
-            document.createElement("div");
-
-        const height =
-            value === 0
-                ? 5
-                : Math.max(
-                    8,
-                    Math.min(
-                        100,
-                        Math.abs(value) / max * 100
-                    )
-                );
-
-        bar.className =
-            "bar";
-
-        bar.style.setProperty(
-            "--h",
-            `${height}%`
-        );
-
-        chart.appendChild(bar);
-    });
-
-    $("averageKpi").textContent =
-        getAverage().toFixed(1);
+    $("remaining").textContent=
+        t>=GOAL
+            ?"GOAL REACHED"
+            :`${Math.max(0,GOAL-t)} POINTS REMAINING`;
 }
 
 
@@ -2155,150 +1840,159 @@ function renderFlow(){
 
 function renderCalendar(){
 
-    const calendar =
-        $("calendar");
+    const cal=$("calendar");
 
-    calendar.innerHTML = "";
+    cal.innerHTML="";
 
-    const [year,month] =
+    const [y,m]=
         currentMonth
             .split("-")
             .map(Number);
 
-    $("monthTitle").textContent =
-        `${MONTH_NAMES[month-1]} ${year}`;
+    $("monthTitle").textContent=
+        `${MONTH_NAMES[m-1]} ${y}`;
 
-    $("monthBadge").textContent =
+    $("monthTag").textContent=
         currentMonth;
 
-    /*
-       이전/다음 달 날짜를 넣지 않는다.
-    */
+    const first=
+        new Date(y,m-1,1).getDay();
 
-    const firstDay =
-        new Date(
-            year,
-            month-1,
-            1
-        ).getDay();
+    const days=
+        daysInMonth(y,m);
 
-    const days =
-        getDaysInMonth(
-            year,
-            month
-        );
+    for(let i=0;i<first;i++){
 
-    const totalCells =
-        firstDay + days;
-
-    const rows =
-        totalCells > 35
-            ? 6
-            : 5;
-
-    calendar.classList.toggle(
-        "six",
-        rows === 6
-    );
-
-    /*
-       빈 칸
-    */
-
-    for(
-        let i=0;
-        i<firstDay;
-        i++
-    ){
-
-        const empty =
+        const e=
             document.createElement("div");
 
-        empty.className =
-            "day empty";
+        e.className="day empty";
 
-        calendar.appendChild(empty);
+        cal.appendChild(e);
     }
 
-    /*
-       날짜
-    */
+    for(let d=1;d<=days;d++){
 
-    for(
-        let day=1;
-        day<=days;
-        day++
-    ){
+        const date=
+            makeDate(y,m,d);
 
-        const date =
-            makeDate(
-                year,
-                month,
-                day
-            );
+        const value=
+            Number(data[date])||0;
 
-        const value =
-            Number(data[date] || 0);
-
-        const cell =
+        const cell=
             document.createElement("div");
 
-        cell.className =
-            "day";
+        cell.className="day";
 
-        if(
-            date === selectedDate
-        ){
-            cell.classList.add(
-                "selected"
-            );
-        }
+        if(date===selectedDate)
+            cell.classList.add("selected");
 
-        if(
-            date === TODAY
-        ){
-            cell.classList.add(
-                "today"
-            );
-        }
+        if(date===TODAY)
+            cell.classList.add("today");
 
-        const scoreClass =
-            value > 0
-                ? "pos"
-                : value < 0
-                    ? "neg"
-                    : "zero";
+        const cls=
+            value>0
+                ?"pos"
+                :value<0
+                    ?"neg"
+                    :"zero";
 
-        const gauge =
+        const width=
             Math.min(
                 100,
-                Math.abs(value) / 10 * 100
+                Math.abs(value)/10*100
             );
 
-        cell.innerHTML = `
-            <div class="day-number">
-                ${day}
-            </div>
-
-            <div class="day-score ${scoreClass}">
+        cell.innerHTML=`
+            <div class="day-number">${d}</div>
+            <div class="day-score ${cls}">
                 ${formatScore(value)}
             </div>
-
-            <div class="day-gauge">
-                <i style="--w:${gauge}%"></i>
+            <div class="day-line">
+                <i style="--w:${width}%"></i>
             </div>
         `;
 
-        cell.addEventListener(
-            "click",
-            ()=>{
-                selectedDate = date;
-                renderAll();
-            }
-        );
+        cell.onclick=()=>{
 
-        calendar.appendChild(cell);
+            selectedDate=date;
+            render();
+        };
+
+        cal.appendChild(cell);
     }
+
+    /*
+       6주가 필요하지 않으면
+       grid가 자연스럽게 남은 공간을 사용.
+    */
+
+    $("monthTotal").textContent=
+        monthTotal();
+
+    $("monthBest").textContent=
+        monthBest();
+
+    $("monthAvg").textContent=
+        monthAverage().toFixed(1);
+
+    $("monthActive").textContent=
+        monthActive();
+}
+
+
+/* =========================================================
+   MONTH STATS
+========================================================= */
+
+function monthValues(){
+
+    const [y,m]=
+        currentMonth
+            .split("-")
+            .map(Number);
+
+    const arr=[];
+
+    for(let d=1;d<=daysInMonth(y,m);d++){
+
+        arr.push(
+            Number(
+                data[
+                    makeDate(y,m,d)
+                ]
+            )||0
+        );
+    }
+
+    return arr;
+}
+
+function monthTotal(){
+    return monthValues()
+        .reduce((a,b)=>a+b,0);
+}
+
+function monthBest(){
+    return Math.max(
+        0,
+        ...monthValues()
+    );
+}
+
+function monthActive(){
+    return monthValues()
+        .filter(v=>v!==0)
+        .length;
+}
+
+function monthAverage(){
+
+    const a=monthActive();
+
+    return a
+        ?monthTotal()/a
+        :0;
 }
 
 
@@ -2308,32 +2002,59 @@ function renderCalendar(){
 
 function renderSelected(){
 
-    const value =
-        Number(data[selectedDate] || 0);
+    const value=
+        Number(data[selectedDate])||0;
 
-    $("selectedDate").textContent =
+    $("selectedDate").textContent=
         selectedDate;
 
-    $("exactInput").value =
-        value;
-
-    $("bigScore").textContent =
+    $("selectedScore").textContent=
         formatScore(value);
 
-    $("bigScore").className =
-        "big-score " +
-        (
-            value > 0
-                ? "pos"
-                : value < 0
-                    ? "neg"
-                    : "zero"
-        );
+    $("valueInput").value=value;
 
-    $("selectedLabel").textContent =
-        selectedDate === TODAY
-            ? "TODAY"
-            : "DAY";
+    $("selectedTag").textContent=
+        selectedDate===TODAY
+            ?"TODAY"
+            :"DAY";
+
+    $("selectedScore").className=
+        "selected-score "+
+        (
+            value>0
+                ?"pos"
+                :value<0
+                    ?"neg"
+                    :"zero"
+        );
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+function renderStats(){
+
+    $("activeDays").textContent=
+        active();
+
+    $("bestDay").textContent=
+        best();
+
+    $("average").textContent=
+        average().toFixed(1);
+
+    const t=total();
+
+    $("rank").textContent=
+        t>=100
+            ?"DIAMOND"
+            :t>=50
+                ?"GOLD"
+                :t>=25
+                    ?"SILVER"
+                    :"BRONZE";
 }
 
 
@@ -2343,56 +2064,48 @@ function renderSelected(){
 
 function renderRecent(){
 
-    const box =
-        $("recentList");
+    const box=$("recent");
 
-    box.innerHTML = "";
+    box.innerHTML="";
 
-    const dates =
-        getAllDates()
-            .filter(
-                d => d <= TODAY
-            )
+    const arr=
+        dates()
+            .filter(d=>d<=TODAY)
             .slice(-7)
             .reverse();
 
-    dates.forEach(date => {
+    arr.forEach(date=>{
 
-        const value =
-            Number(data[date] || 0);
+        const value=
+            Number(data[date])||0;
 
-        const row =
+        const row=
             document.createElement("div");
 
-        row.className =
-            "recent";
+        row.className="recent-row";
 
-        const cls =
-            value > 0
-                ? "pos"
-                : value < 0
-                    ? "neg"
-                    : "";
+        const cls=
+            value>0
+                ?"pos"
+                :value<0
+                    ?"neg"
+                    :"";
 
-        row.innerHTML = `
+        row.innerHTML=`
             <span class="recent-date">
                 ${date}
             </span>
-
             <span class="recent-value ${cls}">
                 ${formatScore(value)}
             </span>
         `;
 
-        row.addEventListener(
-            "click",
-            ()=>{
-                selectedDate = date;
-                currentMonth =
-                    monthKey(date);
-                renderAll();
-            }
-        );
+        row.onclick=()=>{
+
+            selectedDate=date;
+            currentMonth=monthKey(date);
+            render();
+        };
 
         box.appendChild(row);
     });
@@ -2400,336 +2113,211 @@ function renderRecent(){
 
 
 /* =========================================================
-   ACHIEVEMENTS
+   FLOW
 ========================================================= */
 
-function renderAchievements(){
+function renderFlow(){
 
-    const active =
-        getActive();
+    const box=$("flow");
 
-    $("activeAchievement").textContent =
-        `${active} active days`;
+    box.innerHTML="";
 
-    const total =
-        getTotal();
+    const arr=
+        dates().slice(-30);
 
-    let rank =
-        "BRONZE";
+    const max=
+        Math.max(
+            1,
+            ...arr.map(
+                d=>Math.abs(
+                    Number(data[d])||0
+                )
+            )
+        );
 
-    if(total >= 100){
-        rank = "DIAMOND";
-    }
-    else if(total >= 50){
-        rank = "GOLD";
-    }
-    else if(total >= 25){
-        rank = "SILVER";
-    }
+    arr.forEach(date=>{
 
-    $("rankText").textContent =
-        rank;
+        const value=
+            Number(data[date])||0;
+
+        const bar=
+            document.createElement("i");
+
+        const height=
+            value===0
+                ?4
+                :Math.max(
+                    10,
+                    Math.abs(value)/max*100
+                );
+
+        bar.style.setProperty(
+            "--h",
+            `${height}%`
+        );
+
+        box.appendChild(bar);
+    });
+
+    $("bottomAverage").textContent=
+        average().toFixed(1);
+
+    const percent=
+        Math.max(
+            0,
+            Math.min(
+                100,
+                total()/GOAL*100
+            )
+        );
+
+    $("bottomGoal").textContent=
+        `${Math.round(percent)}%`;
+
+    $("bottomRemain").textContent=
+        total()>=GOAL
+            ?"COMPLETED"
+            :`${GOAL-total()} LEFT`;
 }
 
 
 /* =========================================================
-   MONTH STATS
+   MONTH NAV
 ========================================================= */
 
-function renderMonthStats(){
+function moveMonth(dir){
 
-    const [year,month] =
+    let i=
+        MONTHS.indexOf(
+            currentMonth
+        );
+
+    i+=dir;
+
+    i=
+        Math.max(
+            0,
+            Math.min(
+                MONTHS.length-1,
+                i
+            )
+        );
+
+    currentMonth=
+        MONTHS[i];
+
+    const [y,m]=
         currentMonth
             .split("-")
             .map(Number);
 
-    const days =
-        getDaysInMonth(
-            year,
-            month
+    const oldDay=
+        Number(
+            selectedDate.slice(8)
         );
 
-    const values = [];
-
-    for(
-        let d=1;
-        d<=days;
-        d++
-    ){
-
-        const date =
-            makeDate(
-                year,
-                month,
-                d
-            );
-
-        values.push(
-            Number(data[date] || 0)
-        );
-    }
-
-    const positive =
-        values.reduce(
-            (sum,v)=>
-                sum + (v > 0 ? v : 0),
-            0
+    const day=
+        Math.min(
+            oldDay,
+            daysInMonth(y,m)
         );
 
-    const best =
-        Math.max(
-            0,
-            ...values
-        );
+    selectedDate=
+        makeDate(y,m,day);
 
-    const active =
-        values.filter(
-            v => v !== 0
-        ).length;
-
-    const average =
-        active
-            ? values.reduce(
-                (a,b)=>a+b,
-                0
-            ) / active
-            : 0;
-
-    $("monthPositive").textContent =
-        positive;
-
-    $("monthBest").textContent =
-        best;
-
-    $("monthAverage").textContent =
-        average.toFixed(1);
-
-    $("monthActive").textContent =
-        active;
+    render();
 }
+
+$("prev").onclick=()=>{
+    moveMonth(-1);
+};
+
+$("next").onclick=()=>{
+    moveMonth(1);
+};
+
+$("todayMonth").onclick=()=>{
+
+    currentMonth=
+        monthKey(TODAY);
+
+    selectedDate=
+        TODAY;
+
+    render();
+};
 
 
 /* =========================================================
-   EXTRA
-========================================================= */
-
-function renderExtra(){
-
-    const active =
-        getActive();
-
-    const best =
-        getBest();
-
-    const average =
-        getAverage();
-
-    const remaining =
-        Math.max(
-            0,
-            GOAL - getTotal()
-        );
-
-    $("extraActive").textContent =
-        active;
-
-    $("extraBest").textContent =
-        best;
-
-    $("extraAverage").textContent =
-        average.toFixed(1);
-
-    $("extraRemaining").textContent =
-        remaining;
-}
-
-
-/* =========================================================
-   QUICK BUTTONS
+   QUICK
 ========================================================= */
 
 document
-    .querySelectorAll("[data-add]")
-    .forEach(button => {
+.querySelectorAll("[data-add]")
+.forEach(button=>{
 
-        button.addEventListener(
-            "click",
-            async ()=>{
+    button.onclick=async()=>{
 
-                const amount =
-                    Number(
-                        button.dataset.add
-                    );
+        const amount=
+            Number(
+                button.dataset.add
+            );
 
-                data[selectedDate] =
-                    Number(
-                        data[selectedDate] || 0
-                    ) + amount;
+        data[selectedDate]=
+            (Number(data[selectedDate])||0)
+            +amount;
 
-                renderAll();
+        render();
 
-                await saveCurrent();
-            }
+        await saveCurrent();
+    };
+
+});
+
+
+/* =========================================================
+   SET
+========================================================= */
+
+$("setValue").onclick=async()=>{
+
+    const value=
+        Number(
+            $("valueInput").value
         );
 
-    });
+    if(!Number.isFinite(value))
+        return;
+
+    data[selectedDate]=
+        Math.trunc(value);
+
+    render();
+
+    await saveCurrent();
+};
 
 
 /* =========================================================
-   EXACT VALUE
+   SAVE
 ========================================================= */
 
-$("exactApply")
-    .addEventListener(
-        "click",
-        async ()=>{
-
-            const value =
-                Number(
-                    $("exactInput").value
-                );
-
-            if(!Number.isFinite(value)){
-                return;
-            }
-
-            data[selectedDate] =
-                Math.trunc(value);
-
-            renderAll();
-
-            await saveCurrent();
-        }
-    );
-
-
-/* =========================================================
-   SAVE BUTTON
-========================================================= */
-
-$("saveBtn")
-    .addEventListener(
-        "click",
-        saveCurrent
-    );
+$("save").onclick=
+    saveCurrent;
 
 
 /* =========================================================
    RESET
 ========================================================= */
 
-$("resetBtn")
-    .addEventListener(
-        "click",
-        async ()=>{
+$("reset").onclick=async()=>{
 
-            data[selectedDate] = 0;
+    data[selectedDate]=0;
 
-            renderAll();
+    render();
 
-            await saveCurrent();
-        }
-    );
-
-
-/* =========================================================
-   MONTH NAVIGATION
-========================================================= */
-
-function moveMonth(direction){
-
-    let index =
-        MONTHS.indexOf(
-            currentMonth
-        );
-
-    if(index < 0){
-        index = 0;
-    }
-
-    index += direction;
-
-    index =
-        Math.max(
-            0,
-            Math.min(
-                MONTHS.length-1,
-                index
-            )
-        );
-
-    currentMonth =
-        MONTHS[index];
-
-    /*
-       현재 선택 날짜도
-       해당 월로 이동.
-    */
-
-    const [year,month] =
-        currentMonth
-            .split("-")
-            .map(Number);
-
-    const [oldY,oldM,oldD] =
-        selectedDate
-            .split("-")
-            .map(Number);
-
-    const days =
-        getDaysInMonth(
-            year,
-            month
-        );
-
-    const day =
-        Math.min(
-            oldD,
-            days
-        );
-
-    selectedDate =
-        makeDate(
-            year,
-            month,
-            day
-        );
-
-    renderAll();
-}
-
-
-$("prevMonth")
-    .addEventListener(
-        "click",
-        ()=>{
-            moveMonth(-1);
-        }
-    );
-
-
-$("nextMonth")
-    .addEventListener(
-        "click",
-        ()=>{
-            moveMonth(1);
-        }
-    );
-
-
-$("todayMonth")
-    .addEventListener(
-        "click",
-        ()=>{
-            currentMonth =
-                monthKey(TODAY);
-
-            selectedDate =
-                TODAY;
-
-            renderAll();
-        }
-    );
+    await saveCurrent();
+};
 
 
 /* =========================================================
@@ -2737,75 +2325,53 @@ $("todayMonth")
 ========================================================= */
 
 document.addEventListener(
-    "keydown",
-    async event => {
+"keydown",
+async e=>{
 
-        /*
-           input 입력 중에는 무시
-        */
-
-        if(
-            document.activeElement.tagName ===
-            "INPUT"
-        ){
-            return;
-        }
-
-        if(
-            event.key === "+" ||
-            event.key === "="
-        ){
-
-            data[selectedDate] =
-                Number(
-                    data[selectedDate] || 0
-                ) + 1;
-
-            renderAll();
-
-            await saveCurrent();
-        }
-
-        if(
-            event.key === "-" ||
-            event.key === "_"
-        ){
-
-            data[selectedDate] =
-                Number(
-                    data[selectedDate] || 0
-                ) - 1;
-
-            renderAll();
-
-            await saveCurrent();
-        }
+    if(
+        document.activeElement &&
+        document.activeElement.tagName==="INPUT"
+    ){
+        return;
     }
-);
+
+    if(e.key==="+"||e.key==="="){
+
+        data[selectedDate]=
+            (Number(data[selectedDate])||0)+1;
+
+        render();
+
+        await saveCurrent();
+    }
+
+    if(e.key==="-"||e.key==="_"){
+
+        data[selectedDate]=
+            (Number(data[selectedDate])||0)-1;
+
+        render();
+
+        await saveCurrent();
+    }
+});
 
 
 /* =========================================================
-   INIT
+   START
 ========================================================= */
 
-initializeData();
+initialize();
 
-renderAll();
+render();
 
-setConnection(
-    "Connecting",
+setSync(
+    "CONNECTING",
     true
 );
 
-/*
-   화면을 먼저 띄운 뒤
-   서버 데이터를 불러온다.
-*/
-
 setTimeout(
-    ()=>{
-        loadAll();
-    },
+    loadAll,
     50
 );
 
